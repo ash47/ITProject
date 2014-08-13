@@ -1,6 +1,10 @@
 (6) Team lemmings
 =================
 
-###How to build###
- - You can't since there is no code yet!
+###Requirnments###
+ - Android SDK 4.4W
 
+###How to build###
+ - Checkout the repo to your PC
+ - Load the project into the android SDK
+ - Hit the run button
