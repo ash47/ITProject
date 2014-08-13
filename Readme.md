@@ -1,7 +1,7 @@
 (6) Team lemmings
 =================
 
-###Requirnments###
+###Requirements###
  - Android SDK 4.4W
 
 ###How to build###
