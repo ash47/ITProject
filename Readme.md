@@ -8,5 +8,3 @@
  - Checkout the repo to your PC
  - Load the project into the android SDK
  - Hit the run button
- 
- testing!
