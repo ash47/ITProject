@@ -1,10 +1,15 @@
 (6) Team lemmings
 =================
 
+<<<<<<< HEAD
 ###Requirnments###
  - Android SDK
  - Gradle
  - Java Development Kit 7+ (JDK) (6 will not work!)
+=======
+###Requirements###
+ - Android SDK 4.4W
+>>>>>>> 50c6a7b43cad1dfbd1da25fee5287c79003580ea
 
 There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29#setting-up-eclipse) or rough instructions below
 
@@ -19,6 +24,7 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 
 ###How to setup###
  - Checkout the repo to your PC
+<<<<<<< HEAD
  - Load up eclipse
  - Select File -> Import
  - Gradle -> Gradle Project
@@ -37,3 +43,9 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 ###Where do I put things?###
  - Assets, such as images go into the **Lemmings-android/assets folder**
  - Code goes into **Lemmings-core/src** folder
+=======
+ - Load the project into the android SDK
+ - Hit the run button
+ 
+ testing! testing again
+>>>>>>> 50c6a7b43cad1dfbd1da25fee5287c79003580ea
