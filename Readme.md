@@ -1,6 +1,9 @@
 (6) Team lemmings
 =================
 
+###Engine###
+ - We are using libGDX
+
 ###Requirnments###
  - Android SDK
  - Gradle
