@@ -23,6 +23,7 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 
 ###How to setup###
  - Checkout the repo to your PC
+ - In the root folder create a file named `local.properties`, inside add `sdk.dir=C:/Location/to/your/Android/android-sdk`, changing the path accordingly
  - Load up eclipse
  - Select File -> Import
  - Gradle -> Gradle Project
