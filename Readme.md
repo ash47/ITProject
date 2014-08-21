@@ -14,6 +14,7 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 ###Installing Gradle###
  - Gradle is an eclipse plugin needed to setup libGDX
  - There is a guide [here](https://github.com/spring-projects/eclipse-integration-gradle/#installing-gradle-tooling-from-update-site)
+ - Note: Only install the stuff from the section it jumps to
  - Of the three update sites, **http://dist.springsource.com/release/TOOLS/gradle** seems to work fine
 
 ###Installing Java Development Kit 7+###
