@@ -33,12 +33,12 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
  - Hit next and follow the promps
 
 ###How to run###
- - Select which version you'd like to test [eg: Lemmings-desktop]
+ - Select which version you'd like to test [eg: desktop]
  - Right click it and select Run-As
   - For desktop -> Java Application
   - For android -> Android Application
  - Follow the on screen instructions
 
 ###Where do I put things?###
- - Assets, such as images go into the **Lemmings-android/assets folder**
- - Code goes into **Lemmings-core/src** folder
+ - Assets, such as images go into the **android/assets folder**
+ - Code goes into **core/src** folder
