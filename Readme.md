@@ -42,3 +42,21 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 ###Where do I put things?###
  - Assets, such as images go into the **android/assets folder**
  - Code goes into **core/src** folder
+
+###Running Tests###
+ - To setup the testing environment, ensure gradle has all the dependencies (Note: This is only needed if you setup your environment before testing was added)
+  - Open eclipse
+  - Right click on any project, select `Gradle -> Refresh All`
+  - Wait for it to download any missing dependencies
+ - Open a command window and navigate to to the root project directory
+ - Type `gradlew core:test`, this will run all the tests
+ - You can view the test results here `Lemmings/core/build/reports/tests/index.html`
+
+###Alternate Way To Run Tests###
+ - Right click on the `core` package
+ - Select `Run As -> JUnit Test`
+ - Eclipse should now run tests in the JUint testing interface
+
+###Creating Tests###
+ - Create a new class in the package `com.teamlemmings.tests`
+ - Any functions that have the `@Test` tag will be run as tests

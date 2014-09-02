@@ -1,12 +1,15 @@
 package com.teamlemmings.lemmings;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class lemmings extends ApplicationAdapter {
+public class Lemmings extends ApplicationAdapter {
+	public static final boolean isRelease = false;
+	
 	SpriteBatch batch;
 	Texture img;
 	
@@ -23,5 +26,12 @@ public class lemmings extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(img, 0, 0);
 		batch.end();
+	}
+	
+	public void setLogLevel() {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		if(isRelease) {
+			Gdx.app.setLogLevel(Application.LOG_NONE);
+		}	
 	}
 }

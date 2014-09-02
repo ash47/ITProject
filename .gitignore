@@ -61,3 +61,6 @@ build/
 
 ## OS Specific
 .DS_Store
+
+# Ignore test results
+core/build/reports/

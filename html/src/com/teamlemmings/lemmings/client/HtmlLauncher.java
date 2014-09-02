@@ -3,7 +3,7 @@ package com.teamlemmings.lemmings.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.teamlemmings.lemmings.lemmings;
+import com.teamlemmings.lemmings.Lemmings;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -14,6 +14,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener getApplicationListener () {
-                return new lemmings();
+                return new Lemmings();
         }
 }
