@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
+import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
 
 public class GameScreen extends LemmingScreen {
@@ -23,7 +24,14 @@ public class GameScreen extends LemmingScreen {
 	
 	private float accumulator = 0;
 	
+	// Am array of all the GameObjects in this screen
 	private ArrayList<GameObject> gameObjects;
+	
+	// The width of the actual camera size
+	private int viewportX = 200;
+	
+	// The height of the actual camera size
+	private int viewportY = 150;
 	
 	public GameScreen(Game game) {
 		super(game);
@@ -41,7 +49,10 @@ public class GameScreen extends LemmingScreen {
 		debugRenderer = new Box2DDebugRenderer();
 		
 		// Create the camera
-		cam = new OrthographicCamera(200, 150);
+		cam = new OrthographicCamera(viewportX, viewportY);
+		
+		// Create the touch wall
+		new TouchWall(this);
 		
 		// Create some walls
 		new Wall(this, 0f, -75f, cam.viewportWidth, 10f);
@@ -99,5 +110,23 @@ public class GameScreen extends LemmingScreen {
 	
 	public World getWorld() {
 		return this.world;
+	}
+	
+	/**
+	 * Converts a screen x coordinate into a world x coordinate, adjusting for camera and viewport
+	 * @param x screen x coordinate
+	 * @return world x coordinate
+	 */
+	public float screenToWorldX(float x) {
+		return x / Gdx.graphics.getWidth() * cam.viewportWidth - cam.viewportWidth/2 + cam.position.x;
+	}
+	
+	/**
+	 * Converts a screen y coordinate into a world y coordinate, adjusting for camera and viewport
+	 * @param y screen y coordinate
+	 * @return world y coordinate
+	 */
+	public float screenToWorldY(float y) {
+		return -y / Gdx.graphics.getHeight() * cam.viewportHeight + cam.viewportHeight/2 + cam.position.y;
 	}
 }
