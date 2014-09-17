@@ -26,7 +26,7 @@ public class Wall extends GameObject {
 	}
 	
 	@Override
-	public void update(float deltaTime) {}
+	public void render(float deltaTime) {}
 	
 	@Override
 	protected void createFixture() {

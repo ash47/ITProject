@@ -18,7 +18,7 @@ public class Sheep extends GameObject {
 	}
 	
 	@Override
-	public void update(float deltaTime) {
+	public void render(float deltaTime) {
 		Vector2 vel = this.body.getLinearVelocity();
 		Vector2 pos = this.body.getPosition();
 

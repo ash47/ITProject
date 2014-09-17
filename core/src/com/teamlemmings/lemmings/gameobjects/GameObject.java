@@ -38,7 +38,7 @@ public class GameObject {
 	 * Called to update this GameObject
 	 * @param deltaTime Time since the last call
 	 */
-	public void update(float deltaTime) {};
+	public void render(float deltaTime) {};
 	
 	/**
 	 * Creates the physics fixture for this GameObject

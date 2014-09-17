@@ -20,7 +20,7 @@ public class TouchWall extends GameObject {
 	}
 	
 	@Override
-	public void update(float deltaTime) {
+	public void render(float deltaTime) {
 		// Check if user is touching something
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			// Move into position

@@ -2,7 +2,7 @@ package com.teamlemmings.lemmings;
 
 public class Constants {
 	// How often we should update
-	public static final float TIME_STEP = 1/45f;
+	public static final float TIME_STEP = 1/60f;
 	
 	// How many iterations for velocity we should run
 	public static final int VELOCITY_ITERATIONS = 6;

@@ -87,7 +87,7 @@ public class GameScreen extends LemmingScreen {
 		Iterator<GameObject> it = gameObjects.iterator();
 		while(it.hasNext()) {
 			GameObject obj = it.next();
-			obj.update(delta);
+			obj.render(delta);
 		}
 		
 		// Update the physics world
