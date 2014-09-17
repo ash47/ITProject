@@ -20,8 +20,11 @@ public class Sheep extends GameObject {
 	// How fast the sheep gains acceleration
 	private float speedIncrease = 0.1f;
 	
-	// If the sheep can change directions now, or not
-	private boolean canChangeDir = false;
+	// How long to wait before we can turn around at a wall
+	private float waitTime = 0.1f;
+	
+	// How long this sheep has been waiting
+	private float timeWaited = 0;
 	
 	// Scale of the sheep
 	private static final float scale = 2f;
@@ -62,18 +65,17 @@ public class Sheep extends GameObject {
 		     this.body.applyLinearImpulse(speedIncrease*direction, 0, pos.x, pos.y, true);
 		     
 		     // See if the sheep needs to change directions
-		     if(canChangeDir) {
-		    	 if(xSpeed < 0.1f) {
+		     if(timeWaited > waitTime) {
+		    	 if(xSpeed < speedIncrease) {
 			    	 direction *= -1;
-			    	 canChangeDir = false;
+			    	 timeWaited = 0;
 			    	 
 			    	 // Flip the sheep
 			    	 sprite.flip(true, false);
 			     }
 		     } else {
-		    	 if(xSpeed > 0.1f) {
-		    		 canChangeDir = true;
-		    	 }
+		    	 // Allow the changing of direction
+		    	 timeWaited += deltaTime;
 		     }
 		}
 	}
