@@ -1,5 +1,6 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -26,7 +27,7 @@ public class Wall extends GameObject {
 	}
 	
 	@Override
-	public void render(float deltaTime) {}
+	public void render(float deltaTime, Batch batch) {}
 	
 	@Override
 	protected void createFixture() {

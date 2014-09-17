@@ -1,5 +1,6 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -38,7 +39,12 @@ public class GameObject {
 	 * Called to update this GameObject
 	 * @param deltaTime Time since the last call
 	 */
-	public void render(float deltaTime) {};
+	public void render(float deltaTime, Batch batch) {};
+	
+	/**
+	 * Called when this GameObject is disposed of, cleanup resources here
+	 */
+	public void dispose() {};
 	
 	/**
 	 * Creates the physics fixture for this GameObject

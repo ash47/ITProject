@@ -2,6 +2,7 @@ package com.teamlemmings.lemmings.gameobjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -20,7 +21,7 @@ public class TouchWall extends GameObject {
 	}
 	
 	@Override
-	public void render(float deltaTime) {
+	public void render(float deltaTime, Batch batch) {
 		// Check if user is touching something
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			// Move into position
@@ -34,7 +35,7 @@ public class TouchWall extends GameObject {
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(10f, 10f);
+		groundBox.setAsBox(1f, 1f);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();

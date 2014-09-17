@@ -1,5 +1,9 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -7,20 +11,49 @@ import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 public class Sheep extends GameObject {
+	// The current direction the sheep is walking, 1 = right, -1 = left
 	private int direction = 1;
-	private float maxSpeed = 10f;
-	private float speedIncrease = 2f;
+	
+	// The max speed the sheep can move at
+	private float maxSpeed = 1f;
+	
+	// How fast the sheep gains acceleration
+	private float speedIncrease = 0.1f;
+	
+	// If the sheep can change directions now, or not
 	private boolean canChangeDir = false;
+	
+	// Scale of the sheep
+	private static final float scale = 2f;
+	
+	// The texture for this sheep
+	private Texture texture;
+	
+	// The sprite for this sheep
+    private Sprite sprite;
 	
 	public Sheep(GameScreen screen, float x, float y) {
 		// Setup the game object
 		super(screen, x, y);
+		
+		// We should replace this so we dont load the same texture 999 times
+		
+		texture = new Texture(Gdx.files.internal("sheep.png"));
+	    sprite = new Sprite(texture);
+	    sprite.setScale(scale/64f, scale/64f);
 	}
 	
 	@Override
-	public void render(float deltaTime) {
+	public void render(float deltaTime, Batch batch) {
+		// Grab our position and velocity
 		Vector2 vel = this.body.getLinearVelocity();
 		Vector2 pos = this.body.getPosition();
+		
+		// Render the sprite
+		sprite.setCenter(pos.x, pos.y);
+		sprite.draw(batch);
+		
+		// Make it walk
 
 		float xSpeed = Math.abs(vel.x);
 		
@@ -30,12 +63,15 @@ public class Sheep extends GameObject {
 		     
 		     // See if the sheep needs to change directions
 		     if(canChangeDir) {
-		    	 if(xSpeed < 0.5f) {
+		    	 if(xSpeed < 0.1f) {
 			    	 direction *= -1;
 			    	 canChangeDir = false;
+			    	 
+			    	 // Flip the sheep
+			    	 sprite.flip(true, false);
 			     }
 		     } else {
-		    	 if(xSpeed > 2f) {
+		    	 if(xSpeed > 0.1f) {
 		    		 canChangeDir = true;
 		    	 }
 		     }
@@ -43,10 +79,16 @@ public class Sheep extends GameObject {
 	}
 	
 	@Override
+	public void dispose() {
+		// Cleanup texture
+		texture.dispose();
+	}
+	
+	@Override
 	protected void createFixture() {
 		// Create a circle
 		CircleShape circle = new CircleShape();
-		circle.setRadius(2f);
+		circle.setRadius(scale/2);
 
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
