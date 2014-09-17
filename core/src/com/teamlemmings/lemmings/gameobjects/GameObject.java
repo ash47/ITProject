@@ -24,6 +24,9 @@ public class GameObject {
 		// Add the body into the world
 		body = screen.getWorld().createBody(bodyDef);
 		
+		// Store reference from body to GameObject
+		body.setUserData(this);
+		
 		// Create the fixture
 		this.createFixture();
 		
