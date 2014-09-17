@@ -1,20 +1,19 @@
 package com.teamlemmings.lemmings.screens;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.gameobjects.GameObject;
+import com.teamlemmings.lemmings.gameobjects.Sheep;
+import com.teamlemmings.lemmings.gameobjects.Wall;
 
 public class GameScreen extends LemmingScreen {
 	private Box2DDebugRenderer debugRenderer;
@@ -24,12 +23,17 @@ public class GameScreen extends LemmingScreen {
 	
 	private float accumulator = 0;
 	
+	private ArrayList<GameObject> gameObjects;
+	
 	public GameScreen(Game game) {
 		super(game);
 	}
 	
 	@Override
 	public void show () {
+		// Create the list to store game objects into
+		gameObjects = new ArrayList<GameObject>();
+		
 		// Create a physics world and debug renderer
 		// We need to replace the debug renderer with
 		//  actual graphics at some point
@@ -39,57 +43,24 @@ public class GameScreen extends LemmingScreen {
 		// Create the camera
 		cam = new OrthographicCamera(200, 150);
 		
+		// Create some walls
+		new Wall(this, 0f, -75f, cam.viewportWidth, 10f);
+		new Wall(this, -100f, -75f, 20f, cam.viewportHeight);
+		new Wall(this, 100f, -75f, 20f, cam.viewportHeight);
 		
-		// First we create a body definition
-		BodyDef bodyDef = new BodyDef();
-		// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-		bodyDef.type = BodyType.DynamicBody;
-		// Set our body's starting position in the world
-		bodyDef.position.set(0, 10);
-
-		// Create our body in the world using our body definition
-		Body body = world.createBody(bodyDef);
-
-		// Create a circle shape and set its radius to 6
-		CircleShape circle = new CircleShape();
-		circle.setRadius(6f);
-
-		// Create a fixture definition to apply our shape to
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = circle;
-		fixtureDef.density = 0.5f; 
-		fixtureDef.friction = 0.4f;
-		fixtureDef.restitution = 0.6f; // Make it bounce a little bit
-
-		// Create our fixture and attach it to the body
-		body.createFixture(fixtureDef);
-
-		// Remember to dispose of any shapes after you're done with them!
-		// BodyDef and FixtureDef don't need disposing, but shapes do.
-		circle.dispose();
-		
-		
-		
-		
-		
-		
-		// Create our body definition
-		BodyDef groundBodyDef = new BodyDef();  
-		// Set its world position
-		groundBodyDef.position.set(new Vector2(0, -50));  
-
-		// Create a body from the defintion and add it to the world
-		Body groundBody = world.createBody(groundBodyDef);  
-
-		// Create a polygon shape
-		PolygonShape groundBox = new PolygonShape();  
-		// Set the polygon shape as a box which is twice the size of our view port and 20 high
-		// (setAsBox takes half-width and half-height as arguments)
-		groundBox.setAsBox(cam.viewportWidth, 10.0f);
-		// Create a fixture from our polygon shape and add it to our ground body  
-		groundBody.createFixture(groundBox, 0.0f); 
-		// Clean up after ourselves
-		groundBox.dispose();
+		// Create a new sheep
+		for(int i=0; i<10; i++) {
+			new Sheep(this, 4f*i, 0f);
+		}
+	}
+	
+	/**
+	 * Adds a given gameObject into the scene
+	 * @param obj
+	 */
+	public void addObject(GameObject obj) {
+		// Add the GameObject
+		this.gameObjects.add(obj);
 	}
 
 	@Override
@@ -100,6 +71,13 @@ public class GameScreen extends LemmingScreen {
 		
 		// Update the camera
 		cam.update();
+		
+		// Update all the GameObjects
+		Iterator<GameObject> it = gameObjects.iterator();
+		while(it.hasNext()) {
+			GameObject obj = it.next();
+			obj.update(delta);
+		}
 		
 		// Update the physics world
 		doPhysicsStep(delta);
@@ -117,5 +95,9 @@ public class GameScreen extends LemmingScreen {
 	        world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
 	        accumulator -= Constants.TIME_STEP;
 	    }
+	}
+	
+	public World getWorld() {
+		return this.world;
 	}
 }
