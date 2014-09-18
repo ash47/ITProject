@@ -10,6 +10,7 @@ import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 public class TouchWall extends GameObject {
+	// The screen this TouchWall is attached to
 	private GameScreen screen;
 	
 	public TouchWall(GameScreen screen) {
@@ -27,6 +28,7 @@ public class TouchWall extends GameObject {
 			// Move into position
 			this.body.setTransform(screen.screenToWorldX(Gdx.input.getX()), screen.screenToWorldY(Gdx.input.getY()), 0.0f);
 		} else {
+			// Remove the wall
 			this.body.setTransform(-10000, -10000, 0.0f);
 		}
 	}

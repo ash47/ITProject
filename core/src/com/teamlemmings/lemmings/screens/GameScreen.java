@@ -8,10 +8,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.teamlemmings.lemmings.CollisionHandler;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
@@ -62,6 +65,14 @@ public class GameScreen extends LemmingScreen {
 		
 		// Create the camera
 		cam = new OrthographicCamera(viewportX, viewportY);
+		
+		// Create the collision handler
+		CollisionHandler col = new CollisionHandler();
+		world.setContactListener(col);
+		
+		// Create the gesture controller
+		GestureProcessor ges = new GestureProcessor(this);
+		Gdx.input.setInputProcessor(new GestureDetector(ges));
 		
 		// Create the touch wall
 		new TouchWall(this);
@@ -153,5 +164,20 @@ public class GameScreen extends LemmingScreen {
 	 */
 	public float screenToWorldY(float y) {
 		return -y / Gdx.graphics.getHeight() * cam.viewportHeight + cam.viewportHeight/2 + cam.position.y;
+	}
+	
+	/**
+	 * Called when the user taps the screen
+	 * @param x The x coordinate they tapped
+	 * @param y The y coordinate they tapped
+	 * @param count
+	 * @param button The button they pressed (left click, right click, etc)
+	 */
+	public void onTap(float x, float y, int count, int button) {
+		System.out.println("User tapped the screen!");
+		
+		// Convert to useful coordinates
+		float worldX = screenToWorldX(x);
+		float worldY = screenToWorldX(y);
 	}
 }
