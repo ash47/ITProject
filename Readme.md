@@ -60,3 +60,7 @@ There is an indepth guide [here](https://github.com/libgdx/libgdx/wiki/Setting-u
 ###Creating Tests###
  - Create a new class in the package `com.teamlemmings.tests`
  - Any functions that have the `@Test` tag will be run as tests
+
+###Error Loading Resources?###
+ - If the game is having trouble loading resources you'll need to clean the project
+ - From the menus, select `Project -> Clean -> Clean all projects -> OK`
