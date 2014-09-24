@@ -123,8 +123,17 @@ public class GameScreen extends LemmingScreen {
 		// Update all the GameObjects
 		Iterator<GameObject> it = gameObjects.iterator();
 		while(it.hasNext()) {
+			// Grab the next object
 			GameObject obj = it.next();
-			obj.render(delta, batch);
+			
+			// Check if we should delete this object
+			if(obj.shouldDelete()) {
+				// Yep, remove the object
+				it.remove();
+			} else {
+				// Render the object
+				obj.render(delta, batch);
+			}
 		}
 		
 		// Finish drawing the sprite batch
