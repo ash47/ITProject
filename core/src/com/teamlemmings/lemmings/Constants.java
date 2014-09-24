@@ -22,8 +22,11 @@ public abstract class Constants {
 	// World Collision Category
 	public static final short CATEGORY_WORLD = 1;
 	
+	// Sensor Collision Category
+	public static final short CATEGORY_SENSOR = 2;
+	
 	// Sheep Collision Category
-	public static final short CATEGORY_SHEEP = 2;
+	public static final short CATEGORY_SHEEP = 4;
 	
 	// Collision Masks
 	// The mask contains the bits of the categories it should collide with
@@ -32,6 +35,9 @@ public abstract class Constants {
 	// World Mask
 	public static final short MASK_WORLD = -1;
 	
+	// Sensor Mask
+	public static final short MASK_SENSOR = -1;
+	
 	// Sheep Mask
-	public static final short MASK_SHEEP = CATEGORY_WORLD;
+	public static final short MASK_SHEEP = CATEGORY_WORLD + CATEGORY_SENSOR;
 }

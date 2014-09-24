@@ -3,6 +3,7 @@ package com.teamlemmings.lemmings.gameobjects;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
@@ -50,6 +51,10 @@ public class SensorZone extends GameObject {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundBox;
 		fixtureDef.isSensor = true;
+		
+		// Default to world collisions
+		fixtureDef.filter.categoryBits = Constants.CATEGORY_SENSOR;
+		fixtureDef.filter.maskBits = Constants.MASK_SENSOR;
 
 		// Create our fixture and attach it to the body
 		body.createFixture(fixtureDef);
@@ -60,6 +65,6 @@ public class SensorZone extends GameObject {
 	
 	@Override
 	protected BodyType getBodyType() {
-		return BodyType.StaticBody;
+		return BodyType.DynamicBody;
 	}
 }

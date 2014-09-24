@@ -20,11 +20,11 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
-import com.teamlemmings.lemmings.gameobjects.InteractiveObject;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
+import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 
 /**
  * Represents a screen in the game where users can interact and play
@@ -95,6 +95,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		new Wall(this, 0f, -7.5f, cam.viewportWidth, 2f);
 		new Wall(this, -10f, -7.5f, 2f, cam.viewportHeight);
 		new Wall(this, 10f, -7.5f, 2f, cam.viewportHeight);
+		
+		// Create a ramp to walk up
+		new InteractiveRamp(this, 0f, -6f);
 		
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
@@ -226,7 +229,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void beginContact(Contact contact) {
 		// Grab the two game objects that touched
 		GameObject a = (GameObject) contact.getFixtureA().getBody().getUserData();
-		GameObject b = (GameObject) contact.getFixtureA().getBody().getUserData();
+		GameObject b = (GameObject) contact.getFixtureB().getBody().getUserData();
 		
 		// Ensure if we have an sensor object, that it is stored in a
 		if(b instanceof SensorZone) {
