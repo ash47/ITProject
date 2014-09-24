@@ -16,6 +16,7 @@ import com.teamlemmings.lemmings.CollisionHandler;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
+import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
@@ -194,8 +195,11 @@ public class GameScreen extends LemmingScreen {
 		System.out.println("User tapped the screen!");
 		
 		// Convert to useful coordinates
-		//float worldX = screenToWorldX(x);
-		//float worldY = screenToWorldX(y);
+		float worldX = screenToWorldX(x);
+		float worldY = screenToWorldX(y);
+		
+		// Create a collision zone temporarily
+		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
 		
 	}
 }
