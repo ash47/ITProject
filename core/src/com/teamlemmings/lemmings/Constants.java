@@ -1,18 +1,23 @@
 package com.teamlemmings.lemmings;
 
-public class Constants {
-	// How often we should update
+/**
+ * This class contains constants used throughout the game, and should never be instantiated
+ * @author aschmid
+ *
+ */
+public abstract class Constants {
+	// How often we should update the physics simulation
 	public static final float TIME_STEP = 1/60f;
 	
-	// How many iterations for velocity we should run
+	// How many iterations for velocity we should run in the physics simulation
 	public static final int VELOCITY_ITERATIONS = 6;
 	
-	// How many iterations we should run for position
+	// How many iterations we should run for position in the physics simulation
 	public static final int POSITION_ITERATIONS = 2;
 	
 	// Collision Categories
 	// Different categories for things that should / shouldn't collide
-	// Upto 16 categories can exist
+	// Upto 16 categories can exist, they should be 1, 2, 4, 8, etc
 	
 	// World Collision Category
 	public static final short CATEGORY_WORLD = 1;
