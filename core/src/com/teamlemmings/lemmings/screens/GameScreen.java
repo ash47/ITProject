@@ -20,6 +20,11 @@ import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
 
+/**
+ * Represents a screen in the game where users can interact and play
+ * @author aschmid
+ *
+ */
 public class GameScreen extends LemmingScreen {
 	// Temp: Used to render the physics world
 	private Box2DDebugRenderer debugRenderer;
@@ -30,7 +35,7 @@ public class GameScreen extends LemmingScreen {
 	// The camera
 	private OrthographicCamera cam;
 	
-	// An accumulator used for updating phyics smoothly
+	// An accumulator used for updating physics smoothly
 	private float accumulator = 0;
 	
 	// Am array of all the GameObjects in this screen
@@ -45,6 +50,10 @@ public class GameScreen extends LemmingScreen {
 	// The sprite batch renderer
 	private SpriteBatch batch;
 	
+	/**
+	 * Create a new game screen
+	 * @param game The game this screen is attached to
+	 */
 	public GameScreen(Game game) {
 		super(game);
 	}
@@ -82,7 +91,7 @@ public class GameScreen extends LemmingScreen {
 		new Wall(this, -10f, -7.5f, 2f, cam.viewportHeight);
 		new Wall(this, 10f, -7.5f, 2f, cam.viewportHeight);
 		
-		// Create a new sheep
+		// Create some test sheep
 		for(int i=0; i<8; i++) {
 			new Sheep(this, i-5, 0f);
 		}
@@ -132,7 +141,11 @@ public class GameScreen extends LemmingScreen {
 		// Cleanup resources
 		batch.dispose();
 	}
-
+	
+	/**
+	 * This function tries to do a smooth physics step, it will limit the max delta time, to ensure the game won't crash
+	 * @param deltaTime The time since the last call to this function
+	 */
 	private void doPhysicsStep(float deltaTime) {
 	    // fixed time step
 	    // max frame time to avoid spiral of death (on slow devices)
@@ -144,6 +157,10 @@ public class GameScreen extends LemmingScreen {
 	    }
 	}
 	
+	/**
+	 * Gets a reference to the physics world
+	 * @return The physics world
+	 */
 	public World getWorld() {
 		return this.world;
 	}
@@ -177,7 +194,8 @@ public class GameScreen extends LemmingScreen {
 		System.out.println("User tapped the screen!");
 		
 		// Convert to useful coordinates
-		float worldX = screenToWorldX(x);
-		float worldY = screenToWorldX(y);
+		//float worldX = screenToWorldX(x);
+		//float worldY = screenToWorldX(y);
+		
 	}
 }
