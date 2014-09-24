@@ -4,15 +4,23 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
+/**
+ * This class handles the gesture controls
+ * @author aschmid
+ *
+ */
 public class GestureProcessor implements GestureListener {
 	// The game screen we are attached to
 	private GameScreen screen;
 	
+	/**
+	 * Creates a new gesture proessor for the given screen
+	 * @param screen The game screen we report events back to
+	 */
 	public GestureProcessor(GameScreen screen) {
 		// Store the screen
 		this.screen = screen;
 	}
-	
 	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
