@@ -44,7 +44,7 @@ public class GameObject {
 	}
 	
 	/**
-	 * Called to update this GameObject
+	 * Called to update/draw this GameObject
 	 * @param deltaTime Time since the last call
 	 * @param batch The batch we are rendering in
 	 */

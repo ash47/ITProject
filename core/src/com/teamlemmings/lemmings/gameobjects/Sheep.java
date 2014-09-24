@@ -10,23 +10,28 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
+/**
+ * A sheep that walks around
+ * @author aschmid
+ *
+ */
 public class Sheep extends GameObject {
 	// The current direction the sheep is walking, 1 = right, -1 = left
 	private int direction = 1;
 	
-	// The max speed the sheep can move at
+	// The max speed the sheep can move at (meters per second)
 	private float maxSpeed = 1f;
 	
-	// How fast the sheep gains acceleration
+	// How fast the sheep gains acceleration (meters per second)
 	private float speedIncrease = 0.1f;
 	
-	// How long to wait before we can turn around at a wall
+	// How long to wait before we can turn around at a wall (seconds)
 	private float waitTime = 0.1f;
 	
-	// How long this sheep has been waiting
+	// How long this sheep has been waiting (seconds)
 	private float timeWaited = 0;
 	
-	// Scale of the sheep
+	// Scale of the sheep (meters)
 	private static final float scale = 2f;
 	
 	// The texture for this sheep
@@ -35,11 +40,17 @@ public class Sheep extends GameObject {
 	// The sprite for this sheep
     private Sprite sprite;
 	
+    /**
+     * Create a new sheep
+     * @param screen The screen to attach this sheep to
+     * @param x The x position to place the sheep
+     * @param y The y position to place the sheep
+     */
 	public Sheep(GameScreen screen, float x, float y) {
 		// Setup the game object
 		super(screen, x, y);
 		
-		// We should replace this so we dont load the same texture 999 times
+		// We should replace this so we don't load the same texture 999 times
 		
 		texture = new Texture(Gdx.files.internal("sheep.png"));
 	    sprite = new Sprite(texture);
