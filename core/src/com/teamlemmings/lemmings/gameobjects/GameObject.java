@@ -123,4 +123,9 @@ public class GameObject {
 	public Body getBody() {
 		return this.body;
 	}
+	
+	/**
+	 * An event that is fired when the object is touched
+	 */
+	public void onTouched() {}
 }
