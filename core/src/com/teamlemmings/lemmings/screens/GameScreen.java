@@ -100,6 +100,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create a ramp to walk up
 		new InteractiveRamp(this, 8f, -2f);
 		
+		// Create the goal for the sheep
+		new Goal(this, 7f, -1f);
+		
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
 			new Sheep(this, i-5, 0f);
