@@ -9,10 +9,19 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
+/**
+ * This class represents a wall that is created when the user touches the screen
+ * @author aschmid
+ *
+ */
 public class TouchWall extends GameObject {
 	// The screen this TouchWall is attached to
 	private GameScreen screen;
 	
+	/**
+	 * Create a new touch screen
+	 * @param screen The screen to attach to
+	 */
 	public TouchWall(GameScreen screen) {
 		// Setup the game object
 		super(screen, -10000, -10000);
