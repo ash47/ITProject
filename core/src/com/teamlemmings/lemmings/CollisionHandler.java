@@ -5,8 +5,12 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+/**
+ * This class will fire events when two physics objects interact
+ * @author aschmid
+ *
+ */
 public class CollisionHandler implements ContactListener {
-
 	@Override
 	public void beginContact(Contact contact) {
 		System.out.println("Begin!");
@@ -27,8 +31,7 @@ public class CollisionHandler implements ContactListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 	
 }
