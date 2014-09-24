@@ -22,8 +22,11 @@ public class Sheep extends GameObject {
 	// The max speed the sheep can move at (meters per second)
 	private float maxSpeed = 1f;
 	
+	// The lowest speed a sheep can be going before it will try to turn around (meters per second)
+	private float minSpeed = 0.1f;
+	
 	// How fast the sheep gains acceleration (meters per second)
-	private float speedIncrease = 0.1f;
+	private float speedIncrease = 1f;
 	
 	// How long to wait before we can turn around at a wall (seconds)
 	private float waitTime = 0.1f;
@@ -77,7 +80,7 @@ public class Sheep extends GameObject {
 		     
 		     // See if the sheep needs to change directions
 		     if(timeWaited > waitTime) {
-		    	 if(xSpeed < speedIncrease) {
+		    	 if(xSpeed < minSpeed) {
 			    	 direction *= -1;
 			    	 timeWaited = 0;
 			    	 

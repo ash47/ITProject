@@ -97,7 +97,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		new Wall(this, 10f, -7.5f, 2f, cam.viewportHeight);
 		
 		// Create a ramp to walk up
-		new InteractiveRamp(this, 0f, -6f);
+		new InteractiveRamp(this, 8f, -2f);
 		
 		// Create some test sheep
 		for(int i=0; i<8; i++) {

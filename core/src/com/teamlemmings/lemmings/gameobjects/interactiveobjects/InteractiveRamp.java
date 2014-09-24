@@ -45,11 +45,14 @@ public class InteractiveRamp extends InteractiveObject {
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(4f, 0.5f);
+		groundBox.setAsBox(4f, 0.5f, new Vector2(-4f, 0), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundBox;
+		
+		// Allow sheep to easily walk up
+		fixtureDef.friction = 1;
 		
 		// Default to world collisions
 		fixtureDef.filter.categoryBits = Constants.CATEGORY_WORLD;
@@ -69,8 +72,6 @@ public class InteractiveRamp extends InteractiveObject {
 	
 	@Override
 	public void onTouched() {
-		System.out.println("hello");
-		
 		// Check which ramp state we are in
 		if(rampState == 0) {
 			// Change to angled
@@ -95,7 +96,7 @@ public class InteractiveRamp extends InteractiveObject {
 			if(rampState == 0) {
 				setRotation(0);
 			} else {
-				setRotation(0.17f);
+				setRotation(0.5f);
 			}
 		}
 	}
