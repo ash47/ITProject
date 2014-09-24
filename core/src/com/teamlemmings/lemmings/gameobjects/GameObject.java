@@ -18,6 +18,9 @@ public class GameObject {
 	// The physics body for this GameObject
 	protected Body body;
 	
+	// Used to track whether this object should be deleted or not
+	private Boolean shouldDelete = false;
+	
 	/**
 	 * Creates a new game object based on the given screen and position
 	 * @param screen The screen this object should be stored into
@@ -89,5 +92,27 @@ public class GameObject {
 	 */
 	protected BodyType getBodyType() {
 		return BodyType.DynamicBody;
+	}
+	
+	/**
+	 * Marks this object for deletion
+	 */
+	public void cleanup() {
+		// Check if this game object has already been deleted
+		if(!this.shouldDelete) {
+			// Nope, delete it
+			this.shouldDelete = true;
+			
+			// Run cleanup functions
+			this.dispose();
+		}
+	}
+	
+	/**
+	 * Checks if this object has been marked for deletion
+	 * @return If we should delete this object or not
+	 */
+	public boolean shouldDelete() {
+		return this.shouldDelete;
 	}
 }
