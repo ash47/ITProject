@@ -209,6 +209,6 @@ public class GameScreen extends LemmingScreen {
 		
 		// Create a collision zone temporarily
 		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
-		
+		//s.cleanup();
 	}
 }

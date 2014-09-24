@@ -115,4 +115,12 @@ public class GameObject {
 	public boolean shouldDelete() {
 		return this.shouldDelete;
 	}
+	
+	/**
+	 * Gets this game object's body
+	 * @return This game object's body
+	 */
+	public Body getBody() {
+		return this.body;
+	}
 }
