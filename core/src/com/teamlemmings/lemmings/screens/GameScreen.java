@@ -89,7 +89,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
 		
 		// Create the touch wall
-		//new TouchWall(this);
+		new TouchWall(this);
 		
 		// Create some walls
 		new Wall(this, 0f, -7.5f, cam.viewportWidth, 2f);
