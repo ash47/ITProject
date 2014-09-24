@@ -12,8 +12,11 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.teamlemmings.lemmings.CollisionHandler;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -27,7 +30,7 @@ import com.teamlemmings.lemmings.gameobjects.Wall;
  * @author aschmid
  *
  */
-public class GameScreen extends LemmingScreen {
+public class GameScreen extends LemmingScreen implements ContactListener {
 	// Temp: Used to render the physics world
 	private Box2DDebugRenderer debugRenderer;
 	
@@ -78,15 +81,14 @@ public class GameScreen extends LemmingScreen {
 		cam = new OrthographicCamera(viewportX, viewportY);
 		
 		// Create the collision handler
-		CollisionHandler col = new CollisionHandler();
-		world.setContactListener(col);
+		world.setContactListener(this);
 		
 		// Create the gesture controller
 		GestureProcessor ges = new GestureProcessor(this);
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
 		
 		// Create the touch wall
-		new TouchWall(this);
+		//new TouchWall(this);
 		
 		// Create some walls
 		new Wall(this, 0f, -7.5f, cam.viewportWidth, 2f);
@@ -210,14 +212,36 @@ public class GameScreen extends LemmingScreen {
 	 * @param button The button they pressed (left click, right click, etc)
 	 */
 	public void onTap(float x, float y, int count, int button) {
-		System.out.println("User tapped the screen!");
-		
 		// Convert to useful coordinates
 		float worldX = screenToWorldX(x);
-		float worldY = screenToWorldX(y);
+		float worldY = screenToWorldY(y);
 		
 		// Create a collision zone temporarily
 		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
 		s.cleanup();
+	}
+
+	@Override
+	public void beginContact(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void endContact(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {
+		// TODO Auto-generated method stub
+		
 	}
 }
