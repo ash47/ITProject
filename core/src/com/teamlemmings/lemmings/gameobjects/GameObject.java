@@ -128,4 +128,10 @@ public class GameObject {
 	 * An event that is fired when the object is touched
 	 */
 	public void onTouched() {}
+	
+	/**
+	 * Fired when this object collides with an object it register to collide with
+	 * @param obj The object it collided with
+	 */
+	public void onCollide(GameObject obj) {}
 }

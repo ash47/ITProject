@@ -12,5 +12,15 @@ public class Goal extends GameObject {
 	public Goal(GameScreen screen, float x, float y) {
 		super(screen, x, y);
 	}
-
+	
+	@Override
+	public void onCollide(GameObject obj) {
+		if(obj instanceof Sheep) {
+			// Cleanup the sheep
+			obj.cleanup();
+			
+			// Tell the user one got home
+			System.out.println("A sheep got home!");
+		}
+	}
 }

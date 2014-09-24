@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
+import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
@@ -227,6 +228,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
+		// We should setup a listening system for game objects eventually
+		// instead of hard coding collision events
+		
 		// Grab the two game objects that touched
 		GameObject a = (GameObject) contact.getFixtureA().getBody().getUserData();
 		GameObject b = (GameObject) contact.getFixtureB().getBody().getUserData();
@@ -242,6 +246,17 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		if(a instanceof SensorZone) {
 			// Fire the touch event on this game object
 			b.onTouched();
+		}
+		
+		// Check for goals
+		if(b instanceof Goal) {
+			GameObject tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
+		if(a instanceof Goal && b instanceof Sheep) {
+			a.onCollide(b);
 		}
 	}
 
