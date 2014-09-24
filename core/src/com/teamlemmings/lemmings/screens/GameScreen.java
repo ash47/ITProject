@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.CollisionHandler;
@@ -120,6 +121,9 @@ public class GameScreen extends LemmingScreen {
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
 		
+		// Update the physics world
+		doPhysicsStep(delta);
+		
 		// Update all the GameObjects
 		Iterator<GameObject> it = gameObjects.iterator();
 		while(it.hasNext()) {
@@ -128,6 +132,14 @@ public class GameScreen extends LemmingScreen {
 			
 			// Check if we should delete this object
 			if(obj.shouldDelete()) {
+				// Cleanup the body
+				Body body = obj.getBody();
+				if(body != null) {
+					world.destroyBody(body);
+					body.setUserData(null);
+					body = null;
+				}
+				
 				// Yep, remove the object
 				it.remove();
 			} else {
@@ -138,9 +150,6 @@ public class GameScreen extends LemmingScreen {
 		
 		// Finish drawing the sprite batch
 		batch.end();
-		
-		// Update the physics world
-		doPhysicsStep(delta);
 		
 		// Render the world
 		debugRenderer.render(world, cam.combined);
@@ -209,6 +218,6 @@ public class GameScreen extends LemmingScreen {
 		
 		// Create a collision zone temporarily
 		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
-		//s.cleanup();
+		s.cleanup();
 	}
 }
