@@ -2,6 +2,11 @@ package com.teamlemmings.lemmings.gameobjects;
 
 import com.teamlemmings.lemmings.screens.GameScreen;
 
+/**
+ * Represents the goal the sheep need to get to
+ * @author aschmid
+ *
+ */
 public class Goal extends GameObject {
 	/**
 	 * Creates a new goal for the sheep
