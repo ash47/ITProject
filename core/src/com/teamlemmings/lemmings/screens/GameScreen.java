@@ -10,17 +10,29 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.teamlemmings.lemmings.CollisionHandler;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
+import com.teamlemmings.lemmings.gameobjects.Goal;
+import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
+import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 
-public class GameScreen extends LemmingScreen {
+/**
+ * Represents a screen in the game where users can interact and play
+ * @author aschmid
+ *
+ */
+public class GameScreen extends LemmingScreen implements ContactListener {
 	// Temp: Used to render the physics world
 	private Box2DDebugRenderer debugRenderer;
 	
@@ -30,7 +42,7 @@ public class GameScreen extends LemmingScreen {
 	// The camera
 	private OrthographicCamera cam;
 	
-	// An accumulator used for updating phyics smoothly
+	// An accumulator used for updating physics smoothly
 	private float accumulator = 0;
 	
 	// Am array of all the GameObjects in this screen
@@ -45,6 +57,10 @@ public class GameScreen extends LemmingScreen {
 	// The sprite batch renderer
 	private SpriteBatch batch;
 	
+	/**
+	 * Create a new game screen
+	 * @param game The game this screen is attached to
+	 */
 	public GameScreen(Game game) {
 		super(game);
 	}
@@ -67,8 +83,7 @@ public class GameScreen extends LemmingScreen {
 		cam = new OrthographicCamera(viewportX, viewportY);
 		
 		// Create the collision handler
-		CollisionHandler col = new CollisionHandler();
-		world.setContactListener(col);
+		world.setContactListener(this);
 		
 		// Create the gesture controller
 		GestureProcessor ges = new GestureProcessor(this);
@@ -82,7 +97,13 @@ public class GameScreen extends LemmingScreen {
 		new Wall(this, -10f, -7.5f, 2f, cam.viewportHeight);
 		new Wall(this, 10f, -7.5f, 2f, cam.viewportHeight);
 		
-		// Create a new sheep
+		// Create a ramp to walk up
+		new InteractiveRamp(this, 8f, -2f);
+		
+		// Create the goal for the sheep
+		new Goal(this, 7f, -1f);
+		
+		// Create some test sheep
 		for(int i=0; i<8; i++) {
 			new Sheep(this, i-5, 0f);
 		}
@@ -110,18 +131,35 @@ public class GameScreen extends LemmingScreen {
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
 		
+		// Update the physics world
+		doPhysicsStep(delta);
+		
 		// Update all the GameObjects
 		Iterator<GameObject> it = gameObjects.iterator();
 		while(it.hasNext()) {
+			// Grab the next object
 			GameObject obj = it.next();
-			obj.render(delta, batch);
+			
+			// Check if we should delete this object
+			if(obj.shouldDelete()) {
+				// Cleanup the body
+				Body body = obj.getBody();
+				if(body != null) {
+					world.destroyBody(body);
+					body.setUserData(null);
+					body = null;
+				}
+				
+				// Yep, remove the object
+				it.remove();
+			} else {
+				// Render the object
+				obj.render(delta, batch);
+			}
 		}
 		
 		// Finish drawing the sprite batch
 		batch.end();
-		
-		// Update the physics world
-		doPhysicsStep(delta);
 		
 		// Render the world
 		debugRenderer.render(world, cam.combined);
@@ -132,7 +170,11 @@ public class GameScreen extends LemmingScreen {
 		// Cleanup resources
 		batch.dispose();
 	}
-
+	
+	/**
+	 * This function tries to do a smooth physics step, it will limit the max delta time, to ensure the game won't crash
+	 * @param deltaTime The time since the last call to this function
+	 */
 	private void doPhysicsStep(float deltaTime) {
 	    // fixed time step
 	    // max frame time to avoid spiral of death (on slow devices)
@@ -144,6 +186,10 @@ public class GameScreen extends LemmingScreen {
 	    }
 	}
 	
+	/**
+	 * Gets a reference to the physics world
+	 * @return The physics world
+	 */
 	public World getWorld() {
 		return this.world;
 	}
@@ -174,10 +220,64 @@ public class GameScreen extends LemmingScreen {
 	 * @param button The button they pressed (left click, right click, etc)
 	 */
 	public void onTap(float x, float y, int count, int button) {
-		System.out.println("User tapped the screen!");
-		
 		// Convert to useful coordinates
 		float worldX = screenToWorldX(x);
-		float worldY = screenToWorldX(y);
+		float worldY = screenToWorldY(y);
+		
+		// Create a collision zone temporarily
+		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
+		s.cleanup();
+	}
+
+	@Override
+	public void beginContact(Contact contact) {
+		// We should setup a listening system for game objects eventually
+		// instead of hard coding collision events
+		
+		// Grab the two game objects that touched
+		GameObject a = (GameObject) contact.getFixtureA().getBody().getUserData();
+		GameObject b = (GameObject) contact.getFixtureB().getBody().getUserData();
+		
+		// Ensure if we have an sensor object, that it is stored in a
+		if(b instanceof SensorZone) {
+			GameObject tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
+		// Check if we are dealing with sensor
+		if(a instanceof SensorZone) {
+			// Fire the touch event on this game object
+			b.onTouched();
+		}
+		
+		// Check for goals
+		if(b instanceof Goal) {
+			GameObject tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
+		if(a instanceof Goal && b instanceof Sheep) {
+			a.onCollide(b);
+		}
+	}
+
+	@Override
+	public void endContact(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {
+		// TODO Auto-generated method stub
+		
 	}
 }

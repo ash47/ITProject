@@ -1,6 +1,5 @@
 package com.teamlemmings.lemmings.gameobjects;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -8,11 +7,11 @@ import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
- * This class represents a basic wall
+ * This class represents a sensor zone
  * @author aschmid
  *
  */
-public class Wall extends GameObject {
+public class SensorZone extends GameObject {
 	// Width of this wall (meters)
 	private float width;
 	
@@ -27,7 +26,7 @@ public class Wall extends GameObject {
 	 * @param w The width of the wall
 	 * @param h The height of the wall
 	 */
-	public Wall(GameScreen screen, float x, float y, float w, float h) {
+	public SensorZone(GameScreen screen, float x, float y, float w, float h) {
 		// Setup the game object
 		super(screen, x, y);
 		
@@ -37,11 +36,6 @@ public class Wall extends GameObject {
 		
 		// Create the fixture
 		createFixture();
-	}
-	
-	@Override
-	public void render(float deltaTime, Batch batch) {
-		// This needs to be implemented
 	}
 	
 	@Override
@@ -56,10 +50,11 @@ public class Wall extends GameObject {
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundBox;
+		fixtureDef.isSensor = true;
 		
 		// Default to world collisions
-		fixtureDef.filter.categoryBits = Constants.CATEGORY_WORLD;
-		fixtureDef.filter.maskBits = Constants.MASK_WORLD;
+		fixtureDef.filter.categoryBits = Constants.CATEGORY_SENSOR;
+		fixtureDef.filter.maskBits = Constants.MASK_SENSOR;
 
 		// Create our fixture and attach it to the body
 		body.createFixture(fixtureDef);
@@ -70,6 +65,6 @@ public class Wall extends GameObject {
 	
 	@Override
 	protected BodyType getBodyType() {
-		return BodyType.StaticBody;
+		return BodyType.DynamicBody;
 	}
 }
