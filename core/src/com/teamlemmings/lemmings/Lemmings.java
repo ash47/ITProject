@@ -8,8 +8,8 @@ import com.teamlemmings.lemmings.screens.GameScreen;
 /**
  * This is the common entry point for our game on all platforms
  * @author aschmid
+ *
  */
- 
 public class Lemmings extends Game {
 	// Whether the game is being compiled for release, it will turn off logging if it's on
 	public static final boolean isRelease = false;
