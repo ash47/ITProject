@@ -4,7 +4,7 @@
 ###Engine###
  - We are using libGDX
 
-###Requirnments###
+###Requirements###
  - Android SDK
  - Gradle
  - Java Development Kit 7+ (JDK) (6 will not work!)
