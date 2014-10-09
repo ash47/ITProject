@@ -55,9 +55,9 @@ public class Sheep extends GameObject {
 		
 		// We should replace this so we don't load the same texture 999 times
 		
-		texture = new Texture(Gdx.files.internal("sheep.png"));
+		texture = new Texture(Gdx.files.internal("sheepRight.png"));
 	    sprite = new Sprite(texture);
-	    sprite.setScale(scale/64f, scale/64f);
+	    sprite.setScale(scale/256f, scale/256f);
 	}
 	
 	@Override
