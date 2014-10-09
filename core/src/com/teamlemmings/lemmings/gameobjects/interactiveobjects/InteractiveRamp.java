@@ -39,7 +39,7 @@ public class InteractiveRamp extends InteractiveObject {
 	private boolean clockwise;
 	
 	// The speed to rotate at
-	private float rotationSpeed = 0.1f;
+	private float rotationSpeed = 1f;
 	
 	// The amount of rotation required to complete the toggle
 	private float totalRotation;
@@ -71,6 +71,9 @@ public class InteractiveRamp extends InteractiveObject {
 		
 		// Create the fixture
 		createFixture();
+		
+		// Set the initial rotation
+		setRotation(this.initialAngle);
 	}
 	
 	/**
@@ -112,7 +115,7 @@ public class InteractiveRamp extends InteractiveObject {
 		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width, this.height, new Vector2(this.originX, this.originY), this.initialAngle);
+		groundBox.setAsBox(this.width, this.height, new Vector2(this.originX, this.originY), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
