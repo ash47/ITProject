@@ -16,17 +16,54 @@ public class InteractiveRamp extends InteractiveObject {
 	// If we need to update the rotation
 	private boolean needsUpdate = false;
 	
+	// The width of the ramp
+	private float width;
+	
+	// The height of the ramp
+	private float height;
+	
+	// The x origin of the ramp
+	private float originX;
+	
+	// The y origin of the ramp
+	private float originY;
+	
+	// The starting angle of the ramp
+	private float initialAngle;
+	
+	// The final angle of the ramp
+	private float finalAngle;
+	
+	// Should we rotate clockwise or not?
+	private boolean clockwise;
+	
 	/**
 	 * Creates a ramp that can be interacted with
 	 * @param screen The screen to attach to
 	 * @param x The x coordinate of this object
 	 * @param y The y coordinate of this object
+	 * @param width The width of the ramp
+	 * @param height The height of the ramp
+	 * @param The x origin to rotate about
+	 * @param The y origin to rotate about
+	 * @param initialAngle The initial rotate to start at (in radians)
+	 * @param finalAngle The final angle to finish at
+	 * @param clockwise Should we rotate clockwise or not?
 	 */
-	public InteractiveRamp(GameScreen screen, float x, float y) {
+	public InteractiveRamp(GameScreen screen, float x, float y, float width, float height, float originX, float originY, float initialAngle, float finalAngle, boolean clockwise) {
 		super(screen, x, y);
 		
+		// Store the vars
+		this.width = width;
+		this.height = height;
+		this.originX = originX;
+		this.originY = originY;
+		this.initialAngle = initialAngle;
+		this.finalAngle = finalAngle;
+		this.clockwise = clockwise;
+		
 		// Set the initial rotation
-		setRotation(0);
+		setRotation(this.initialAngle);
 	}
 	
 	/**
@@ -43,6 +80,9 @@ public class InteractiveRamp extends InteractiveObject {
 	
 	@Override
 	protected void createFixture() {
+		// Ensure we have been given a size
+		if(this.width <= 0 || this.height <= 0) return;
+		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
 		groundBox.setAsBox(4f, 0.5f, new Vector2(-4f, 0), 0);
