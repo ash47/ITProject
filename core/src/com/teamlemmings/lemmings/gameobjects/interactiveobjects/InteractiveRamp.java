@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Transform;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.gameobjects.InteractiveObject;
 import com.teamlemmings.lemmings.screens.GameScreen;
@@ -37,6 +38,12 @@ public class InteractiveRamp extends InteractiveObject {
 	// Should we rotate clockwise or not?
 	private boolean clockwise;
 	
+	// The speed to rotate at
+	private float rotationSpeed = 0.1f;
+	
+	// The amount of rotation required to complete the toggle
+	private float totalRotation;
+	
 	/**
 	 * Creates a ramp that can be interacted with
 	 * @param screen The screen to attach to
@@ -62,20 +69,40 @@ public class InteractiveRamp extends InteractiveObject {
 		this.finalAngle = finalAngle;
 		this.clockwise = clockwise;
 		
-		// Set the initial rotation
-		setRotation(this.initialAngle);
+		// Create the fixture
+		createFixture();
 	}
 	
 	/**
 	 * Sets the angle of the ramp
+	 * This should NOT be called by any physics interrupts, such as onTouched!
 	 * @param angle The new angle
 	 */
-	private void setRotation(float angle) {
+	protected void setRotation(float angle) {
 		// Grab our position
 		Vector2 pos = this.body.getPosition();
 		
 		// Update our transformation
 		this.body.setTransform(pos.x, pos.y, angle);
+	}
+	
+	/**
+	 * Adds to our current rotation
+	 * This should NOT be called by any physics interrupts, such as onTouched!
+	 * @param angle The new angle
+	 */
+	protected void addRotation(float angle) {
+		// Grab our transformation
+		Transform trans = this.body.getTransform();
+		
+		// Grab our position
+		Vector2 pos = trans.getPosition();
+		
+		// Grab the current rotation
+		float rot = trans.getRotation();
+		
+		// Update our transformation
+		this.body.setTransform(pos.x, pos.y, rot + angle);
 	}
 	
 	@Override
@@ -85,7 +112,7 @@ public class InteractiveRamp extends InteractiveObject {
 		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(4f, 0.5f, new Vector2(-4f, 0), 0);
+		groundBox.setAsBox(this.width, this.height, new Vector2(this.originX, this.originY), this.initialAngle);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
@@ -132,11 +159,11 @@ public class InteractiveRamp extends InteractiveObject {
 			// We don't anymore
 			needsUpdate = false;
 			
-			// Check which rotation to set
-			if(rampState == 0) {
-				setRotation(0);
+			// Decide which direction to rotate
+			if(clockwise) {
+				//setRotation();
 			} else {
-				setRotation(0.5f);
+				
 			}
 		}
 	}
