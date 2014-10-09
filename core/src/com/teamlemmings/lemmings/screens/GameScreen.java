@@ -49,10 +49,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private ArrayList<GameObject> gameObjects;
 	
 	// The width of the actual camera size
-	private int viewportX = 20;
+	private int viewportX = 64;
 	
 	// The height of the actual camera size
-	private int viewportY = 15;
+	private int viewportY = 36;
 	
 	// The sprite batch renderer
 	private SpriteBatch batch;
