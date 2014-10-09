@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
 		// Set the width and height
-		config.width = 10920/2;
+		config.width = 1920/2;
 		config.height = 1080/2;
 		
 		// Create the application
