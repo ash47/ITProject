@@ -11,11 +11,8 @@ import com.teamlemmings.lemmings.gameobjects.InteractiveObject;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 public class InteractiveRamp extends InteractiveObject {
-	// The current ramp state
-	private int rampState = 0;
-	
-	// If we need to update the rotation
-	private boolean needsUpdate = false;
+	// The current ramp state (false = initial position, true = final position)
+	private boolean rampState = false;
 	
 	// The width of the ramp
 	private float width;
@@ -44,6 +41,9 @@ public class InteractiveRamp extends InteractiveObject {
 	// The amount of rotation required to complete the toggle
 	private float totalRotation;
 	
+	// The amount of rotation done in the current toggle
+	private float rotationSoFar = 0;
+	
 	/**
 	 * Creates a ramp that can be interacted with
 	 * @param screen The screen to attach to
@@ -60,6 +60,10 @@ public class InteractiveRamp extends InteractiveObject {
 	public InteractiveRamp(GameScreen screen, float x, float y, float width, float height, float originX, float originY, float initialAngle, float finalAngle, boolean clockwise) {
 		super(screen, x, y);
 		
+		// Ensure correct angle ranges
+		initialAngle = (float) (initialAngle % (2 * Math.PI));
+		finalAngle = (float) (finalAngle % (2 * Math.PI));
+		
 		// Store the vars
 		this.width = width;
 		this.height = height;
@@ -74,6 +78,21 @@ public class InteractiveRamp extends InteractiveObject {
 		
 		// Set the initial rotation
 		setRotation(this.initialAngle);
+		
+		// Calculate how much needs to be added in order to reach our goal final angle
+		if(clockwise) {
+			if(initialAngle > finalAngle) {
+				this.totalRotation = initialAngle - finalAngle;
+			} else {
+				this.totalRotation = (float) (2*Math.PI - (initialAngle - finalAngle));
+			}
+		} else {
+			if(initialAngle < finalAngle) {
+				this.totalRotation = finalAngle - initialAngle;
+			} else {
+				this.totalRotation = (float) (2*Math.PI - (finalAngle - initialAngle));
+			}
+		}
 	}
 	
 	/**
@@ -143,30 +162,55 @@ public class InteractiveRamp extends InteractiveObject {
 	@Override
 	public void onTouched() {
 		// Check which ramp state we are in
-		if(rampState == 0) {
-			// Change to angled
-			rampState = 1;
-		} else {
-			// Change to flat
-			rampState = 0;
-		}
-		
-		// We need to update our rotation
-		needsUpdate = true;
+		rampState = !rampState;
 	}
 	
 	@Override
 	public void render(float deltaTime, Batch batch) {
-		// Check if we need an update
-		if(needsUpdate) {
-			// We don't anymore
-			needsUpdate = false;
-			
-			// Decide which direction to rotate
-			if(clockwise) {
-				//setRotation();
-			} else {
+		// How much we should change in this update
+		float change = deltaTime * this.rotationSpeed;
+		
+		if(rampState) {
+			// Is more rotation required?
+			if(this.rotationSoFar < this.totalRotation) {
+				// Add to the rotation so far
+				this.rotationSoFar += change;
 				
+				// Invert direction if clockwise
+				if(clockwise) change *= -1;
+				
+				// Check if this will complete our rotation
+				if(this.rotationSoFar >= this.totalRotation) {
+					// Set the exact values
+					this.rotationSoFar = this.totalRotation;
+					
+					// Set the final angle
+					setRotation(this.finalAngle);
+				} else {
+					// Add the rotation to our physics fixture
+					addRotation(change);
+				}
+			}
+		} else {
+			// Is more rotation required?
+			if(this.rotationSoFar > 0) {
+				// Change the rotation so far
+				this.rotationSoFar -= change;
+				
+				// Invert direction if counter clockwise
+				if(!clockwise) change *= -1;
+				
+				// Check if this will complete our rotation
+				if(this.rotationSoFar <= 0) {
+					// Set the exact values
+					this.rotationSoFar = 0;
+					
+					// Set the final angle
+					setRotation(this.initialAngle);
+				} else {
+					// Add the rotation to our physics fixture
+					addRotation(change);
+				}
 			}
 		}
 	}
