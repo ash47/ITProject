@@ -35,7 +35,7 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 2f;
+	private static final float scale = 1f;
 	
 	// The texture for this sheep
 	private Texture texture;
