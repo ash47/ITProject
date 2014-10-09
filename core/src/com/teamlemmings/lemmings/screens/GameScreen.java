@@ -153,7 +153,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	@Override
 	public void render(float delta) {
 		// Reset the background
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// Update the camera
