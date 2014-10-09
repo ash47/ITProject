@@ -35,7 +35,7 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 2f;
+	private static final float scale = 1f;
 	
 	// The texture for this sheep
 	private Texture texture;
@@ -55,9 +55,9 @@ public class Sheep extends GameObject {
 		
 		// We should replace this so we don't load the same texture 999 times
 		
-		texture = new Texture(Gdx.files.internal("sheep.png"));
+		texture = new Texture(Gdx.files.internal("sheepRight.png"));
 	    sprite = new Sprite(texture);
-	    sprite.setScale(scale/64f, scale/64f);
+	    sprite.setScale(scale/256f, scale/256f);
 	}
 	
 	@Override

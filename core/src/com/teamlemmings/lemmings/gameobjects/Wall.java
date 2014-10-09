@@ -1,6 +1,7 @@
 package com.teamlemmings.lemmings.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -51,7 +52,7 @@ public class Wall extends GameObject {
 		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width, this.height);
+		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2, -this.height/2), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -49,10 +50,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private ArrayList<GameObject> gameObjects;
 	
 	// The width of the actual camera size
-	private int viewportX = 20;
+	private int viewportX = 48;
 	
 	// The height of the actual camera size
-	private int viewportY = 15;
+	private int viewportY = 27;
 	
 	// The sprite batch renderer
 	private SpriteBatch batch;
@@ -82,6 +83,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the camera
 		cam = new OrthographicCamera(viewportX, viewportY);
 		
+		// Move camera into position
+		cam.translate(cam.viewportWidth/2, -cam.viewportHeight/2);
+		
 		// Create the collision handler
 		world.setContactListener(this);
 		
@@ -92,20 +96,48 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the touch wall
 		new TouchWall(this);
 		
-		// Create some walls
-		new Wall(this, 0f, -7.5f, cam.viewportWidth, 2f);
-		new Wall(this, -10f, -7.5f, 2f, cam.viewportHeight);
-		new Wall(this, 10f, -7.5f, 2f, cam.viewportHeight);
+		// Calculate coords of top left
+		float left = 0;
+		float top = 0;
+		float bottom = -viewportY+1;
+		
+		// Create boundary walls
+		new Wall(this, left, bottom, viewportX, 1f);		// Floor
+		new Wall(this, left, top, 1f, viewportY);			// Right Wall
+		new Wall(this, left+viewportX-1, 0, 1f, viewportY);	// Left wall
+		
+		// Top layer
+		new Wall(this, left, top-3, 9f, 1f);
+		new Wall(this, left+22, top-3, 8f, 1f);
+		new Wall(this, left+35, top-3, 14f, 1f);
+		
+		// 2nd layer
+		new Wall(this, left+8, top-7, 22f, 1f);
+		
+		// 3rd layer
+		new Wall(this, left+8, top-12, 39f, 1f);
+		
+		// 4th layer
+		new Wall(this, left+26, top-17, 21f, 1f);
+		
+		// 5th layer
+		new Wall(this, left+15, top-21, 8f, 1f);
+		
+		// Vertical walls
+		new Wall(this, left+8, top-3, 1f, 5f);
+		new Wall(this, left+29, top-3, 1f, 5f);
+		new Wall(this, left+34, top-3, 1f, 5f);
 		
 		// Create a ramp to walk up
-		new InteractiveRamp(this, 8f, -2f);
+		new InteractiveRamp(this, left+22f, top-3f, 5f, 1f, 5f, 0f, 0, (float)Math.PI/3, false);
+		new InteractiveRamp(this, left+23f, top-21f, 6f, 1f, 0f, 0f, (float)Math.PI/4, (float) (2*Math.PI - Math.PI/4), true);
 		
 		// Create the goal for the sheep
-		new Goal(this, 7f, -1f);
+		new Goal(this, left+45f, top-16f);
 		
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
-			new Sheep(this, i-5, 0f);
+			new Sheep(this, left + 2 + i, top-2f);
 		}
 	}
 	
