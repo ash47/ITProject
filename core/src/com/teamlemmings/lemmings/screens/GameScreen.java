@@ -137,7 +137,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
-			new Sheep(this, i-5, 0f);
+			new Sheep(this, left + 2 + i, top-2f);
 		}
 	}
 	
