@@ -134,7 +134,7 @@ public class InteractiveRamp extends InteractiveObject {
 		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width, this.height, new Vector2(this.originX, this.originY), 0);
+		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2-this.originX, -this.height/2-this.originY), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
