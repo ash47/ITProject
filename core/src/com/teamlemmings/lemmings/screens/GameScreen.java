@@ -130,7 +130,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create a ramp to walk up
 		new InteractiveRamp(this, left+22f, top-3f, 5f, 1f, 5f, 0f, 0, (float)Math.PI/3, false);
-		new InteractiveRamp(this, left+22f, top-21f, 6f, 1f, 0f, 0f, (float)Math.PI/4, (float) (2*Math.PI - Math.PI/4), true);
+		new InteractiveRamp(this, left+23f, top-21f, 6f, 1f, 0f, 0f, (float)Math.PI/4, (float) (2*Math.PI - Math.PI/4), true);
 		
 		// Create the goal for the sheep
 		new Goal(this, left+45f, top-16f);
