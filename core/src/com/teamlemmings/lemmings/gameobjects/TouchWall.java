@@ -46,7 +46,7 @@ public class TouchWall extends GameObject {
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(1f, 1f);
+		groundBox.setAsBox(2f, 2f);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
