@@ -84,13 +84,13 @@ public class InteractiveRamp extends InteractiveObject {
 			if(initialAngle > finalAngle) {
 				this.totalRotation = initialAngle - finalAngle;
 			} else {
-				this.totalRotation = (float) (2*Math.PI - (initialAngle - finalAngle));
+				this.totalRotation = (float) (2*Math.PI - (finalAngle - initialAngle));
 			}
 		} else {
 			if(initialAngle < finalAngle) {
 				this.totalRotation = finalAngle - initialAngle;
 			} else {
-				this.totalRotation = (float) (2*Math.PI - (finalAngle - initialAngle));
+				this.totalRotation = (float) (2*Math.PI - (initialAngle - finalAngle));
 			}
 		}
 	}
