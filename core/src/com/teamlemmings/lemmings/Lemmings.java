@@ -3,7 +3,7 @@ package com.teamlemmings.lemmings;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.teamlemmings.lemmings.screens.GameScreen;
+import com.teamlemmings.lemmings.screens.MenuScreen;
 
 /**
  * This is the common entry point for our game on all platforms
@@ -17,7 +17,7 @@ public class Lemmings extends Game {
 	@Override
 	public void create () {
 		// Change to the game screen
-		setScreen(new GameScreen(this));
+		setScreen(new MenuScreen(this));
 	}
 	
 	/**

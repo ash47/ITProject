@@ -215,8 +215,8 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch.begin();
 		
 		batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
-				  background.getWidth()*bgScale, 
-				  background.getHeight()*bgScale, 
+				  background.getWidth()*bgScale,
+				  background.getHeight()*bgScale,
 				  0, background.getWidth(), background.getHeight(), 0);
 		
 		// Update the physics world
