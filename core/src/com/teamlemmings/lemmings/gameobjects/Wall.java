@@ -54,6 +54,18 @@ public class Wall extends GameObject {
 		PolygonShape groundBox = new PolygonShape();
 		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2, -this.height/2), 0);
 		
+		/*float[] test = new float[4*2];
+		test[0] = 0;
+		test[1] = 0;
+		test[2] = this.width;
+		test[3] = 0;
+		test[4] = this.width;
+		test[5] = -this.height;
+		test[6] = 0;
+		test[7] = -this.height;
+		
+		groundBox.set(test);*/
+		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundBox;
