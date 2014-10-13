@@ -58,9 +58,6 @@ public class Sheep extends GameObject {
 		texture = new Texture(Gdx.files.internal("sheepRight.png"));
 	    sprite = new Sprite(texture);
 	    sprite.setScale(scale/256f, scale/256f);
-	    
-	    // Register for events
-	    screen.listenForCollisions(this);
 	}
 	
 	@Override
@@ -132,7 +129,7 @@ public class Sheep extends GameObject {
 	public void onCollide(GameObject obj) {
 		if(obj instanceof Goal) {
 			// Cleanup the sheep
-			obj.cleanup();
+			this.cleanup();
 			
 			// Tell the user one got home
 			System.out.println("A sheep got home!");

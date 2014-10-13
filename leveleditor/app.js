@@ -184,6 +184,9 @@ var shapeSheep = new shape(4, 4, [
     0, 1, 1, 0
 ]);
 
+// The goal
+shapeGoal = shapeBlockFull;
+
 /*
     Register patterns
 */
@@ -234,13 +237,17 @@ registerRule(function(x, y, rx, ry) {
     }
 });
 
-// Sheep finder
+// Tile finder
 registerRule(function(x, y, rx, ry) {
-    // The color of walls
+    // The color of things
     var sheepColor = toColor(0, 255, 0, 255);
+    var goalColor = toColor(0, 255, 255, 255);
 
-    // Check if there is a wall at the given position
-    if(shapeSheep.match(rx, ry, sheepColor)) {
+    // Check for objects at the given position
+    if(shapeGoal.match(rx, ry, goalColor)) {
+        // Add the goal
+        addTile(x, y, 'goal');
+    } else if(shapeSheep.match(rx, ry, sheepColor)) {
         // Add the sheep
         addTile(x, y, 'sheep');
     }

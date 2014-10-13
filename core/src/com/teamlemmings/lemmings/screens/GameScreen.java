@@ -178,6 +178,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			if(sort.equals("sheep")) {
 				// Create a wall
 				new Sheep(this, left+x, top-y);
+				System.out.println("asd");
+			} else if(sort.equals("goal")) {
+				// Create a wall
+				new Goal(this, left+x, top-y);
 			}
 		}
 		
@@ -214,11 +218,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				  background.getWidth()*bgScale, 
 				  background.getHeight()*bgScale, 
 				  0, background.getWidth(), background.getHeight(), 0);
-
-	//	tiledDrawable.draw(batch, 0, 0, 256,256);
-	//	batch.draw(background, delta, delta);
-		
-		
 		
 		// Update the physics world
 		doPhysicsStep(delta);
