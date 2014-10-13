@@ -1,10 +1,6 @@
 package com.teamlemmings.lemmings.screens;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
@@ -14,9 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -26,7 +20,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -35,7 +28,7 @@ import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
-import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
+import com.teamlemmings.lemmings.networking.Networking;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -75,6 +68,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// Background tile scale
 	private int bgScale = 5;
+	
+	// Our network
+	private Networking network;
 		
 	/**
 	 * Create a new game screen
@@ -111,79 +107,12 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		GestureProcessor ges = new GestureProcessor(this);
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
 		
-		// Create the touch wall
-		new TouchWall(this);
+		// Init networking
+		//network = new Networking();
+		//network.findServer();
 		
-		// Calculate coords of top left
-		float left = 0;
-		float top = 0;
-		
-		// Load a level
-		
-		/*
-		 * 
-		 * ADD EXCEPTION HANDLERS HERE!
-		 * 
-		 */
-		
-		// Read the data
-		FileHandle handle = Gdx.files.internal("maps/level1.json");
-		String jsonData = handle.readString();
-		
-		// Load the json data
-		JSONObject json = new JSONObject(jsonData);
-		
-		// Grab the physics data
-		JSONArray physicsData = json.getJSONArray("physicsData");
-		JSONArray tileData = json.getJSONArray("tileData");
-		
-		// Spawn the physics meshes
-		for(int i=0; i<physicsData.length(); i++) {
-			// Grab the next object
-			JSONObject obj = physicsData.getJSONObject(i);
-			
-			// Grab data
-			String sort = obj.getString("sort");
-			float x = (float) obj.getDouble("x");
-			float y = (float) obj.getDouble("y");
-			
-			JSONArray jsonVerts = obj.getJSONArray("verts");
-			
-			// Create the vert array
-			int len = jsonVerts.length();
-			float[] verts = new float[len];
-			
-			for(int j=0; j<len; j++) {
-				verts[j] = (float) jsonVerts.getDouble(j);
-			}
-			
-			// Check what to make
-			if(sort.equals("wall")) {
-				// Create a wall
-				new Wall(this, left+x, top-y, verts);
-			}
-		}
-
-		// Spawn tiles
-		for(int i=0; i<tileData.length(); i++) {
-			// Grab the next object
-			JSONObject obj = tileData.getJSONObject(i);
-			
-			// Grab data
-			String sort = obj.getString("sort");
-			float x = (float) obj.getDouble("x");
-			float y = (float) obj.getDouble("y");
-			
-			// Check what to make
-			if(sort.equals("sheep")) {
-				// Create a wall
-				new Sheep(this, left+x, top-y);
-				System.out.println("asd");
-			} else if(sort.equals("goal")) {
-				// Create a wall
-				new Goal(this, left+x, top-y);
-			}
-		}
+		// Load up a level
+		loadLevel("level1");
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("bg_castle.png"));
@@ -207,8 +136,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Update the camera
 		cam.update();
-		
-
 		
 		// Begin drawing the sprite batch
 		batch.setProjectionMatrix(cam.combined);
@@ -251,6 +178,31 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Render the world
 		debugRenderer.render(world, cam.combined);
+	}
+	
+	/**
+	 * Cleans up the current level
+	 */
+	public void cleanupLevel() {
+		Iterator<GameObject> it = gameObjects.iterator();
+		while(it.hasNext()) {
+			// Grab the next object
+			GameObject obj = it.next();
+			
+			// Cleanup the object
+			obj.cleanup();
+			
+			// Cleanup the body
+			Body body = obj.getBody();
+			if(body != null) {
+				world.destroyBody(body);
+				body.setUserData(null);
+				body = null;
+			}
+			
+			// Remove the object
+			it.remove();
+		}
 	}
 	
 	@Override
@@ -357,5 +309,83 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void loadLevel(String mapName) {
+		// Cleanup the current level
+		cleanupLevel();
+		
+		// Create the touch wall
+		new TouchWall(this);
+		
+		// Calculate coords of top left
+		float left = 0;
+		float top = 0;
+		
+		// Load a level
+		
+		/*
+		 * 
+		 * ADD EXCEPTION HANDLERS HERE!
+		 * 
+		 */
+		
+		// Read the data
+		FileHandle handle = Gdx.files.internal("maps/"+mapName+".json");
+		String jsonData = handle.readString();
+		
+		// Load the json data
+		JSONObject json = new JSONObject(jsonData);
+		
+		// Grab the physics data
+		JSONArray physicsData = json.getJSONArray("physicsData");
+		JSONArray tileData = json.getJSONArray("tileData");
+		
+		// Spawn the physics meshes
+		for(int i=0; i<physicsData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = physicsData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			JSONArray jsonVerts = obj.getJSONArray("verts");
+			
+			// Create the vert array
+			int len = jsonVerts.length();
+			float[] verts = new float[len];
+			
+			for(int j=0; j<len; j++) {
+				verts[j] = (float) jsonVerts.getDouble(j);
+			}
+			
+			// Check what to make
+			if(sort.equals("wall")) {
+				// Create a wall
+				new Wall(this, left+x, top-y, verts);
+			}
+		}
+
+		// Spawn tiles
+		for(int i=0; i<tileData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = tileData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			// Check what to make
+			if(sort.equals("sheep")) {
+				// Create a wall
+				new Sheep(this, left+x, top-y);
+			} else if(sort.equals("goal")) {
+				// Create a wall
+				new Goal(this, left+x, top-y);
+			}
+		}
 	}
 }

@@ -56,6 +56,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
+
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
@@ -97,6 +99,8 @@ project(":core") {
         testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         testCompile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
