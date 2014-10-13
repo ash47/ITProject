@@ -22,13 +22,13 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
-import com.teamlemmings.lemmings.Networking;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
+import com.teamlemmings.lemmings.networking.Networking;
 
 import org.json.JSONObject;
 import org.json.JSONArray;

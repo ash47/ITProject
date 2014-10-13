@@ -1,4 +1,4 @@
-package com.teamlemmings.lemmings;
+package com.teamlemmings.lemmings.networking;
 
 import java.io.IOException;
 import java.net.InetAddress;
