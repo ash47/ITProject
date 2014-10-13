@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -27,6 +26,8 @@ import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
 import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 /**
  * Represents a screen in the game where users can interact and play
@@ -101,8 +102,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		float top = 0;
 		float bottom = -viewportY+1;
 		
+		// Load a level
+		
+		
 		// Create boundary walls
-		new Wall(this, left, bottom, viewportX, 1f);		// Floor
+		/*new Wall(this, left, bottom, viewportX, 1f);		// Floor
 		new Wall(this, left, top, 1f, viewportY);			// Right Wall
 		new Wall(this, left+viewportX-1, 0, 1f, viewportY);	// Left wall
 		
@@ -138,7 +142,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
 			new Sheep(this, left + 2 + i, top-2f);
-		}
+		}*/
 	}
 	
 	/**
