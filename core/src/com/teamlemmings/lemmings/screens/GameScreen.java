@@ -1,11 +1,6 @@
 package com.teamlemmings.lemmings.screens;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
@@ -15,9 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -27,9 +20,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Server;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -38,7 +28,6 @@ import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
-import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
