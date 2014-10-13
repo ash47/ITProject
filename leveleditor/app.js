@@ -1,4 +1,8 @@
 var PNG = require('png-js');
+var fs = require('fs');
+
+// The directory to save compiled maps into
+var mapDir = '../android/assets/maps/';
 
 // The size of a screen
 var levelWidth = 48;
@@ -67,8 +71,6 @@ function processPosition(x, y) {
     }
 }
 
-
-
 // Creates a hashable string
 function toColor(red, green, blue, alpha) {
     return '('+red+','+green+','+blue+','+alpha+')';
@@ -105,12 +107,28 @@ function compileMap(mapName) {
         // Reset the physics data container
         physicsData = [];
 
+        // Process every position
         for(var y=0; y<levelHeight; y++) {
             for(var x=0; x<levelWidth; x++) {
                 // Process this position
                 processPosition(x, y);
             }
         }
+
+        // Create the map file
+        mapFile = JSON.stringify({
+            physicsData: physicsData
+        });
+
+        // Save the output
+        fs.writeFile(mapDir+mapName+'.json', mapFile, function(err) {
+            if(err) {
+                console.log('Error while compiling '+mapName+':');
+                console.log(err);
+            } else {
+                console.log(mapName+' was compiled successfully!');
+            }
+        });
     });
 }
 

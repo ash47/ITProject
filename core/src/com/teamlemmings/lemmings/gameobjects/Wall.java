@@ -20,6 +20,9 @@ public class Wall extends GameObject {
 	// Height of this wall (meters)
 	private float height;
 	
+	// The vertices that make up this wall
+	private float[] verts;
+	
 	/**
 	 * Create a new wall of the given size
 	 * @param screen The screen to attach to
@@ -40,6 +43,24 @@ public class Wall extends GameObject {
 		createFixture();
 	}
 	
+	/**
+	 * Create a new wall of the given verts
+	 * @param screen The screen to attach to
+	 * @param x The x position of the screen
+	 * @param y The y position of the screen
+	 * @param verts The vertices that makes up this wall
+	 */
+	public Wall(GameScreen screen, float x, float y, float[] verts) {
+		// Setup the game object
+		super(screen, x, y);
+		
+		// Store vars
+		this.verts = verts;
+		
+		// Create the fixture
+		createFixture();
+	}
+	
 	@Override
 	public void render(float deltaTime, Batch batch) {
 		// This needs to be implemented
@@ -47,24 +68,22 @@ public class Wall extends GameObject {
 	
 	@Override
 	protected void createFixture() {
-		// Ensure vars are actually set, if not, don't setup physics
-		if(this.width <= 0 || this.height <= 0) return;
-		
 		// Create a polygon shape
-		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2, -this.height/2), 0);
+		PolygonShape groundBox;
 		
-		/*float[] test = new float[4*2];
-		test[0] = 0;
-		test[1] = 0;
-		test[2] = this.width;
-		test[3] = 0;
-		test[4] = this.width;
-		test[5] = -this.height;
-		test[6] = 0;
-		test[7] = -this.height;
-		
-		groundBox.set(test);*/
+		// Check which kind of wall we are dealing with
+		if(this.verts != null) {
+			// Vert list
+			groundBox = new PolygonShape();
+			groundBox.set(this.verts);
+		} else if(this.width > 0 && this.height > 0) {
+			// Size sort
+			groundBox = new PolygonShape();
+			groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2, -this.height/2), 0);
+		} else {
+			// Unknown, do nothing
+			return;
+		}
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();

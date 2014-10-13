@@ -1,10 +1,14 @@
 package com.teamlemmings.lemmings.screens;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,8 +30,10 @@ import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
 import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Represents a screen in the game where users can interact and play
@@ -99,11 +105,52 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Calculate coords of top left
 		float left = 0;
-		float top = 0;
+		float top = -1;
 		float bottom = -viewportY+1;
 		
 		// Load a level
 		
+		/*
+		 * 
+		 * ADD EXCEPTION HANDLERS HERE!
+		 * 
+		 */
+		
+		// Read the data
+		FileHandle handle = Gdx.files.internal("maps/level1.json");
+		String jsonData = handle.readString();
+		
+		// Load the json data
+		JSONObject json = new JSONObject(jsonData);
+		
+		// Grab the physics data
+		JSONArray physicsData = json.getJSONArray("physicsData");
+		
+		// Spawn the stuff
+		for(int i=0; i<physicsData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = physicsData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			JSONArray jsonVerts = obj.getJSONArray("verts");
+			
+			// Create the vert array
+			int len = jsonVerts.length();
+			float[] verts = new float[len];
+			
+			for(int j=0; j<len; j++) {
+				verts[j] = (float) jsonVerts.getDouble(j);
+			}
+			
+			// Check what to make
+			if(sort.equals("wall")) {
+				new Wall(this, left+x, top-y, verts);
+			}
+		}
 		
 		// Create boundary walls
 		/*new Wall(this, left, bottom, viewportX, 1f);		// Floor
