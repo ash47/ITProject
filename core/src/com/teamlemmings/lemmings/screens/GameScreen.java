@@ -33,7 +33,6 @@ import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * Represents a screen in the game where users can interact and play
@@ -106,7 +105,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Calculate coords of top left
 		float left = 0;
 		float top = 0;
-		float bottom = -viewportY+1;
 		
 		// Load a level
 		
@@ -170,45 +168,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				new Sheep(this, left+x, top-y);
 			}
 		}
-		
-		// Create boundary walls
-		/*new Wall(this, left, bottom, viewportX, 1f);		// Floor
-		new Wall(this, left, top, 1f, viewportY);			// Right Wall
-		new Wall(this, left+viewportX-1, 0, 1f, viewportY);	// Left wall
-		
-		// Top layer
-		new Wall(this, left, top-3, 9f, 1f);
-		new Wall(this, left+22, top-3, 8f, 1f);
-		new Wall(this, left+35, top-3, 14f, 1f);
-		
-		// 2nd layer
-		new Wall(this, left+8, top-7, 22f, 1f);
-		
-		// 3rd layer
-		new Wall(this, left+8, top-12, 39f, 1f);
-		
-		// 4th layer
-		new Wall(this, left+27, top-17, 21f, 1f);
-		
-		// 5th layer
-		new Wall(this, left+15, top-21, 8f, 1f);
-		
-		// Vertical walls
-		new Wall(this, left+8, top-3, 1f, 5f);
-		new Wall(this, left+29, top-3, 1f, 5f);
-		new Wall(this, left+34, top-3, 1f, 5f);
-		
-		// Create a ramp to walk up
-		new InteractiveRamp(this, left+22f, top-3f, 5f, 1f, 5f, 0f, 0, (float)Math.PI/3, false);
-		new InteractiveRamp(this, left+23f, top-21f, 7f, 1f, 0f, 0f, (float)Math.PI/4, (float) (2*Math.PI - Math.PI/4), true);
-		
-		// Create the goal for the sheep
-		new Goal(this, left+45f, top-16f);
-		
-		// Create some test sheep
-		for(int i=0; i<8; i++) {
-			new Sheep(this, left + 2 + i, top-2f);
-		}*/
 	}
 	
 	/**
