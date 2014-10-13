@@ -2,6 +2,7 @@ var PNG = require('png-js');
 var fs = require('fs');
 
 // The directory to save compiled maps into
+var srcDir = 'mapSRC/';
 var mapDir = '../android/assets/maps/';
 
 // The size of a screen
@@ -113,7 +114,7 @@ shape.prototype.match = function(rx, ry, color) {
 
 // Compiles the given map
 function compileMap(mapName) {
-    PNG.decode('mapSRC/'+mapName+'.png', function(pixels) {
+    PNG.decode(srcDir+mapName+'.png', function(pixels) {
         // Store the pixel data
         pixelData = pixels;
 
@@ -245,5 +246,25 @@ registerRule(function(x, y, rx, ry) {
     }
 });
 
-// Compile a map
-compileMap('level1');
+// Compile all maps
+fs.readdir(srcDir, function(err, files) {
+    if(err) throw err;
+
+    for(var i=0; i<files.length; i++) {
+        // Grab the name
+        var name = files[i];
+
+        // Skip bad files
+        if(name == '.') continue;
+        if(name == '..') continue;
+
+        // Ensure it is a valid map
+        if(name.indexOf('.png') == name.length-4) {
+            // Grab the name of this map
+            mapName = name.substr(0, name.length-4);
+
+            // Compile it
+            compileMap(mapName);
+        }
+    }
+});
