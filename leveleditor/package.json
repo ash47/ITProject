@@ -1,0 +1,9 @@
+{
+  "name": "LemmingsLevelEditor",
+  "description": "A level editor for lemmings",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+	"png-js": "*"
+  }
+}

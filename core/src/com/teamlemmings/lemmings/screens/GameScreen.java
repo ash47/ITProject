@@ -1,10 +1,14 @@
 package com.teamlemmings.lemmings.screens;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +18,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -32,6 +35,9 @@ import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
 import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 /**
  * Represents a screen in the game where users can interact and play
@@ -110,50 +116,73 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Calculate coords of top left
 		float left = 0;
 		float top = 0;
-		float bottom = -viewportY+1;
 		
-		// Create boundary walls
-		new Wall(this, left, bottom, viewportX, 1f);		// Floor
-		new Wall(this, left, top, 1f, viewportY);			// Right Wall
-		new Wall(this, left+viewportX-1, 0, 1f, viewportY);	// Left wall
+		// Load a level
 		
-		// Top layer
-		new Wall(this, left, top-3, 9f, 1f);
-		new Wall(this, left+22, top-3, 8f, 1f);
-		new Wall(this, left+35, top-3, 14f, 1f);
+		/*
+		 * 
+		 * ADD EXCEPTION HANDLERS HERE!
+		 * 
+		 */
 		
-		// 2nd layer
-		new Wall(this, left+8, top-7, 22f, 1f);
+		// Read the data
+		FileHandle handle = Gdx.files.internal("maps/level1.json");
+		String jsonData = handle.readString();
 		
-		// 3rd layer
-		new Wall(this, left+8, top-12, 39f, 1f);
+		// Load the json data
+		JSONObject json = new JSONObject(jsonData);
 		
-		// 4th layer
-		new Wall(this, left+26, top-17, 21f, 1f);
+		// Grab the physics data
+		JSONArray physicsData = json.getJSONArray("physicsData");
+		JSONArray tileData = json.getJSONArray("tileData");
 		
-		// 5th layer
-		new Wall(this, left+15, top-21, 8f, 1f);
-		
-		// Vertical walls
-		new Wall(this, left+8, top-3, 1f, 5f);
-		new Wall(this, left+29, top-3, 1f, 5f);
-		new Wall(this, left+34, top-3, 1f, 5f);
-		
-		// Create a ramp to walk up
-		new InteractiveRamp(this, left+22f, top-3f, 5f, 1f, 5f, 0f, 0, (float)Math.PI/3, false);
-		new InteractiveRamp(this, left+23f, top-21f, 6f, 1f, 0f, 0f, (float)Math.PI/4, (float) (2*Math.PI - Math.PI/4), true);
-		
-		// Create the goal for the sheep
-		new Goal(this, left+45f, top-16f);
+		// Spawn the physics meshes
+		for(int i=0; i<physicsData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = physicsData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			JSONArray jsonVerts = obj.getJSONArray("verts");
+			
+			// Create the vert array
+			int len = jsonVerts.length();
+			float[] verts = new float[len];
+			
+			for(int j=0; j<len; j++) {
+				verts[j] = (float) jsonVerts.getDouble(j);
+			}
+			
+			// Check what to make
+			if(sort.equals("wall")) {
+				// Create a wall
+				new Wall(this, left+x, top-y, verts);
+			}
+		}
+
+		// Spawn tiles
+		for(int i=0; i<tileData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = tileData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			// Check what to make
+			if(sort.equals("sheep")) {
+				// Create a wall
+				new Sheep(this, left+x, top-y);
+			}
+		}
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("bg_castle.png"));
 		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-
-		// Create some test sheep
-		for(int i=0; i<8; i++) {
-			new Sheep(this, left + 2 + i, top-2f);
-		}
 	}
 	
 	/**
