@@ -3,6 +3,7 @@ package com.teamlemmings.lemmings.networking;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 
@@ -50,11 +51,17 @@ public class Networking {
 	    		// Try to connect
 				client.connect(5000, address, 54555, 54777);
 				
+				// Register classes
+				registerClasses(client.getKryo());
+				
 				// Connected!
 				started = true;
 				
 				// We are not the server
 				isServer = false;
+				
+				// Request the level data
+				requestLevelData();
 				
 				// Success
 				return true;
@@ -88,6 +95,9 @@ public class Networking {
 	    	// Attempt to bind to the given ports
 			server.bind(54555, 54777);
 			
+			// Register classes
+			registerClasses(server.getKryo());
+			
 			// YAY!
 			started = true;
 			
@@ -106,10 +116,24 @@ public class Networking {
 	}
 	
 	/**
+	 * Registers classes for networking
+	 */
+	private void registerClasses(Kryo kryo) {
+		
+	}
+	
+	/**
 	 * Returns if this is operating as a server or not
 	 * @return If this is operating as a server or not
 	 */
 	public boolean isServer() {
 		return this.isServer;
+	}
+	
+	/**
+	 * Sends a request to the server for the level data
+	 */
+	public void requestLevelData() {
+		if(!started)
 	}
 }
