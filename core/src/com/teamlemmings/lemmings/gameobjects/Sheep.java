@@ -58,6 +58,9 @@ public class Sheep extends GameObject {
 		texture = new Texture(Gdx.files.internal("sheepRight.png"));
 	    sprite = new Sprite(texture);
 	    sprite.setScale(scale/256f, scale/256f);
+	    
+	    // Register for events
+	    screen.listenForCollisions(this);
 	}
 	
 	@Override
@@ -123,5 +126,16 @@ public class Sheep extends GameObject {
 		// Remember to dispose of any shapes after you're done with them!
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
+	}
+	
+	@Override
+	public void onCollide(GameObject obj) {
+		if(obj instanceof Goal) {
+			// Cleanup the sheep
+			obj.cleanup();
+			
+			// Tell the user one got home
+			System.out.println("A sheep got home!");
+		}
 	}
 }

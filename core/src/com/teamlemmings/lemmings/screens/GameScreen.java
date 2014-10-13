@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
@@ -319,12 +320,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
-		// We should setup a listening system for game objects eventually
-		// instead of hard coding collision events
-		
 		// Grab the two game objects that touched
 		GameObject a = (GameObject) contact.getFixtureA().getBody().getUserData();
 		GameObject b = (GameObject) contact.getFixtureB().getBody().getUserData();
+		
+		// Fire collision events
+		a.onCollide(b);
+		b.onCollide(a);
 		
 		// Ensure if we have an sensor object, that it is stored in a
 		if(b instanceof SensorZone) {
@@ -337,17 +339,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		if(a instanceof SensorZone) {
 			// Fire the touch event on this game object
 			b.onTouched();
-		}
-		
-		// Check for goals
-		if(b instanceof Goal) {
-			GameObject tmp = a;
-			a = b;
-			b = tmp;
-		}
-		
-		if(a instanceof Goal && b instanceof Sheep) {
-			a.onCollide(b);
 		}
 	}
 

@@ -23,17 +23,6 @@ public class Goal extends GameObject {
 	}
 	
 	@Override
-	public void onCollide(GameObject obj) {
-		if(obj instanceof Sheep) {
-			// Cleanup the sheep
-			obj.cleanup();
-			
-			// Tell the user one got home
-			System.out.println("A sheep got home!");
-		}
-	}
-	
-	@Override
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
