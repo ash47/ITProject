@@ -5,7 +5,9 @@ import java.net.InetAddress;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.kryonet.Listener;
 
 public class Networking {
 	// The server
@@ -98,6 +100,9 @@ public class Networking {
 			// Register classes
 			registerClasses(server.getKryo());
 			
+			// Setup the listener
+			listenForMessages();
+			
 			// YAY!
 			started = true;
 			
@@ -123,6 +128,26 @@ public class Networking {
 	}
 	
 	/**
+	 * Listens for messages if we are the server
+	 */
+	private void listenForMessages() {
+		// Stop from listening if not the server
+		if(!started || !isServer) return;
+		
+		server.addListener(new Listener() {
+	       public void received (Connection connection, Object object) {
+	          if (object instanceof NetworkingRequest) {
+	        	  // Client asked for map data
+	        	  NetworkingRequest r = (NetworkingRequest)object;
+	        	  System.out.println("Client asked for the map data");
+
+	             // Send them some map data
+	          }
+	       }
+	    });
+	}
+	
+	/**
 	 * Returns if this is operating as a server or not
 	 * @return If this is operating as a server or not
 	 */
@@ -134,6 +159,11 @@ public class Networking {
 	 * Sends a request to the server for the level data
 	 */
 	public void requestLevelData() {
-		if(!started)
+		// Don't do anything if we shoudln't
+		if(!started || isServer) return;
+		
+		// Send out the request
+		NetworkingRequest r = new NetworkingRequest();
+		client.sendTCP(r);
 	}
 }
