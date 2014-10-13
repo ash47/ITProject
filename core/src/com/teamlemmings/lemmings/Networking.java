@@ -16,20 +16,26 @@ public class Networking {
 	// Have we connected / are we running a server
 	private boolean started = false;
 	
+	// Are we the server?
+	private boolean isServer = false;
+	
 	/**
 	 * Handles all networking
 	 */
 	public Networking() {
-		// Tell the user to wait
-		System.out.println("Searching for a server...");
+		// Nothing :O
 	}
 	
 	/**
 	 * Finds and connects to a server, if non exist, it makes one
+	 * @param true if we connected to a server, or started a server
 	 */
 	public boolean findServer() {
 		// Check if we have already started
 		if(started) return false;
+		
+		// Tell the user to wait
+		System.out.println("Searching for a server...");
 		
 		// Create a client
 		client = new Client();
@@ -47,6 +53,9 @@ public class Networking {
 				// Connected!
 				started = true;
 				
+				// We are not the server
+				isServer = false;
+				
 				// Success
 				return true;
 			} catch (IOException e1) {
@@ -61,7 +70,11 @@ public class Networking {
 		return makeServer();
 	}
 	
-	private boolean makeServer() {
+	/**
+	 * Creates a server if not already connected or hosting
+	 * @return If a server was created
+	 */
+	public boolean makeServer() {
 		// Check if we have already started
 		if(started) return false;
 		
@@ -75,6 +88,12 @@ public class Networking {
 	    	// Attempt to bind to the given ports
 			server.bind(54555, 54777);
 			
+			// YAY!
+			started = true;
+			
+			// We are the server
+			isServer = true;
+			
 			// Success
 			return true;
 		} catch (IOException e) {
@@ -84,5 +103,13 @@ public class Networking {
 			// Doh!
 			return false;
 		}
+	}
+	
+	/**
+	 * Returns if this is operating as a server or not
+	 * @return If this is operating as a server or not
+	 */
+	public boolean isServer() {
+		return this.isServer;
 	}
 }
