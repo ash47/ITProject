@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
@@ -177,6 +178,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			if(sort.equals("sheep")) {
 				// Create a wall
 				new Sheep(this, left+x, top-y);
+				System.out.println("asd");
+			} else if(sort.equals("goal")) {
+				// Create a wall
+				new Goal(this, left+x, top-y);
 			}
 		}
 		
@@ -213,11 +218,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				  background.getWidth()*bgScale, 
 				  background.getHeight()*bgScale, 
 				  0, background.getWidth(), background.getHeight(), 0);
-
-	//	tiledDrawable.draw(batch, 0, 0, 256,256);
-	//	batch.draw(background, delta, delta);
-		
-		
 		
 		// Update the physics world
 		doPhysicsStep(delta);
@@ -319,12 +319,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
-		// We should setup a listening system for game objects eventually
-		// instead of hard coding collision events
-		
 		// Grab the two game objects that touched
 		GameObject a = (GameObject) contact.getFixtureA().getBody().getUserData();
 		GameObject b = (GameObject) contact.getFixtureB().getBody().getUserData();
+		
+		// Fire collision events
+		a.onCollide(b);
+		b.onCollide(a);
 		
 		// Ensure if we have an sensor object, that it is stored in a
 		if(b instanceof SensorZone) {
@@ -337,17 +338,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		if(a instanceof SensorZone) {
 			// Fire the touch event on this game object
 			b.onTouched();
-		}
-		
-		// Check for goals
-		if(b instanceof Goal) {
-			GameObject tmp = a;
-			a = b;
-			b = tmp;
-		}
-		
-		if(a instanceof Goal && b instanceof Sheep) {
-			a.onCollide(b);
 		}
 	}
 

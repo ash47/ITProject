@@ -124,4 +124,15 @@ public class Sheep extends GameObject {
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
 	}
+	
+	@Override
+	public void onCollide(GameObject obj) {
+		if(obj instanceof Goal) {
+			// Cleanup the sheep
+			this.cleanup();
+			
+			// Tell the user one got home
+			System.out.println("A sheep got home!");
+		}
+	}
 }

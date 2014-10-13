@@ -1,5 +1,6 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -23,21 +24,10 @@ public class Goal extends GameObject {
 	}
 	
 	@Override
-	public void onCollide(GameObject obj) {
-		if(obj instanceof Sheep) {
-			// Cleanup the sheep
-			obj.cleanup();
-			
-			// Tell the user one got home
-			System.out.println("A sheep got home!");
-		}
-	}
-	
-	@Override
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(0.5f, 0.5f);
+		groundBox.setAsBox(0.5f, 0.5f, new Vector2(0.5f, -0.5f), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
