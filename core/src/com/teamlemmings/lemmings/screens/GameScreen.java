@@ -7,7 +7,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -18,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -57,7 +62,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The sprite batch renderer
 	private SpriteBatch batch;
+		
+	// The background for this level
+	private Texture background;
 	
+	// Background tile scale
+	private int bgScale = 5;
+		
 	/**
 	 * Create a new game screen
 	 * @param game The game this screen is attached to
@@ -135,6 +146,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the goal for the sheep
 		new Goal(this, left+45f, top-16f);
 		
+		// Create a background
+		background = new Texture(Gdx.files.internal("bg_castle.png"));
+		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+
 		// Create some test sheep
 		for(int i=0; i<8; i++) {
 			new Sheep(this, left + 2 + i, top-2f);
@@ -153,15 +168,27 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	@Override
 	public void render(float delta) {
 		// Reset the background
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		// Update the camera
 		cam.update();
 		
+
+		
 		// Begin drawing the sprite batch
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
+		
+		batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
+				  background.getWidth()*bgScale, 
+				  background.getHeight()*bgScale, 
+				  0, background.getWidth(), background.getHeight(), 0);
+
+	//	tiledDrawable.draw(batch, 0, 0, 256,256);
+	//	batch.draw(background, delta, delta);
+		
+		
 		
 		// Update the physics world
 		doPhysicsStep(delta);
