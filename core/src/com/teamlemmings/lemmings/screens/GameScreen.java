@@ -109,6 +109,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Init networking
 		network = new Networking();
+		network.findServer();
 		
 		// Load up a level
 		loadLevel("level1");
