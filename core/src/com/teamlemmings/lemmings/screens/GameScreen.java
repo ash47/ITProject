@@ -108,8 +108,8 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
 		
 		// Init networking
-		network = new Networking();
-		network.findServer();
+		//network = new Networking();
+		//network.findServer();
 		
 		// Load up a level
 		loadLevel("level1");
