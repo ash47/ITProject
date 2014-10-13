@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
+import com.teamlemmings.lemmings.Networking;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
@@ -67,6 +68,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// Background tile scale
 	private int bgScale = 5;
+	
+	// Our network
+	private Networking network;
 		
 	/**
 	 * Create a new game screen
@@ -102,6 +106,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the gesture controller
 		GestureProcessor ges = new GestureProcessor(this);
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
+		
+		// Init networking
+		network = new Networking();
 		
 		// Load up a level
 		loadLevel("level1");
@@ -374,7 +381,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			if(sort.equals("sheep")) {
 				// Create a wall
 				new Sheep(this, left+x, top-y);
-				System.out.println("asd");
 			} else if(sort.equals("goal")) {
 				// Create a wall
 				new Goal(this, left+x, top-y);
