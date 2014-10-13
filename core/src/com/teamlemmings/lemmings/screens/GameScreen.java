@@ -105,7 +105,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Calculate coords of top left
 		float left = 0;
-		float top = -1;
+		float top = 0;
 		float bottom = -viewportY+1;
 		
 		// Load a level
@@ -125,8 +125,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Grab the physics data
 		JSONArray physicsData = json.getJSONArray("physicsData");
+		JSONArray tileData = json.getJSONArray("tileData");
 		
-		// Spawn the stuff
+		// Spawn the physics meshes
 		for(int i=0; i<physicsData.length(); i++) {
 			// Grab the next object
 			JSONObject obj = physicsData.getJSONObject(i);
@@ -148,7 +149,25 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			
 			// Check what to make
 			if(sort.equals("wall")) {
+				// Create a wall
 				new Wall(this, left+x, top-y, verts);
+			}
+		}
+		
+		// Spawn tiles
+		for(int i=0; i<tileData.length(); i++) {
+			// Grab the next object
+			JSONObject obj = tileData.getJSONObject(i);
+			
+			// Grab data
+			String sort = obj.getString("sort");
+			float x = (float) obj.getDouble("x");
+			float y = (float) obj.getDouble("y");
+			
+			// Check what to make
+			if(sort.equals("sheep")) {
+				// Create a wall
+				new Sheep(this, left+x, top-y);
 			}
 		}
 		

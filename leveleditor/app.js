@@ -21,6 +21,9 @@ var worldPatterns = {};
 // Will contain physics data
 var physicsData = [];
 
+// Will contain tile data
+var tileData = [];
+
 // This will contain the pixel data
 var pixelData = [];
 
@@ -35,6 +38,16 @@ function addWall(x, y, verts) {
         verts: verts,
         x: x,
         y: y
+    });
+}
+
+// Add a tile
+function addTile(x, y, sort) {
+    // Stores tile data
+    tileData.push({
+        x: x,
+        y: y,
+        sort: sort
     });
 }
 
@@ -106,6 +119,7 @@ function compileMap(mapName) {
 
         // Reset the physics data container
         physicsData = [];
+        tileData = [];
 
         // Process every position
         for(var y=0; y<levelHeight; y++) {
@@ -117,7 +131,8 @@ function compileMap(mapName) {
 
         // Create the map file
         mapFile = JSON.stringify({
-            physicsData: physicsData
+            physicsData: physicsData,
+            tileData: tileData
         });
 
         // Save the output
@@ -160,6 +175,14 @@ var shapeRampUpRight = new shape(4, 4, [
     1, 1, 1, 1
 ]);
 
+// A sheep
+var shapeSheep = new shape(4, 4, [
+    0, 1, 1, 0,
+    1, 1, 1, 1,
+    1, 1, 1, 1,
+    0, 1, 1, 0
+]);
+
 /*
     Register patterns
 */
@@ -176,24 +199,49 @@ registerRule(function(x, y, rx, ry) {
         wallHeight = tileHeight;
 
         // Add the wall
-        addWall(x, y, [0, 0, wallWidth, 0, wallWidth, wallHeight, 0, wallHeight]);
+        addWall(x, y, [0, 0, wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
     } else if(shapeRampUpLeft.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;
         wallHeight = tileHeight;
 
         // Add the wall
-        addWall(x, y, [0, 0, wallWidth, wallHeight, 0, wallHeight]);
+        addWall(x, y, [0, 0, wallWidth, -wallHeight, 0, -wallHeight]);
     } else if(shapeRampUpRight.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;
         wallHeight = tileHeight;
 
         // Add the wall
-        addWall(x, y, [wallWidth, 0, wallWidth, wallHeight, 0, wallHeight]);
+        addWall(x, y, [wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
     } else {
         // Handle raw data (hopefully they don't have too much!)
 
+        var tw1 = tileWidth/levelScale;
+        var th1 = tileHeight/levelScale;
+
+        for(var xx=0; xx<levelScale; xx++) {
+            for(var yy=0; yy<levelScale; yy++) {
+                var c = getColor(rx+xx, ry+yy)
+
+                // Check if we should create a wall here
+                if(c == wallColor) {
+                    addWall(x+xx*tw1, y+yy*th1, [0, 0, tw1, 0, tw1, -th1, 0, -th1]);
+                }
+            }
+        }
+    }
+});
+
+// Sheep finder
+registerRule(function(x, y, rx, ry) {
+    // The color of walls
+    var sheepColor = toColor(0, 255, 0, 255);
+
+    // Check if there is a wall at the given position
+    if(shapeSheep.match(rx, ry, sheepColor)) {
+        // Add the sheep
+        addTile(x, y, 'sheep');
     }
 });
 
