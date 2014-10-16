@@ -126,6 +126,13 @@ function compileMap(mapName) {
         tileData = [];
         visualData = [];
 
+        // Reset visual data
+        for(var y=0; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                visualData[x + y*levelWidth] = '';
+            }
+        }
+
         // Process every position
         for(var y=0; y<levelHeight; y++) {
             for(var x=0; x<levelWidth; x++) {
@@ -209,6 +216,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [0, 0, wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassMid';
     } else if(shapeRampUpLeft.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;

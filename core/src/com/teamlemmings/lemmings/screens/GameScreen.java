@@ -72,6 +72,12 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The renderer
 	private Renderer renderer;
+	
+	// The visual data
+	private String[] visualArray;
+	
+	// The scale to render the world at
+	private float worldScale = 1/256f;
 		
 	/**
 	 * Create a new game screen
@@ -137,9 +143,27 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Update the camera
 		cam.update();
 		
+		// Render the world
+		debugRenderer.render(world, cam.combined);
+		
 		// Begin drawing the sprite batch
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
+		
+		// Render the world
+		for(int y=0; y<viewportY;y++) {
+			for(int x=0; x<viewportX; x++) {
+				// Grab the image
+				String image = visualArray[x+y*viewportX];
+				
+				// Should we render something?
+				if(!image.equals("")) {
+					// Render the sprite
+					System.out.println(image);
+					renderer.renderSprite("Tiles/grassMid", x+0.5f, -y-0.5f, worldScale);
+				}
+			}
+		}
 		
 		/*batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
 				  background.getWidth()*bgScale,
@@ -175,9 +199,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Finish drawing the sprite batch
 		batch.end();
-		
-		// Render the world
-		debugRenderer.render(world, cam.combined);
 	}
 	
 	/**
@@ -341,6 +362,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Grab the physics data
 		JSONArray physicsData = json.getJSONArray("physicsData");
 		JSONArray tileData = json.getJSONArray("tileData");
+		JSONArray visualData = json.getJSONArray("visualData");
 		
 		// Spawn the physics meshes
 		for(int i=0; i<physicsData.length(); i++) {
@@ -387,6 +409,12 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				// Create a wall
 				new Goal(this, left+x, top-y);
 			}
+		}
+		
+		// Load the visual data
+		visualArray = new String[visualData.length()];
+		for(int i=0; i<visualData.length(); i++) {
+			visualArray[i] = visualData.getString(i);
 		}
 	}
 	
