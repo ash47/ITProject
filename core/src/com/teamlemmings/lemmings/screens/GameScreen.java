@@ -65,6 +65,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	// The sprite batch renderer
 	public SpriteBatch batch;
 	
+	// The background for this level
+	private Texture background;
+	
 	// Background tile scale
 	private int bgScale = 5;
 	
@@ -124,6 +127,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Load up a level
 		loadLevel("level1");
+		
+		// Create a background
+		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
+		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 	}
 	
 	/**
@@ -144,12 +151,15 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Update the camera
 		cam.update();
 		
-		// Render the world
-		debugRenderer.render(world, cam.combined);
-		
 		// Begin drawing the sprite batch
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
+		
+		// Draw the background
+		batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
+				  background.getWidth()*bgScale,
+				  background.getHeight()*bgScale,
+				  0, background.getWidth(), background.getHeight(), 0);
 		
 		// Render the world
 		for(int y=0; y<viewportY;y++) {
@@ -164,11 +174,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				}
 			}
 		}
-		
-		/*batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
-				  background.getWidth()*bgScale,
-				  background.getHeight()*bgScale,
-				  0, background.getWidth(), background.getHeight(), 0);*/
 		
 		// Update the physics world
 		doPhysicsStep(delta);
@@ -199,6 +204,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Finish drawing the sprite batch
 		batch.end();
+		
+		// DEBUG: Render the world
+		debugRenderer.render(world, cam.combined);
 	}
 	
 	/**

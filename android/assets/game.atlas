@@ -20,26 +20,6 @@ sheepRight
   index: -1
 
 game2.png
-size: 516,258
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-Backgrounds/bg
-  rotate: false
-  xy: 2, 2
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
-Backgrounds/bg_castle
-  rotate: false
-  xy: 260, 2
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
-
-game3.png
 size: 126,510
 format: RGBA8888
 filter: Nearest,Nearest
@@ -171,7 +151,7 @@ Enemies/snailWalk2
   offset: 0, 0
   index: -1
 
-game4.png
+game3.png
 size: 488,126
 format: RGBA8888
 filter: Nearest,Nearest
@@ -380,7 +360,7 @@ HUD/hud_x
   offset: 0, 0
   index: -1
 
-game5.png
+game4.png
 size: 1004,241
 format: RGBA8888
 filter: Nearest,Nearest
@@ -638,7 +618,7 @@ Items/weightChained
   offset: 0, 0
   index: -1
 
-game6.png
+game5.png
 size: 986,980
 format: RGBA8888
 filter: Nearest,Nearest
