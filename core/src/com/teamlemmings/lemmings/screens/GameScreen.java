@@ -30,6 +30,7 @@ import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
+import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 import com.teamlemmings.lemmings.networking.Networking;
 
 import org.json.JSONObject;
@@ -419,6 +420,16 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			} else if(sort.equals("coin")) {
 				// Create a wall
 				new Coin(this, left+x, top-y);
+			} else if(sort.equals("ramp")) {
+				// Create the ramp
+				new InteractiveRamp(this, left+x, top-y,
+						(float)obj.getDouble("width"), (float)obj.getDouble("height"),
+						(float)obj.getDouble("originX"), (float)obj.getDouble("originY"),
+						(float)obj.getDouble("initialAngle"), (float)obj.getDouble("finalAngle"),
+						obj.getBoolean("clockwise")
+				);
+				
+				// float x, float y, float width, float height, float originX, float originY, float initialAngle, float finalAngle, boolean clockwise
 			}
 		}
 		

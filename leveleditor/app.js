@@ -4,6 +4,7 @@ var fs = require('fs');
 // The directory to save compiled maps into
 var srcDir = './mapSRC/';
 var mapDir = './../android/assets/maps/';
+var mapDir2 = './../desktop/bin/maps/';
 
 // The size of a screen
 var levelWidth = 48;
@@ -51,8 +52,6 @@ function addWall(x, y, verts) {
 // Add a tile
 function addTile(x, y, sort, data) {
     var toAdd = {
-        x: x,
-        y: y,
         sort: sort
     };
 
@@ -63,6 +62,10 @@ function addTile(x, y, sort, data) {
             toAdd[key] = data[key];
         }
     }
+
+    // Store coords
+    toAdd.x = x;
+    toAdd.y = y;
 
     // Stores tile data
     tileData.push(toAdd);
@@ -225,6 +228,15 @@ function compileMap(mapName) {
                 console.log(mapName+' was compiled successfully!');
             }
         });
+
+        fs.writeFile(mapDir2+mapName+'.json', mapFile, function(err) {
+            if(err) {
+                console.log('Error while compiling (2) '+mapName+':');
+                console.log(err);
+            } else {
+                console.log(mapName+' was compiled (2) successfully!');
+            }
+        });
     });
 }
 
@@ -360,6 +372,8 @@ registerRule(function(x, y, rx, ry) {
             height: 1,
             x: x,
             y: y,
+            shiftX: 0,
+            shiftY: 0,
             originX: 0,
             originY: 0,
             initialAngle: 0,
@@ -394,7 +408,7 @@ registerRule(function(x, y, rx, ry) {
         }
 
         // Add the sheep
-        addTile(x, y, 'interactive', settings);
+        addTile(x+settings.shiftX, y+settings.shiftY, 'interactive', settings);
     }
 });
 

@@ -133,9 +133,20 @@ public class InteractiveRamp extends InteractiveObject {
 		// Ensure we have been given a size
 		if(this.width <= 0 || this.height <= 0) return;
 		
+		float[] verts = new float[2*4];
+		verts[0] = this.originX;
+		verts[1] = this.originY;
+		verts[2] = this.originX+this.width;
+		verts[3] = this.originY;
+		verts[4] = this.originX+this.width;
+		verts[5] = this.originY-this.height;
+		verts[6] = this.originX;
+		verts[7] = this.originY-this.height;
+		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2-this.originX, -this.height/2-this.originY), 0);
+		//groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.originX, this.originY), 0);
+		groundBox.set(verts);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
