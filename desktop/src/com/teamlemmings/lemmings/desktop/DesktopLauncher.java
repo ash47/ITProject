@@ -8,10 +8,12 @@ import com.teamlemmings.lemmings.Lemmings;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
+		// Build texture atlas
 		Settings settings = new Settings();
-	    settings.maxWidth = 512;
-	    settings.maxHeight = 512;
-	    TexturePacker.process(settings, "../images", "../game-android/assets", "game");
+		settings.pot = true;
+	    //settings.maxWidth = 512;
+	    //settings.maxHeight = 512;
+	    TexturePacker.process(settings, "../Tiles", "../android/assets", "tiles");
 
 		
 		// Create a new config
