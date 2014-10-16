@@ -22,12 +22,15 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
+import com.teamlemmings.lemmings.Renderer;
+import com.teamlemmings.lemmings.gameobjects.Coin;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
 import com.teamlemmings.lemmings.gameobjects.Wall;
+import com.teamlemmings.lemmings.gameobjects.interactiveobjects.InteractiveRamp;
 import com.teamlemmings.lemmings.networking.Networking;
 
 import org.json.JSONObject;
@@ -61,8 +64,8 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private int viewportY = 27;
 	
 	// The sprite batch renderer
-	private SpriteBatch batch;
-		
+	public SpriteBatch batch;
+	
 	// The background for this level
 	private Texture background;
 	
@@ -71,6 +74,15 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// Our network
 	private Networking network;
+	
+	// The renderer
+	private Renderer renderer;
+	
+	// The visual data
+	private String[] visualArray;
+	
+	// The scale to render the world at
+	private float worldScale = 1 / 235f;
 		
 	/**
 	 * Create a new game screen
@@ -87,6 +99,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create the sprite batch
 		batch = new SpriteBatch();
+		
+		// Create the renderer
+		renderer = new Renderer(batch);
 		
 		// Create a physics world and debug renderer
 		// We need to replace the debug renderer with
@@ -115,7 +130,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		loadLevel("level1");
 		
 		// Create a background
-		background = new Texture(Gdx.files.internal("bg_castle.png"));
+		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
 		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 	}
 	
@@ -141,10 +156,25 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
 		
+		// Draw the background
 		batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
 				  background.getWidth()*bgScale,
 				  background.getHeight()*bgScale,
 				  0, background.getWidth(), background.getHeight(), 0);
+		
+		// Render the world
+		for(int y=0; y<viewportY;y++) {
+			for(int x=0; x<viewportX; x++) {
+				// Grab the image
+				String image = visualArray[x+y*viewportX];
+				
+				// Should we render something?
+				if(!image.equals("")) {
+					// Render the sprite
+					renderer.renderSprite(image, x+0.5f, -y-0.5f, worldScale);
+				}
+			}
+		}
 		
 		// Update the physics world
 		doPhysicsStep(delta);
@@ -169,15 +199,15 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				it.remove();
 			} else {
 				// Render the object
-				obj.render(delta, batch);
+				obj.render(delta, renderer);
 			}
 		}
 		
 		// Finish drawing the sprite batch
 		batch.end();
 		
-		// Render the world
-		debugRenderer.render(world, cam.combined);
+		// DEBUG: Render the world
+		//debugRenderer.render(world, cam.combined);
 	}
 	
 	/**
@@ -209,6 +239,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void dispose() {
 		// Cleanup resources
 		batch.dispose();
+		renderer.dispose();
 	}
 	
 	/**
@@ -340,6 +371,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Grab the physics data
 		JSONArray physicsData = json.getJSONArray("physicsData");
 		JSONArray tileData = json.getJSONArray("tileData");
+		JSONArray visualData = json.getJSONArray("visualData");
 		
 		// Spawn the physics meshes
 		for(int i=0; i<physicsData.length(); i++) {
@@ -385,7 +417,30 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			} else if(sort.equals("goal")) {
 				// Create a wall
 				new Goal(this, left+x, top-y);
+			} else if(sort.equals("coin")) {
+				// Create a wall
+				new Coin(this, left+x, top-y);
+			} else if(sort.equals("ramp")) {
+				// Create the ramp
+				new InteractiveRamp(this, left+x, top-y,
+						(float)obj.getDouble("width"), (float)obj.getDouble("height"),
+						(float)obj.getDouble("originX"), (float)obj.getDouble("originY"),
+						(float)obj.getDouble("initialAngle"), (float)obj.getDouble("finalAngle"),
+						obj.getBoolean("clockwise")
+				);
+				
+				// float x, float y, float width, float height, float originX, float originY, float initialAngle, float finalAngle, boolean clockwise
 			}
 		}
+		
+		// Load the visual data
+		visualArray = new String[visualData.length()];
+		for(int i=0; i<visualData.length(); i++) {
+			visualArray[i] = visualData.getString(i);
+		}
+	}
+	
+	public SpriteBatch getBatch() {
+		return this.batch;
 	}
 }

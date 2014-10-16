@@ -49,17 +49,20 @@ public class MenuScreen extends LemmingScreen {
     
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(208, 244, 247, 255);
+        // Clear the screen
+    	Gdx.gl.glClearColor(208, 244, 247, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
         
         //Generate the background image
         batch.begin();
 		
+        // Render the background
 		batch.draw(background, 0, 0,
 				  background.getWidth()*bgScale, 
 				  background.getHeight()*bgScale, 
-				  0, background.getWidth(), background.getHeight(), 0);		
+				  0, background.getWidth(), background.getHeight(), 0);	
+		
+		// Finish drawing
 		batch.end();
         stage.act();
         stage.draw();
@@ -102,7 +105,7 @@ public class MenuScreen extends LemmingScreen {
      	batch = new SpriteBatch();
         
         // Create a background
-        background = new Texture(Gdx.files.internal("bg_castle.png"));
+        background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
         background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
     }
 

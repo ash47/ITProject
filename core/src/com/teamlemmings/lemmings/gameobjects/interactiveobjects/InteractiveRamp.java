@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.InteractiveObject;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
@@ -51,8 +52,8 @@ public class InteractiveRamp extends InteractiveObject {
 	 * @param y The y coordinate of this object
 	 * @param width The width of the ramp
 	 * @param height The height of the ramp
-	 * @param The x origin to rotate about
-	 * @param The y origin to rotate about
+	 * @param originX The x origin to rotate about
+	 * @param originY The y origin to rotate about
 	 * @param initialAngle The initial rotate to start at (in radians)
 	 * @param finalAngle The final angle to finish at
 	 * @param clockwise Should we rotate clockwise or not?
@@ -132,9 +133,20 @@ public class InteractiveRamp extends InteractiveObject {
 		// Ensure we have been given a size
 		if(this.width <= 0 || this.height <= 0) return;
 		
+		// Build verts
+		float[] verts = new float[2*4];
+		verts[0] = this.originX;
+		verts[1] = this.originY;
+		verts[2] = this.originX+this.width;
+		verts[3] = this.originY;
+		verts[4] = this.originX+this.width;
+		verts[5] = this.originY-this.height;
+		verts[6] = this.originX;
+		verts[7] = this.originY-this.height;
+		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(this.width/2, this.height/2, new Vector2(this.width/2-this.originX, -this.height/2-this.originY), 0);
+		groundBox.set(verts);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
@@ -166,7 +178,7 @@ public class InteractiveRamp extends InteractiveObject {
 	}
 	
 	@Override
-	public void render(float deltaTime, Batch batch) {
+	public void render(float deltaTime, Renderer renderer) {
 		// How much we should change in this update
 		float change = deltaTime * this.rotationSpeed;
 		
@@ -213,5 +225,17 @@ public class InteractiveRamp extends InteractiveObject {
 				}
 			}
 		}
+		
+		// Grab our transformation
+		Transform trans = this.body.getTransform();
+		
+		// Grab our position
+		Vector2 pos = trans.getPosition();
+		
+		// Grab the current rotation
+		float rot = trans.getRotation();
+		
+		// Render the visual
+		renderer.renderSprite("Tiles/boxItem", pos.x, pos.y, this.width/256f, this.height/230f, (float) (rot/Math.PI*180), this.originX, this.originY);
 	}
 }

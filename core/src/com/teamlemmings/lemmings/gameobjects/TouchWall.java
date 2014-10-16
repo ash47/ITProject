@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
@@ -31,7 +32,7 @@ public class TouchWall extends GameObject {
 	}
 	
 	@Override
-	public void render(float deltaTime, Batch batch) {
+	public void render(float deltaTime, Renderer renderer) {
 		// Check if user is touching something
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			// Move into position

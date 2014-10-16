@@ -2,8 +2,9 @@ var PNG = require('png-js');
 var fs = require('fs');
 
 // The directory to save compiled maps into
-var srcDir = 'mapSRC/';
-var mapDir = '../android/assets/maps/';
+var srcDir = './mapSRC/';
+var mapDir = './../android/assets/maps/';
+var mapDir2 = './../desktop/bin/maps/';
 
 // The size of a screen
 var levelWidth = 48;
@@ -25,11 +26,17 @@ var physicsData = [];
 // Will contain tile data
 var tileData = [];
 
+// Will contain the visual data for what to draw in a given position
+var visualData = [];
+
 // This will contain the pixel data
 var pixelData = [];
 
 // An array of rules to apply to build the map
 var processingRules = [];
+
+// Settings for the loaded map
+var mapSettings = {};
 
 // Adds a wall
 function addWall(x, y, verts) {
@@ -43,13 +50,25 @@ function addWall(x, y, verts) {
 }
 
 // Add a tile
-function addTile(x, y, sort) {
-    // Stores tile data
-    tileData.push({
-        x: x,
-        y: y,
+function addTile(x, y, sort, data) {
+    var toAdd = {
         sort: sort
-    });
+    };
+
+    // Check if there is data
+    if(data != null) {
+        // Copy the data in
+        for(var key in data) {
+            toAdd[key] = data[key];
+        }
+    }
+
+    // Store coords
+    toAdd.x = x;
+    toAdd.y = y;
+
+    // Stores tile data
+    tileData.push(toAdd);
 }
 
 // Adds a rule to the processing chain
@@ -118,9 +137,28 @@ function compileMap(mapName) {
         // Store the pixel data
         pixelData = pixels;
 
+        // Attempt to load map settings
+        mapSettings = {};
+        if(fs.existsSync(srcDir+mapName+'.json')) {
+            mapSettings = require(srcDir+mapName+'.json');
+        }
+
+        // Ensure fields exist
+        mapSettings.mapName = mapSettings.mapName || 'Untitled Map';
+        mapSettings.sheepToWin = mapSettings.sheepToWin || 1;
+        mapSettings.interactiveObjects = mapSettings.interactiveObjects || [];
+
         // Reset the physics data container
         physicsData = [];
         tileData = [];
+        visualData = [];
+
+        // Reset visual data
+        for(var y=0; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                visualData[x + y*levelWidth] = '';
+            }
+        }
 
         // Process every position
         for(var y=0; y<levelHeight; y++) {
@@ -130,10 +168,55 @@ function compileMap(mapName) {
             }
         }
 
+        // Add the dirt
+        for(var y=1; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                // Grab the image
+                var image = visualData[x + y*levelWidth];
+
+                var imageAbove = visualData[x + (y-1)*levelWidth];
+
+                if(image == 'Tiles/grassMid' && imageAbove.indexOf('grass') != -1) {
+                    if(imageAbove == 'Tiles/grassHillRight') {
+                        visualData[x + y*levelWidth] = 'Tiles/grassHillRight2';
+                    } else if(imageAbove == 'Tiles/grassHillLeft') {
+                        visualData[x + y*levelWidth] = 'Tiles/grassHillLeft2';
+                    } else {
+                        visualData[x + y*levelWidth] = 'Tiles/grassCenter';
+                    }
+                }
+            }
+        }
+
+        // Add the rounded edges
+        /*for(var y=0; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                // Grab the image
+                var image = visualData[x + y*levelWidth];
+
+                var imageAbove = visualData[x + (y-1)*levelWidth];
+
+                if(image == 'Tiles/grassMid' && imageAbove == 'Tiles/grassMid') {
+                    visualData[x + y*levelWidth] = 'Tiles/grassCenter';
+                }
+            }
+        }*/
+
         // Create the map file
         mapFile = JSON.stringify({
             physicsData: physicsData,
-            tileData: tileData
+            tileData: tileData,
+            visualData: visualData
+        });
+
+        // Save Map Settings
+        fs.writeFile(srcDir+mapName+'.json', JSON.stringify(mapSettings), function(err) {
+            if(err) {
+                console.log('Error while saving settings '+mapName+':');
+                console.log(err);
+            } else {
+                console.log(mapName+' settings were saved!');
+            }
         });
 
         // Save the output
@@ -143,6 +226,15 @@ function compileMap(mapName) {
                 console.log(err);
             } else {
                 console.log(mapName+' was compiled successfully!');
+            }
+        });
+
+        fs.writeFile(mapDir2+mapName+'.json', mapFile, function(err) {
+            if(err) {
+                console.log('Error while compiling (2) '+mapName+':');
+                console.log(err);
+            } else {
+                console.log(mapName+' was compiled (2) successfully!');
             }
         });
     });
@@ -184,6 +276,14 @@ var shapeSheep = new shape(4, 4, [
     0, 1, 1, 0
 ]);
 
+// A coin
+var shapeCoin = new shape(4, 4, [
+    0, 0, 0, 0,
+    0, 1, 1, 0,
+    0, 1, 1, 0,
+    0, 0, 0, 0
+]);
+
 // The goal
 shapeGoal = shapeBlockFull;
 
@@ -204,6 +304,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [0, 0, wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassMid';
     } else if(shapeRampUpLeft.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;
@@ -211,6 +314,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [0, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassHillRight';
     } else if(shapeRampUpRight.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;
@@ -218,6 +324,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassHillLeft';
     } else {
         // Handle raw data (hopefully they don't have too much!)
 
@@ -242,6 +351,8 @@ registerRule(function(x, y, rx, ry) {
     // The color of things
     var sheepColor = toColor(0, 255, 0, 255);
     var goalColor = toColor(0, 255, 255, 255);
+    var coinColor = toColor(255, 255, 0, 255);
+    var interactiveColor = toColor(255, 0, 0, 255);
 
     // Check for objects at the given position
     if(shapeGoal.match(rx, ry, goalColor)) {
@@ -250,6 +361,54 @@ registerRule(function(x, y, rx, ry) {
     } else if(shapeSheep.match(rx, ry, sheepColor)) {
         // Add the sheep
         addTile(x, y, 'sheep');
+    } else if(shapeCoin.match(rx, ry, coinColor)) {
+        // Add the sheep
+        addTile(x, y, 'coin');
+    } else if(shapeBlockFull.match(rx, ry, interactiveColor)) {
+        // Grab settings for this object
+        var settings = {
+            sort: 'ramp',
+            width: 1,
+            height: 1,
+            x: x,
+            y: y,
+            shiftX: 0,
+            shiftY: 0,
+            originX: 0,
+            originY: 0,
+            initialAngle: 0,
+            finalAngle: 3.14,
+            clockwise: true
+        };
+
+        var found = null;
+
+        for(var key in mapSettings.interactiveObjects) {
+            var io = mapSettings.interactiveObjects[key];
+
+            // Is this the one we are looking at?
+            if(io.x == x && io.y == y) {
+                // Found it
+                found = key;
+
+                // Yep, copy over settings
+                for(var kk in io) {
+                    settings[kk] = io[kk];
+                }
+
+                break;
+            }
+        }
+
+        // Update the settings file
+        if(found != null) {
+            mapSettings.interactiveObjects[found] = settings;
+        } else {
+            mapSettings.interactiveObjects.push(settings);
+        }
+
+        // Add the sheep
+        addTile(x+settings.shiftX, y+settings.shiftY, 'interactive', settings);
     }
 });
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.teamlemmings.lemmings.screens.GameScreen;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 
 /**
  * This is the class all objects used in the game are derived from
@@ -49,9 +50,9 @@ public class GameObject {
 	/**
 	 * Called to update/draw this GameObject
 	 * @param deltaTime Time since the last call
-	 * @param batch The batch we are rendering in
+	 * @param renderer The batch we are rendering in
 	 */
-	public void render(float deltaTime, Batch batch) {};
+	public void render(float deltaTime, Renderer renderer) {};
 	
 	/**
 	 * Called when this GameObject is disposed of, cleanup resources here

@@ -9,21 +9,22 @@ import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
- * Represents the goal the sheep need to get to
+ * A sheep that walks around
  * @author aschmid
  *
  */
-public class Goal extends GameObject {
+public class Coin extends GameObject {
 	// Scale of the sprite
 	private static final float spriteScale = 1f/235f;
 	
-	/**
-	 * Creates a new goal for the sheep
-	 * @param screen The screen to attach to
-	 * @param x The x coordinate of the goal
-	 * @param y The y coordinate of the goal
-	 */
-	public Goal(GameScreen screen, float x, float y) {
+    /**
+     * Create a coin
+     * @param screen The screen to attach this coin to
+     * @param x The x position to place the coin
+     * @param y The y position to place the coin
+     */
+	public Coin(GameScreen screen, float x, float y) {
+		// Setup the game object
 		super(screen, x, y);
 	}
 	
@@ -33,19 +34,18 @@ public class Goal extends GameObject {
 		Vector2 pos = this.body.getPosition();
 		
 		// Render the sprite
-		renderer.renderSprite("Tiles/door_openTop", pos.x+0.5f, pos.y+0.5f, spriteScale);
-		renderer.renderSprite("Tiles/door_openMid", pos.x+0.5f, pos.y-0.5f, spriteScale);
+		renderer.renderSprite("Items/coinGold", pos.x+0.5f, pos.y-0.5f, spriteScale);
 	}
 	
 	@Override
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(0.5f, 0.75f, new Vector2(0.5f, -0.5f), 0);
+		groundBox.setAsBox(0.25f, 0.25f, new Vector2(0.5f, -0.5f), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = groundBox;
+		fixtureDef.shape = groundBox;	
 		fixtureDef.isSensor = true;
 		
 		// Default to world collisions
@@ -59,7 +59,16 @@ public class Goal extends GameObject {
 		groundBox.dispose();
 	}
 	
-	
+	@Override
+	public void onCollide(GameObject obj) {
+		if(obj instanceof Goal) {
+			// Cleanup the sheep
+			this.cleanup();
+			
+			// Tell the user one got home
+			System.out.println("A sheep got home!");
+		}
+	}
 	
 	@Override
 	protected BodyType getBodyType() {
