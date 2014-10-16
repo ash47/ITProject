@@ -25,6 +25,9 @@ var physicsData = [];
 // Will contain tile data
 var tileData = [];
 
+// Will contain the visual data for what to draw in a given position
+var visualData = [];
+
 // This will contain the pixel data
 var pixelData = [];
 
@@ -121,6 +124,7 @@ function compileMap(mapName) {
         // Reset the physics data container
         physicsData = [];
         tileData = [];
+        visualData = [];
 
         // Process every position
         for(var y=0; y<levelHeight; y++) {
@@ -133,7 +137,8 @@ function compileMap(mapName) {
         // Create the map file
         mapFile = JSON.stringify({
             physicsData: physicsData,
-            tileData: tileData
+            tileData: tileData,
+            visualData: visualData
         });
 
         // Save the output
