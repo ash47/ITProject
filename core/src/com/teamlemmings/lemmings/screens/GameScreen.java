@@ -207,7 +207,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch.end();
 		
 		// DEBUG: Render the world
-		debugRenderer.render(world, cam.combined);
+		//debugRenderer.render(world, cam.combined);
 	}
 	
 	/**

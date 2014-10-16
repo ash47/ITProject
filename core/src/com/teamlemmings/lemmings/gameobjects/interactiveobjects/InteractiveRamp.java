@@ -225,5 +225,17 @@ public class InteractiveRamp extends InteractiveObject {
 				}
 			}
 		}
+		
+		// Grab our transformation
+		Transform trans = this.body.getTransform();
+		
+		// Grab our position
+		Vector2 pos = trans.getPosition();
+		
+		// Grab the current rotation
+		float rot = trans.getRotation();
+		
+		// Render the visual
+		renderer.renderSprite("Tiles/boxItem", pos.x, pos.y, this.width/256f, this.height/230f, (float) (rot/Math.PI*180), this.originX, this.originY);
 	}
 }
