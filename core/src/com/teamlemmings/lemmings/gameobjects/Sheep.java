@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
@@ -35,13 +36,10 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 1f;
+	private static final float scale = 1f/2560f;
 	
 	// The texture for this sheep
 	private Texture texture;
-	
-	// The sprite for this sheep
-    private Sprite sprite;
 	
     /**
      * Create a new sheep
@@ -52,23 +50,16 @@ public class Sheep extends GameObject {
 	public Sheep(GameScreen screen, float x, float y) {
 		// Setup the game object
 		super(screen, x, y);
-		
-		// We should replace this so we don't load the same texture 999 times
-		
-		texture = new Texture(Gdx.files.internal("sheepRight.png"));
-	    sprite = new Sprite(texture);
-	    sprite.setScale(scale/256f, scale/256f);
 	}
 	
 	@Override
-	public void render(float deltaTime, Batch batch) {
+	public void render(float deltaTime, Renderer renderer) {
 		// Grab our position and velocity
 		Vector2 vel = this.body.getLinearVelocity();
 		Vector2 pos = this.body.getPosition();
 		
 		// Render the sprite
-		sprite.setCenter(pos.x, pos.y);
-		sprite.draw(batch);
+		renderer.renderSprite("sheepRight", pos.x, pos.y, scale);
 		
 		// Make it walk
 
@@ -83,9 +74,6 @@ public class Sheep extends GameObject {
 		    	 if(xSpeed < minSpeed) {
 			    	 direction *= -1;
 			    	 timeWaited = 0;
-			    	 
-			    	 // Flip the sheep
-			    	 sprite.flip(true, false);
 			     }
 		     } else {
 		    	 // Allow the changing of direction

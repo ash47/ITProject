@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
@@ -62,15 +63,15 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The sprite batch renderer
 	private SpriteBatch batch;
-		
-	// The background for this level
-	private Texture background;
 	
 	// Background tile scale
 	private int bgScale = 5;
 	
 	// Our network
 	private Networking network;
+	
+	// The renderer
+	private Renderer renderer;
 		
 	/**
 	 * Create a new game screen
@@ -87,6 +88,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create the sprite batch
 		batch = new SpriteBatch();
+		
+		// Create the renderer
+		renderer = new Renderer(batch);
 		
 		// Create a physics world and debug renderer
 		// We need to replace the debug renderer with
@@ -113,10 +117,6 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Load up a level
 		loadLevel("level1");
-		
-		// Create a background
-		background = new Texture(Gdx.files.internal("bg_castle.png"));
-		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 	}
 	
 	/**
@@ -141,10 +141,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch.setProjectionMatrix(cam.combined);
 		batch.begin();
 		
-		batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
+		/*batch.draw(background, -cam.viewportWidth/2, -cam.viewportHeight,
 				  background.getWidth()*bgScale,
 				  background.getHeight()*bgScale,
-				  0, background.getWidth(), background.getHeight(), 0);
+				  0, background.getWidth(), background.getHeight(), 0);*/
 		
 		// Update the physics world
 		doPhysicsStep(delta);
@@ -169,7 +169,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				it.remove();
 			} else {
 				// Render the object
-				obj.render(delta, batch);
+				obj.render(delta, renderer);
 			}
 		}
 		
@@ -209,6 +209,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void dispose() {
 		// Cleanup resources
 		batch.dispose();
+		renderer.dispose();
 	}
 	
 	/**

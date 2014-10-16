@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.InteractiveObject;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
@@ -166,7 +167,7 @@ public class InteractiveRamp extends InteractiveObject {
 	}
 	
 	@Override
-	public void render(float deltaTime, Batch batch) {
+	public void render(float deltaTime, Renderer renderer) {
 		// How much we should change in this update
 		float change = deltaTime * this.rotationSpeed;
 		

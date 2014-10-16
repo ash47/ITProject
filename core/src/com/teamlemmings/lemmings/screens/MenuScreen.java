@@ -56,10 +56,10 @@ public class MenuScreen extends LemmingScreen {
         //Generate the background image
         batch.begin();
 		
-		batch.draw(background, 0, 0,
+		/*batch.draw(background, 0, 0,
 				  background.getWidth()*bgScale, 
 				  background.getHeight()*bgScale, 
-				  0, background.getWidth(), background.getHeight(), 0);		
+				  0, background.getWidth(), background.getHeight(), 0);	*/	
 		batch.end();
         stage.act();
         stage.draw();
@@ -102,8 +102,8 @@ public class MenuScreen extends LemmingScreen {
      	batch = new SpriteBatch();
         
         // Create a background
-        background = new Texture(Gdx.files.internal("bg_castle.png"));
-        background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+        //background = new Texture(Gdx.files.internal("bg_castle.png"));
+        //background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
     }
 
     @Override
