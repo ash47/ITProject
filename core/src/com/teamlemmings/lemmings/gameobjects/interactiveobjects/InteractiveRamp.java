@@ -52,8 +52,8 @@ public class InteractiveRamp extends InteractiveObject {
 	 * @param y The y coordinate of this object
 	 * @param width The width of the ramp
 	 * @param height The height of the ramp
-	 * @param The x origin to rotate about
-	 * @param The y origin to rotate about
+	 * @param originX The x origin to rotate about
+	 * @param originY The y origin to rotate about
 	 * @param initialAngle The initial rotate to start at (in radians)
 	 * @param finalAngle The final angle to finish at
 	 * @param clockwise Should we rotate clockwise or not?

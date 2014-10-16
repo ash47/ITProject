@@ -2,8 +2,8 @@ var PNG = require('png-js');
 var fs = require('fs');
 
 // The directory to save compiled maps into
-var srcDir = 'mapSRC/';
-var mapDir = '../android/assets/maps/';
+var srcDir = './mapSRC/';
+var mapDir = './../android/assets/maps/';
 
 // The size of a screen
 var levelWidth = 48;
@@ -34,6 +34,9 @@ var pixelData = [];
 // An array of rules to apply to build the map
 var processingRules = [];
 
+// Settings for the loaded map
+var mapSettings = {};
+
 // Adds a wall
 function addWall(x, y, verts) {
     // Store the wall
@@ -46,13 +49,23 @@ function addWall(x, y, verts) {
 }
 
 // Add a tile
-function addTile(x, y, sort) {
-    // Stores tile data
-    tileData.push({
+function addTile(x, y, sort, data) {
+    var toAdd = {
         x: x,
         y: y,
         sort: sort
-    });
+    };
+
+    // Check if there is data
+    if(data != null) {
+        // Copy the data in
+        for(var key in data) {
+            toAdd[key] = data[key];
+        }
+    }
+
+    // Stores tile data
+    tileData.push(toAdd);
 }
 
 // Adds a rule to the processing chain
@@ -121,6 +134,17 @@ function compileMap(mapName) {
         // Store the pixel data
         pixelData = pixels;
 
+        // Attempt to load map settings
+        mapSettings = {};
+        if(fs.existsSync(srcDir+mapName+'.json')) {
+            mapSettings = require(srcDir+mapName+'.json');
+        }
+
+        // Ensure fields exist
+        mapSettings.mapName = mapSettings.mapName || 'Untitled Map';
+        mapSettings.sheepToWin = mapSettings.sheepToWin || 1;
+        mapSettings.interactiveObjects = mapSettings.interactiveObjects || [];
+
         // Reset the physics data container
         physicsData = [];
         tileData = [];
@@ -180,6 +204,16 @@ function compileMap(mapName) {
             physicsData: physicsData,
             tileData: tileData,
             visualData: visualData
+        });
+
+        // Save Map Settings
+        fs.writeFile(srcDir+mapName+'.json', JSON.stringify(mapSettings), function(err) {
+            if(err) {
+                console.log('Error while saving settings '+mapName+':');
+                console.log(err);
+            } else {
+                console.log(mapName+' settings were saved!');
+            }
         });
 
         // Save the output
@@ -306,6 +340,7 @@ registerRule(function(x, y, rx, ry) {
     var sheepColor = toColor(0, 255, 0, 255);
     var goalColor = toColor(0, 255, 255, 255);
     var coinColor = toColor(255, 255, 0, 255);
+    var interactiveColor = toColor(255, 0, 0, 255);
 
     // Check for objects at the given position
     if(shapeGoal.match(rx, ry, goalColor)) {
@@ -317,6 +352,49 @@ registerRule(function(x, y, rx, ry) {
     } else if(shapeCoin.match(rx, ry, coinColor)) {
         // Add the sheep
         addTile(x, y, 'coin');
+    } else if(shapeBlockFull.match(rx, ry, interactiveColor)) {
+        // Grab settings for this object
+        var settings = {
+            sort: 'ramp',
+            width: 1,
+            height: 1,
+            x: x,
+            y: y,
+            originX: 0,
+            originY: 0,
+            initialAngle: 0,
+            finalAngle: 3.14,
+            clockwise: true
+        };
+
+        var found = null;
+
+        for(var key in mapSettings.interactiveObjects) {
+            var io = mapSettings.interactiveObjects[key];
+
+            // Is this the one we are looking at?
+            if(io.x == x && io.y == y) {
+                // Found it
+                found = key;
+
+                // Yep, copy over settings
+                for(var kk in io) {
+                    settings[kk] = io[kk];
+                }
+
+                break;
+            }
+        }
+
+        // Update the settings file
+        if(found != null) {
+            mapSettings.interactiveObjects[found] = settings;
+        } else {
+            mapSettings.interactiveObjects.push(settings);
+        }
+
+        // Add the sheep
+        addTile(x, y, 'interactive', settings);
     }
 });
 
