@@ -43,8 +43,12 @@ public class Renderer {
 	}
 	
 	public void renderSprite(String name, float x, float y, float scale) {
+		// Find and validate the region
+		AtlasRegion region = textureAtlas.findRegion(name);
+		if(region == null) return;
+		
 		// Change the sprite
-		sprite.setRegion(textureAtlas.findRegion(name));
+		sprite.setRegion(region);
 		
 		// Set the scale
 		sprite.setScale(scale);

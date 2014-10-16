@@ -55,7 +55,11 @@ public class Sheep extends GameObject {
 		Vector2 pos = this.body.getPosition();
 		
 		// Render the sprite
-		renderer.renderSprite("sheepRight", pos.x, pos.y, spriteScale);
+		if(direction == 1) {
+			renderer.renderSprite("sheepRight", pos.x, pos.y, spriteScale);
+		} else {
+			renderer.renderSprite("sheepLeft", pos.x, pos.y, spriteScale);
+		}
 		
 		// Make it walk
 

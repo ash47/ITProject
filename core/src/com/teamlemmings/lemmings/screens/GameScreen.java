@@ -77,7 +77,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private String[] visualArray;
 	
 	// The scale to render the world at
-	private float worldScale = 1/256f;
+	private float worldScale = 1 / 235f;
 		
 	/**
 	 * Create a new game screen
@@ -159,8 +159,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				// Should we render something?
 				if(!image.equals("")) {
 					// Render the sprite
-					System.out.println(image);
-					renderer.renderSprite("Tiles/grassMid", x+0.5f, -y-0.5f, worldScale);
+					renderer.renderSprite(image, x+0.5f, -y-0.5f, worldScale);
 				}
 			}
 		}

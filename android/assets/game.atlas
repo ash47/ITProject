@@ -1,12 +1,19 @@
 
 game.png
-size: 258,235
+size: 516,235
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-sheepRight
+sheepLeft
   rotate: false
   xy: 2, 2
+  size: 256, 233
+  orig: 256, 233
+  offset: 0, 0
+  index: -1
+sheepRight
+  rotate: false
+  xy: 260, 2
   size: 256, 233
   orig: 256, 233
   offset: 0, 0

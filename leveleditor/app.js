@@ -141,6 +141,40 @@ function compileMap(mapName) {
             }
         }
 
+        // Add the dirt
+        for(var y=1; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                // Grab the image
+                var image = visualData[x + y*levelWidth];
+
+                var imageAbove = visualData[x + (y-1)*levelWidth];
+
+                if(image == 'Tiles/grassMid' && imageAbove.indexOf('grass') != -1) {
+                    if(imageAbove == 'Tiles/grassHillRight') {
+                        visualData[x + y*levelWidth] = 'Tiles/grassHillRight2';
+                    } else if(imageAbove == 'Tiles/grassHillLeft') {
+                        visualData[x + y*levelWidth] = 'Tiles/grassHillLeft2';
+                    } else {
+                        visualData[x + y*levelWidth] = 'Tiles/grassCenter';
+                    }
+                }
+            }
+        }
+
+        // Add the rounded edges
+        /*for(var y=0; y<levelHeight; y++) {
+            for(var x=0; x<levelWidth; x++) {
+                // Grab the image
+                var image = visualData[x + y*levelWidth];
+
+                var imageAbove = visualData[x + (y-1)*levelWidth];
+
+                if(image == 'Tiles/grassMid' && imageAbove == 'Tiles/grassMid') {
+                    visualData[x + y*levelWidth] = 'Tiles/grassCenter';
+                }
+            }
+        }*/
+
         // Create the map file
         mapFile = JSON.stringify({
             physicsData: physicsData,
@@ -226,6 +260,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [0, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassHillRight';
     } else if(shapeRampUpRight.match(rx, ry, wallColor)) {
         // The size of the wall
         wallWidth = tileWidth;
@@ -233,6 +270,9 @@ registerRule(function(x, y, rx, ry) {
 
         // Add the wall
         addWall(x, y, [wallWidth, 0, wallWidth, -wallHeight, 0, -wallHeight]);
+
+        // Add the visual part
+        visualData[x+y*levelWidth] = 'Tiles/grassHillLeft';
     } else {
         // Handle raw data (hopefully they don't have too much!)
 

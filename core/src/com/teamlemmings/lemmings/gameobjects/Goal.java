@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
@@ -13,6 +14,9 @@ import com.teamlemmings.lemmings.screens.GameScreen;
  *
  */
 public class Goal extends GameObject {
+	// Scale of the sprite
+	private static final float spriteScale = 1f/235f;
+	
 	/**
 	 * Creates a new goal for the sheep
 	 * @param screen The screen to attach to
@@ -24,10 +28,20 @@ public class Goal extends GameObject {
 	}
 	
 	@Override
+	public void render(float deltaTime, Renderer renderer) {
+		// Grab our position
+		Vector2 pos = this.body.getPosition();
+		
+		// Render the sprite
+		renderer.renderSprite("Tiles/door_openTop", pos.x+0.5f, pos.y+0.5f, spriteScale);
+		renderer.renderSprite("Tiles/door_openMid", pos.x+0.5f, pos.y-0.5f, spriteScale);
+	}
+	
+	@Override
 	protected void createFixture() {
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(0.5f, 0.5f, new Vector2(0.5f, -0.5f), 0);
+		groundBox.setAsBox(0.5f, 0.75f, new Vector2(0.5f, -0.5f), 0);
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
@@ -44,6 +58,8 @@ public class Goal extends GameObject {
 		// Clean up after ourselves
 		groundBox.dispose();
 	}
+	
+	
 	
 	@Override
 	protected BodyType getBodyType() {
