@@ -62,7 +62,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private int viewportY = 27;
 	
 	// The sprite batch renderer
-	private SpriteBatch batch;
+	public SpriteBatch batch;
 	
 	// Background tile scale
 	private int bgScale = 5;
@@ -90,7 +90,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch = new SpriteBatch();
 		
 		// Create the renderer
-		renderer = new Renderer(batch);
+		renderer = new Renderer(batch, this);
 		
 		// Create a physics world and debug renderer
 		// We need to replace the debug renderer with
@@ -388,5 +388,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 				new Goal(this, left+x, top-y);
 			}
 		}
+	}
+	
+	public SpriteBatch getBatch() {
+		return this.batch;
 	}
 }

@@ -1,9 +1,5 @@
 package com.teamlemmings.lemmings.gameobjects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -36,10 +32,10 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 1f/2560f;
+	private static final float scale = 1f;
 	
-	// The texture for this sheep
-	private Texture texture;
+	// Scale of the sprite
+	private static final float spriteScale = scale/256f;
 	
     /**
      * Create a new sheep
@@ -59,7 +55,7 @@ public class Sheep extends GameObject {
 		Vector2 pos = this.body.getPosition();
 		
 		// Render the sprite
-		renderer.renderSprite("sheepRight", pos.x, pos.y, scale);
+		renderer.renderSprite("sheepRight", pos.x, pos.y, spriteScale);
 		
 		// Make it walk
 
@@ -80,12 +76,6 @@ public class Sheep extends GameObject {
 		    	 timeWaited += deltaTime;
 		     }
 		}
-	}
-	
-	@Override
-	public void dispose() {
-		// Cleanup texture
-		texture.dispose();
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
  * This class handles image rendering
@@ -21,11 +22,15 @@ public class Renderer {
 	// The batch we will be rendering to
 	private SpriteBatch batch;
 	
+	private GameScreen screen;
+	
 	/**
 	 * Creates a new renderer
 	 * @param batch The sprite batch to render to
 	 */
-	public Renderer(SpriteBatch batch) {
+	public Renderer(SpriteBatch batch, GameScreen screen) {
+		this.screen = screen;
+		
 		// Store the batch
 		this.batch = batch;
 		
@@ -41,14 +46,14 @@ public class Renderer {
 		// Change the sprite
 		sprite.setRegion(textureAtlas.findRegion(name));
 		
-		// Set the position
-		sprite.setPosition(x, y);
-		
 		// Set the scale
-		//sprite.scale(scale);
+		sprite.setScale(scale);
+		
+		// Set the position
+		sprite.setCenter(x, y);
 		
 		// Render the sprite
-		sprite.draw(batch);
+		sprite.draw(screen.batch);
 	}
 	
 	/**
