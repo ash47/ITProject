@@ -45,7 +45,7 @@ public class Coin extends GameObject {
 		
 		// Create a fixture definition to apply our shape to it
 		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = groundBox;
+		fixtureDef.shape = groundBox;	
 		fixtureDef.isSensor = true;
 		
 		// Default to world collisions

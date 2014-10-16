@@ -97,7 +97,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		batch = new SpriteBatch();
 		
 		// Create the renderer
-		renderer = new Renderer(batch, this);
+		renderer = new Renderer(batch);
 		
 		// Create a physics world and debug renderer
 		// We need to replace the debug renderer with
