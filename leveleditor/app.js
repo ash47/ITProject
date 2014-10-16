@@ -230,6 +230,14 @@ var shapeSheep = new shape(4, 4, [
     0, 1, 1, 0
 ]);
 
+// A coin
+var shapeCoin = new shape(4, 4, [
+    0, 0, 0, 0,
+    0, 1, 1, 0,
+    0, 1, 1, 0,
+    0, 0, 0, 0
+]);
+
 // The goal
 shapeGoal = shapeBlockFull;
 
@@ -305,6 +313,9 @@ registerRule(function(x, y, rx, ry) {
     } else if(shapeSheep.match(rx, ry, sheepColor)) {
         // Add the sheep
         addTile(x, y, 'sheep');
+    } else if(shapeCoin.match(rx, ry, sheepColor)) {
+        // Add the sheep
+        addTile(x, y, 'coin');
     }
 });
 
