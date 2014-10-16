@@ -305,6 +305,7 @@ registerRule(function(x, y, rx, ry) {
     // The color of things
     var sheepColor = toColor(0, 255, 0, 255);
     var goalColor = toColor(0, 255, 255, 255);
+    var coinColor = toColor(255, 255, 0, 255);
 
     // Check for objects at the given position
     if(shapeGoal.match(rx, ry, goalColor)) {
@@ -313,7 +314,7 @@ registerRule(function(x, y, rx, ry) {
     } else if(shapeSheep.match(rx, ry, sheepColor)) {
         // Add the sheep
         addTile(x, y, 'sheep');
-    } else if(shapeCoin.match(rx, ry, sheepColor)) {
+    } else if(shapeCoin.match(rx, ry, coinColor)) {
         // Add the sheep
         addTile(x, y, 'coin');
     }

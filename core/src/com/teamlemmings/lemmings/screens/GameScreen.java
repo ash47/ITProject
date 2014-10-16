@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
 import com.teamlemmings.lemmings.Renderer;
+import com.teamlemmings.lemmings.gameobjects.Coin;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
@@ -407,6 +408,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			} else if(sort.equals("goal")) {
 				// Create a wall
 				new Goal(this, left+x, top-y);
+			} else if(sort.equals("coin")) {
+				// Create a wall
+				new Coin(this, left+x, top-y);
 			}
 		}
 		

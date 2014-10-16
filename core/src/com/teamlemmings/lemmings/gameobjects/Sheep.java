@@ -115,6 +115,12 @@ public class Sheep extends GameObject {
 			
 			// Tell the user one got home
 			System.out.println("A sheep got home!");
+		} else if(obj instanceof Coin) {
+			// Cleanup coin
+			obj.cleanup();
+			
+			// Add to our score
+			System.out.println("Got a coin!");
 		}
 	}
 }
