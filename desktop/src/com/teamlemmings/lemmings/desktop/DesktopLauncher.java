@@ -2,14 +2,16 @@ package com.teamlemmings.lemmings.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.teamlemmings.lemmings.Lemmings;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		/*Settings settings = new Settings();
+		Settings settings = new Settings();
 	    settings.maxWidth = 512;
 	    settings.maxHeight = 512;
-	    TexturePacker.process(settings, "../images", "../game-android/assets", "game");*/
+	    TexturePacker.process(settings, "../images", "../game-android/assets", "game");
 
 		
 		// Create a new config
