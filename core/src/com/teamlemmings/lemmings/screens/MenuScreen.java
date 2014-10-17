@@ -81,6 +81,7 @@ public class MenuScreen extends LemmingScreen {
         
         // Create the networking manager
         network = new Networking();
+        network.setMenuScreen(this);
         
         // Load up the main menu
         menuMain();
@@ -172,17 +173,76 @@ public class MenuScreen extends LemmingScreen {
             btn.addListener(new ClickListener(){
         	    @Override
         	    public void clicked(InputEvent event, float x, float y) {
-        	    	ms.loadLevel(mapName);
+        	    	//ms.loadLevel(mapName);
+        	    	network.makeLobby(mapName);
         	    }
         	});
             table.add(btn).size(150,60).padBottom(20).row();
         }
     }
     
-    
+    /**
+     * Creates a lobby for the given map
+     * @param mapName The map to make a lobby for
+     */
     public void createLobby(String mapName) {
     	// Create the server
     	network.makeLobby(mapName);
+    }
+    
+    /**
+     * Shows the lobby menu
+     */
+    public void menuLobby() {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Back
+        TextButton btn = new TextButton("Back", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	if(ms.network.isServer()) {
+    	    		// Go back to the map selection screen
+        	    	ms.menuMaps();
+        	    	
+        	    	// Cleanup network connection
+        	    	ms.network.closeServer();
+    	    	} else {
+    	    		// Go back to the find games screen
+    	    		ms.menuFindGames();
+    	    		
+    	    		// Cleanup client
+    	    		ms.network.disconnectClient();
+    	    	}
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Add list of players
+        for(String player : ms.network.lobby.players) {
+        	if(player != null) {
+        		btn = new TextButton(player, skin);
+            	table.add(btn).size(150,60).padBottom(20).row();
+        	}
+        }
+        
+        // Workout how many players are needed
+        int playersNeeded = ms.network.lobby.totalScreens - ms.network.lobby.connectedPlayers;
+        
+        // Can they start the game?
+        if(playersNeeded <= 0) {
+        	// Start game
+        	btn = new TextButton("Start", skin);
+        	table.add(btn).size(150,60).padBottom(20).row();
+        } else {
+        	// Nope, tell them how many are needed
+        	btn = new TextButton("Waiting for "+playersNeeded+" players", skin);
+        	table.add(btn).size(150,60).padBottom(20).row();
+        }
     }
     
     /**

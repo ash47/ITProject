@@ -30,7 +30,7 @@ public class Networking {
 	private boolean inLobby = false;
 	
 	// Lobby info
-	private NetworkLobby lobby;
+	public NetworkLobby lobby;
 	
 	// The menu we are attached to
 	private MenuScreen menuScreen;
@@ -64,12 +64,8 @@ public class Networking {
 	 * @return If a server was created
 	 */
 	public boolean makeLobby(String mapName) {
-		// Check if we have already started
-		if(server != null) {
-			// Close server
-			server.close();
-			server.stop();
-		}
+		// Close any existing servers
+		closeServer();
 		
 		// Tell the user what is going on
 		System.out.println("Attempting to start a server...");
@@ -85,13 +81,36 @@ public class Networking {
             		return null;
             	}
             	
-            	// Create the connection
-            	LemmingConnection con = new LemmingConnection();
-            	con.screenNumber = lobby.connectedPlayers+1;
-            	
             	// Increase the number of connected players
             	lobby.connectedPlayers++;
             	
+            	// The slot number this player will be allocated into
+            	int slotNumber = -1;
+            	
+            	// Find slot for this player
+            	for(int i=0; i<lobby.totalScreens; i++) {
+            		if(lobby.players[i] == null) {
+            			slotNumber = i;
+            		}
+            	}
+            	
+            	// Did we find a slot?
+            	if(slotNumber == -1) {
+            		return null;
+            	}
+            	
+            	// Create the connection
+            	LemmingConnection con = new LemmingConnection();
+            	con.screenNumber = slotNumber;
+            	con.playerName = "Player "+(slotNumber+1);
+            	
+            	// Store this slot as taken
+            	lobby.players[slotNumber] = con.playerName; 
+            	
+            	// Update the menu
+            	menuScreen.menuLobby();
+            	
+            	// Return the connection
                 return con;
             }
 	    };
@@ -136,6 +155,32 @@ public class Networking {
 			
 			// Doh!
 			return false;
+		}
+	}
+	
+	/**
+	 * Closes the server
+	 */
+	public void closeServer() {
+		// Check if we have already started
+		if(server != null) {
+			// Close server
+			server.close();
+			server.stop();
+			server = null;
+		}
+	}
+	
+	/**
+	 * Disconnects client
+	 */
+	public void disconnectClient() {
+		// Check if we have a client
+		if(client != null) {
+			// Kill it
+			client.close();
+			client.stop();
+			client = null;
 		}
 	}
 	
