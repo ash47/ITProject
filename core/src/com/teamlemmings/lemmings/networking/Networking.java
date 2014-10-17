@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.Listener;
 import com.teamlemmings.lemmings.MapInfo;
+import com.teamlemmings.lemmings.screens.GameScreen;
 import com.teamlemmings.lemmings.screens.MenuScreen;
 
 public class Networking {
@@ -34,6 +35,9 @@ public class Networking {
 	
 	// The menu we are attached to
 	private MenuScreen menuScreen;
+	
+	// Our screen number
+	private int screenNumber;
 	
 	/**
 	 * Handles all networking
@@ -61,6 +65,7 @@ public class Networking {
 	
 	/**
 	 * Creates a lobby if not already connected or hosting
+	 * @param mapName The name of the map to start a lobby for
 	 * @return If a server was created
 	 */
 	public boolean makeLobby(String mapName) {
@@ -147,6 +152,9 @@ public class Networking {
 			lobby.players = new String[info.totalScreens];
 			lobby.connectedPlayers = 1;
 			
+			// Set our screen number
+			screenNumber = 0;
+			
 			// Store our name
 			lobby.players[0] = playerName;
 			
@@ -164,6 +172,11 @@ public class Networking {
 		}
 	}
 	
+	/**
+	 * Attempts to join the given lobby
+	 * @param address The IP of the server to connect to
+	 * @return If it connected or not
+	 */
 	public boolean joinLobby(String address) {
 		// Disconnect any old clients
 		disconnectClient();
@@ -200,7 +213,26 @@ public class Networking {
 			// Failire
 			return false;
 		}
-	    
+	}
+	
+	/**
+	 * Starts the game
+	 */
+	public void startGame() {
+		// Ensure conditions are correct to start
+		if(!inLobby) return;
+		
+		// Tell clients if we are the server
+		if(isServer) {
+			// Tell the clients to load their screens
+			server.sendToAllTCP(new NetworkStartGame());
+		}
+		
+		// We are no longer in the lobby
+		inLobby = false;
+		
+		// Create the game screen
+		menuScreen.loadLevel(lobby.mapName, screenNumber);
 	}
 	
 	/**
@@ -236,6 +268,8 @@ public class Networking {
 		kryo.register(NetworkLobby.class);
 		kryo.register(NetworkRequestLobby.class);
 		kryo.register(String[].class);
+		kryo.register(NetworkPlayerInfo.class);
+		kryo.register(NetworkStartGame.class);
 	}
 	
 	/**
@@ -256,10 +290,18 @@ public class Networking {
 	    		   return;
 	    	   }
 	    	   
+	    	   // Grab a lemming connection
+	    	   LemmingConnection con = (LemmingConnection) connection;
+	    	   
 	    	   // Process messages
 	    	   if (object instanceof NetworkRequestLobby) {
 	    		   // Send out the info
 	    		   connection.sendTCP(lobby);
+	    		   
+	    		   // Send them their slot number
+	    		   NetworkPlayerInfo info = new NetworkPlayerInfo();
+	    		   info.screenNumber = con.screenNumber;
+	    		   connection.sendTCP(info);
 	    	   }
 	       }
 	    });
@@ -272,12 +314,22 @@ public class Networking {
 		// Listen for messages
 		client.addListener(new Listener() {
 	       public void received (Connection connection, Object object) {
-	    	   if (object instanceof NetworkLobby) {
+	    	   if(object instanceof NetworkLobby) {
 	    		   // Store the lobby
 	    		   lobby = (NetworkLobby) object;
 	    		   
 	    		   // Update menu
 	    		   menuScreen.menuLobby();
+	    	   } else if(object instanceof NetworkPlayerInfo) {
+	    		   // Grab the info
+	    		   NetworkPlayerInfo info = (NetworkPlayerInfo) object;
+	    		   
+	    		   System.out.println("I am slot "+info.screenNumber);
+	    		   
+	    		   screenNumber = info.screenNumber;
+	    	   } else if(object instanceof NetworkStartGame) {
+	    		   // Server wants to start the game
+	    		   startGame();
 	    	   }
 	       }
 		});

@@ -225,12 +225,17 @@ public class MenuScreen extends LemmingScreen {
         // Add list of players
         for(String player : ms.network.lobby.players) {
         	if(player != null) {
+        		// A player
         		btn = new TextButton(player, skin);
+            	table.add(btn).size(150,60).padBottom(20).row();
+        	} else {
+        		// An empty slot
+        		btn = new TextButton("<awaiting player>", skin);
             	table.add(btn).size(150,60).padBottom(20).row();
         	}
         }
         
-        // Workout how many players are needed
+        // Work out how many players are needed
         int playersNeeded = ms.network.lobby.totalScreens - ms.network.lobby.connectedPlayers;
         
         // Can they start the game?
@@ -238,6 +243,13 @@ public class MenuScreen extends LemmingScreen {
         	if(ms.network.isServer()) {
 	        	// Start game
 	        	btn = new TextButton("Start", skin);
+	        	btn.addListener(new ClickListener(){
+	        	    @Override
+	        	    public void clicked(InputEvent event, float x, float y) {
+	        	    	// Starts the game
+	        	    	ms.network.startGame();
+	        	    }
+	        	});
 	        	table.add(btn).size(150,60).padBottom(20).row();
         	} else {
         		btn = new TextButton("Waiting for host", skin);
@@ -303,12 +315,12 @@ public class MenuScreen extends LemmingScreen {
      * Loads the given level
      * @param mapName The level to load
      */
-    public void loadLevel(String mapName) {
+    public void loadLevel(String mapName, int screenNumber) {
     	// Create a new game screen
     	GameScreen gs = new GameScreen(this.game);
     	
     	// Load up the correct map
-    	gs.loadLevel(mapName);
+    	gs.loadLevel(mapName, screenNumber);
     	
     	// Change to that screen
     	((Game)Gdx.app.getApplicationListener()).setScreen(gs);

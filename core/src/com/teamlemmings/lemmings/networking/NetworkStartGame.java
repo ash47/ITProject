@@ -1,9 +1,9 @@
 package com.teamlemmings.lemmings.networking;
 
 /**
- * Client is asking for lobby info
+ * The server is starting the game
  * @author aschmid
  *
  */
-public class NetworkRequestLobby {
+public class NetworkStartGame {
 }
