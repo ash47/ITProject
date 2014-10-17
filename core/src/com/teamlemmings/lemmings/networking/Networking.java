@@ -23,6 +23,9 @@ public class Networking {
 	// Are we the server?
 	private boolean isServer = false;
 	
+	// Are we in the lobby
+	private boolean inLobby = false;
+	
 	/**
 	 * Handles all networking
 	 */
@@ -53,7 +56,11 @@ public class Networking {
 	 */
 	public boolean makeServer() {
 		// Check if we have already started
-		if(started) return false;
+		if(server != null) {
+			// Close server
+			server.close();
+			server.stop();
+		}
 		
 		// Tell the user what is going on
 		System.out.println("Attempting to start a server...");
@@ -76,6 +83,11 @@ public class Networking {
 			
 			// We are the server
 			isServer = true;
+			
+			// We are in a lobby
+			inLobby = true;
+			
+			
 			
 			// Success
 			return true;

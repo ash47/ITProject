@@ -129,6 +129,9 @@ public class MenuScreen extends LemmingScreen {
         table.add(btn).size(150,60).padBottom(20).row();
     }
     
+    /**
+     * Shows the map selection screen
+     */
     public void menuMaps() {
     	// Clear the menu
     	table.clear();
@@ -174,6 +177,11 @@ public class MenuScreen extends LemmingScreen {
         	});
             table.add(btn).size(150,60).padBottom(20).row();
         }
+    }
+    
+    
+    public void createLobby(String mapName) {
+    	
     }
     
     /**
