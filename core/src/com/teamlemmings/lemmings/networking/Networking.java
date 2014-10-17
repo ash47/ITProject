@@ -2,6 +2,7 @@ package com.teamlemmings.lemmings.networking;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.List;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
@@ -30,53 +31,20 @@ public class Networking {
 	}
 	
 	/**
-	 * Finds and connects to a server, if non exist, it makes one
-	 * @param true if we connected to a server, or started a server
+	 * Finds and returns a list of servers
 	 */
-	public boolean findServer() {
-		// Check if we have already started
-		if(started) return false;
-		
+	public List<InetAddress> findServers() {
 		// Tell the user to wait
 		System.out.println("Searching for a server...");
 		
-		// Create a client
-		client = new Client();
-		client.start();
+		// Ensure we have a client
+		if(client == null) {
+			client = new Client();
+			client.start();
+		}
 		
 		// Search for servers
-		InetAddress address = client.discoverHost(54777, 1500);
-		
-	    // Did we find a server?
-	    if(address != null) {
-	    	try {
-	    		// Try to connect
-				client.connect(5000, address, 54555, 54777);
-				
-				// Register classes
-				registerClasses(client.getKryo());
-				
-				// Connected!
-				started = true;
-				
-				// We are not the server
-				isServer = false;
-				
-				// Request the level data
-				requestLevelData();
-				
-				// Success
-				return true;
-			} catch (IOException e1) {
-				// Tell the user
-				System.out.println("Failed to find a server, starting one...");
-			}
-	    }
-	    
-	    // Failed to find / connect to a server
-	    
-	    // Make a server
-		return makeServer();
+		return client.discoverHosts(54777, 1500);
 	}
 	
 	/**

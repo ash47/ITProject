@@ -90,10 +90,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public GameScreen(Game game) {
 		super(game);
-	}
-	
-	@Override
-	public void show () {
+		
 		// Create the list to store game objects into
 		gameObjects = new ArrayList<GameObject>();
 		
@@ -117,7 +114,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create the collision handler
 		world.setContactListener(this);
-		
+	}
+	
+	@Override
+	public void show () {
 		// Create the gesture controller
 		GestureProcessor ges = new GestureProcessor(this);
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
@@ -127,7 +127,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		//network.findServer();
 		
 		// Load up a level
-		loadLevel("level1");
+		//loadLevel("level1");
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
@@ -368,10 +368,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Load the json data
 		JSONObject json = new JSONObject(jsonData);
 		
+		// Grab data for my screen
+		JSONObject myScreen = json.getJSONObject("1");
+		
 		// Grab the physics data
-		JSONArray physicsData = json.getJSONArray("physicsData");
-		JSONArray tileData = json.getJSONArray("tileData");
-		JSONArray visualData = json.getJSONArray("visualData");
+		JSONArray physicsData = myScreen.getJSONArray("physicsData");
+		JSONArray tileData = myScreen.getJSONArray("tileData");
+		JSONArray visualData = myScreen.getJSONArray("visualData");
 		
 		// Spawn the physics meshes
 		for(int i=0; i<physicsData.length(); i++) {

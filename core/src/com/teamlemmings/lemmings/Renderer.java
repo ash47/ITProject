@@ -38,6 +38,13 @@ public class Renderer {
         sprite = new Sprite(region);
 	}
 	
+	/**
+	 * Renders the given sprite
+	 * @param name The name of the sprite, look in Images/*, where * is the name / path to the image you want to use, including slashes
+	 * @param x The x position to draw it at
+	 * @param y The y position to draw it at
+	 * @param scale The scale to render it at
+	 */
 	public void renderSprite(String name, float x, float y, float scale) {
 		// Find and validate the region
 		AtlasRegion region = textureAtlas.findRegion(name);
@@ -62,6 +69,17 @@ public class Renderer {
 		sprite.draw(this.batch);
 	}
 	
+	/**
+	 * 
+	 * @param name The name of the sprite, look in Images/*, where * is the name / path to the image you want to use, including slashes
+	 * @param x The x position to draw it at
+	 * @param y The y position to draw it at
+	 * @param scaleX The scale in the x direction
+	 * @param scaleY The scale in the y direction
+	 * @param rotation The rotation 
+	 * @param originX The x origin
+	 * @param originY The y origin
+	 */
 	public void renderSprite(String name, float x, float y, float scaleX, float scaleY, float rotation, float originX, float originY) {
 		// Find and validate the region
 		AtlasRegion region = textureAtlas.findRegion(name);
@@ -72,8 +90,6 @@ public class Renderer {
 		
 		// Update origin
 		sprite.setOrigin(0, 0);
-		
-		//sprite.setOrigin(0, sprite.getHeight());
 		
 		// Set the scale
 		sprite.setScale(scaleX, scaleY);
