@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.Listener;
 import com.teamlemmings.lemmings.MapInfo;
-import com.teamlemmings.lemmings.screens.GameScreen;
 import com.teamlemmings.lemmings.screens.MenuScreen;
 
 public class Networking {
@@ -37,7 +35,7 @@ public class Networking {
 	private MenuScreen menuScreen;
 	
 	// Our screen number
-	private int screenNumber;
+	public int screenNumber;
 	
 	/**
 	 * Handles all networking
@@ -56,7 +54,7 @@ public class Networking {
 		// Ensure we have a client
 		if(client == null) {
 			client = new Client();
-			client.start();
+			new Thread(client).start();
 		}
 		
 		// Search for servers
@@ -122,16 +120,13 @@ public class Networking {
                 return con;
             }
 	    };
-	    server.start();
+	    new Thread(server).start();
 	    try {
 	    	// Attempt to bind to the given ports
 			server.bind(54555, 54777);
 			
 			// Register classes
 			registerClasses(server.getKryo());
-			
-			// Setup the listener
-			listenForMessagesServer();
 			
 			// YAY!
 			started = true;
@@ -161,6 +156,9 @@ public class Networking {
 			// Change to the lobby screen
 			menuScreen.menuLobby();
 			
+			// Setup the listener
+			listenForMessagesServer();
+			
 			// Success
 			return true;
 		} catch (IOException e) {
@@ -181,10 +179,11 @@ public class Networking {
 		// Disconnect any old clients
 		disconnectClient();
 		
-		// Create new client
-		client = new Client();
-		new Thread(client).start();
-	    //client.start();
+		// Ensure we have a client
+		if(client == null) {
+			client = new Client();
+			new Thread(client).start();
+		}
 	    
 	    // Attempt to connect
 	    try {
@@ -232,7 +231,7 @@ public class Networking {
 		inLobby = false;
 		
 		// Create the game screen
-		menuScreen.loadLevel(lobby.mapName, screenNumber);
+		menuScreen.loadMapNextTick();
 	}
 	
 	/**
@@ -267,9 +266,9 @@ public class Networking {
 	private static void registerClasses(Kryo kryo) {
 		kryo.register(NetworkLobby.class);
 		kryo.register(NetworkRequestLobby.class);
-		kryo.register(String[].class);
 		kryo.register(NetworkPlayerInfo.class);
 		kryo.register(NetworkStartGame.class);
+		kryo.register(String[].class);
 	}
 	
 	/**
@@ -282,8 +281,6 @@ public class Networking {
 		// Listen for messages
 		server.addListener(new Listener() {
 	       public void received (Connection connection, Object object) {
-	    	   System.out.println("GOT A MESSAGE!");
-	    	   
 	    	   // Ensure they are allowed to talk to us
 	    	   if(!(connection instanceof LemmingConnection)) {
 	    		   connection.close();
@@ -307,6 +304,9 @@ public class Networking {
 	    });
 	}
 	
+	/**
+	 * Called to tell the client to listen for messages
+	 */
 	public void listenForMessagesClient() {
 		// Stop from listening if not client
 		if(!started || isServer) return;
@@ -324,8 +324,6 @@ public class Networking {
 	    		   // Grab the info
 	    		   NetworkPlayerInfo info = (NetworkPlayerInfo) object;
 	    		   
-	    		   System.out.println("I am slot "+info.screenNumber);
-	    		   
 	    		   screenNumber = info.screenNumber;
 	    	   } else if(object instanceof NetworkStartGame) {
 	    		   // Server wants to start the game
@@ -342,18 +340,6 @@ public class Networking {
 	 */
 	public boolean isServer() {
 		return this.isServer;
-	}
-	
-	/**
-	 * Sends a request to the server for the level data
-	 */
-	public void requestLevelData() {
-		// Don't do anything if we shoudln't
-		if(!started || isServer) return;
-		
-		// Send out the request
-		NetworkingRequest r = new NetworkingRequest();
-		client.sendTCP(r);
 	}
 	
 	/**

@@ -55,6 +55,9 @@ public class MenuScreen extends LemmingScreen {
 	// The networking manager
 	private Networking network;
 	
+	// Should we load the map on the next tick
+	private boolean loadNextTick = false;
+	
     @Override
     public void show() {
     	// Load the skin
@@ -326,6 +329,13 @@ public class MenuScreen extends LemmingScreen {
     	((Game)Gdx.app.getApplicationListener()).setScreen(gs);
     }
     
+    /**
+     * Tells the menu to load the map on the next tick
+     */
+    public void loadMapNextTick() {
+    	loadNextTick = true;
+    }
+    
     @Override
     public void render(float delta) {
         // Clear the screen
@@ -345,6 +355,15 @@ public class MenuScreen extends LemmingScreen {
 		batch.end();
         stage.act();
         stage.draw();
+        
+        // Should we load the map?
+        if(loadNextTick) {
+        	// No longer need to load the map
+        	loadNextTick = false;
+        	
+        	// Load the map
+        	loadLevel(network.lobby.mapName, network.screenNumber);
+        }
     }
 
     @Override
@@ -369,5 +388,4 @@ public class MenuScreen extends LemmingScreen {
         stage.dispose();
         skin.dispose();
     }
-
 }

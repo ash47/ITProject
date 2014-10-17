@@ -443,7 +443,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		}
 	}
 	
-	public SpriteBatch getBatch() {
-		return this.batch;
+	/**
+	 * Connects this game to the game network
+	 * @param network The network to connect to
+	 */
+	public void setNetwork(Networking network) {
+		this.network = network;
 	}
 }
