@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.Listener;
+import com.teamlemmings.lemmings.MapInfo;
+import com.teamlemmings.lemmings.screens.MenuScreen;
 
 public class Networking {
 	// The server
@@ -25,6 +28,12 @@ public class Networking {
 	
 	// Are we in the lobby
 	private boolean inLobby = false;
+	
+	// Lobby info
+	private NetworkLobby lobby;
+	
+	// The menu we are attached to
+	private MenuScreen menuScreen;
 	
 	/**
 	 * Handles all networking
@@ -51,10 +60,10 @@ public class Networking {
 	}
 	
 	/**
-	 * Creates a server if not already connected or hosting
+	 * Creates a lobby if not already connected or hosting
 	 * @return If a server was created
 	 */
-	public boolean makeServer() {
+	public boolean makeLobby(String mapName) {
 		// Check if we have already started
 		if(server != null) {
 			// Close server
@@ -64,9 +73,28 @@ public class Networking {
 		
 		// Tell the user what is going on
 		System.out.println("Attempting to start a server...");
+		
+		// Our player's name
+		String playerName = "Player 1";
 	    
 		// Create a new server instance
-	    server = new Server();
+	    server = new Server() {
+            protected Connection newConnection () {
+                // Is there a spare slot?
+            	if(lobby.connectedPlayers >= lobby.totalScreens) {
+            		return null;
+            	}
+            	
+            	// Create the connection
+            	LemmingConnection con = new LemmingConnection();
+            	con.screenNumber = lobby.connectedPlayers+1;
+            	
+            	// Increase the number of connected players
+            	lobby.connectedPlayers++;
+            	
+                return con;
+            }
+	    };
 	    server.start();
 	    try {
 	    	// Attempt to bind to the given ports
@@ -87,7 +115,18 @@ public class Networking {
 			// We are in a lobby
 			inLobby = true;
 			
+			// Grab info on the map
+			MapInfo info = new MapInfo(mapName);
 			
+			// Create the lobby
+			lobby = new NetworkLobby();
+			lobby.mapName = info.mapName;
+			lobby.totalScreens = info.totalScreens;
+			lobby.players = new String[info.totalScreens];
+			lobby.connectedPlayers = 1;
+			
+			// Store our name
+			lobby.players[0] = playerName;
 			
 			// Success
 			return true;
@@ -103,8 +142,8 @@ public class Networking {
 	/**
 	 * Registers classes for networking
 	 */
-	private void registerClasses(Kryo kryo) {
-		
+	private static void registerClasses(Kryo kryo) {
+		kryo.register(NetworkLobby.class);
 	}
 	
 	/**
@@ -145,5 +184,13 @@ public class Networking {
 		// Send out the request
 		NetworkingRequest r = new NetworkingRequest();
 		client.sendTCP(r);
+	}
+	
+	/**
+	 * Attaches this to a menu screen
+	 * @param menuScreen The menu screen to attach to
+	 */
+	public void setMenuScreen(MenuScreen menuScreen) {
+		this.menuScreen = menuScreen;
 	}
 }

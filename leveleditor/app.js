@@ -154,7 +154,7 @@ function compiler() {
             }
 
             // Ensure fields exist
-            me.mapSettings.mapName = me.mapSettings.mapName || 'Untitled Map';
+            me.mapSettings.mapTitle = me.mapSettings.mapTitle || 'Untitled Map';
             me.mapSettings.sheepToWin = me.mapSettings.sheepToWin || 1;
             me.mapSettings.interactiveObjects = me.mapSettings.interactiveObjects || [];
 

@@ -181,7 +181,8 @@ public class MenuScreen extends LemmingScreen {
     
     
     public void createLobby(String mapName) {
-    	
+    	// Create the server
+    	network.makeLobby(mapName);
     }
     
     /**

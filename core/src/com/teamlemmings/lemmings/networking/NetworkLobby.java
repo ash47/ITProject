@@ -14,4 +14,7 @@ public class NetworkLobby {
 	
 	// An array of the players in this session
 	public String[] players;
+	
+	// The total number of players in the lobby
+	public int connectedPlayers;
 }
