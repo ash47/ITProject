@@ -230,7 +230,8 @@ function compiler() {
                     visualData: me.visualData
                 }, settings: {
                     mapName: me.mapSettings.mapName,
-                    sheepToWin: me.mapSettings.sheepToWin
+                    sheepToWin: me.mapSettings.sheepToWin,
+                    mapTitle: me.mapSettings.mapTitle
                 }
             });
         });

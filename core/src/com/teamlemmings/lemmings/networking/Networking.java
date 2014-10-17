@@ -110,6 +110,9 @@ public class Networking {
             	// Update the menu
             	menuScreen.menuLobby();
             	
+            	// Send the update to everyone
+            	server.sendToAllTCP(lobby);
+            	
             	// Return the connection
                 return con;
             }
@@ -123,7 +126,7 @@ public class Networking {
 			registerClasses(server.getKryo());
 			
 			// Setup the listener
-			listenForMessages();
+			listenForMessagesServer();
 			
 			// YAY!
 			started = true;
@@ -147,15 +150,53 @@ public class Networking {
 			// Store our name
 			lobby.players[0] = playerName;
 			
+			// Change to the lobby screen
+			menuScreen.menuLobby();
+			
 			// Success
 			return true;
 		} catch (IOException e) {
 			// Failure! GGWP
-			System.out.println("Failed to make a server!");
+			System.out.println("Failed to make a server: "+e.getMessage());
 			
 			// Doh!
 			return false;
 		}
+	}
+	
+	public boolean joinLobby(String address) {
+		// Disconnect any old clients
+		disconnectClient();
+		
+		// Create new client
+		Client client = new Client();
+	    client.start();
+	    
+	    // Attempt to connect
+	    try {
+	    	// Connect
+			client.connect(5000, address, 54555, 54777);
+			
+			// Settings
+			started = true;
+			isServer = false;
+			inLobby = true;
+			
+			// Handler client messages
+			listenForMessagesClient();
+			
+			// Ask for lobby info
+			client.sendTCP(new NetworkRequestLobby());
+			
+			// Success
+			return true;
+		} catch (IOException e) {
+			System.out.println("Failed to connect to "+address+": "+e.getMessage());
+			
+			// Failire
+			return false;
+		}
+	    
 	}
 	
 	/**
@@ -194,21 +235,38 @@ public class Networking {
 	/**
 	 * Listens for messages if we are the server
 	 */
-	private void listenForMessages() {
+	private void listenForMessagesServer() {
 		// Stop from listening if not the server
 		if(!started || !isServer) return;
 		
+		// Listen for messages
 		server.addListener(new Listener() {
 	       public void received (Connection connection, Object object) {
-	          if (object instanceof NetworkingRequest) {
-	        	  // Client asked for map data
-	        	  NetworkingRequest r = (NetworkingRequest)object;
-	        	  System.out.println("Client asked for the map data");
-
-	             // Send them some map data
+	          if (object instanceof NetworkRequestLobby) {
+	        	  // Send out the info
+	        	  connection.sendTCP(lobby);
 	          }
 	       }
 	    });
+	}
+	
+	public void listenForMessagesClient() {
+		// Stop from listening if not client
+		if(!started || isServer) return;
+		
+		// Listen for messages
+		client.addListener(new Listener() {
+	       public void received (Connection connection, Object object) {
+	          if (object instanceof NetworkLobby) {
+	        	  // Store the lobby
+	             lobby = (NetworkLobby) object;
+	             
+	             // Update menu
+	             menuScreen.menuLobby();
+	          }
+	       }
+		});
+		
 	}
 	
 	/**
