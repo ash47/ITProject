@@ -202,11 +202,20 @@ function compileMap(mapName) {
             }
         }*/
 
-        // Create the map file
-        mapFile = JSON.stringify({
+        var screen = {
             physicsData: physicsData,
             tileData: tileData,
             visualData: visualData
+        };
+
+        // Create the map file
+        mapFile = JSON.stringify({
+            // Settings
+            mapName: mapSettings.mapName,
+            sheepToWin: mapSettings.sheepToWin,
+
+            // Screens
+            1: screen
         });
 
         // Save Map Settings

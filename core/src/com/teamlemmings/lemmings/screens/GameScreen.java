@@ -368,10 +368,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Load the json data
 		JSONObject json = new JSONObject(jsonData);
 		
+		// Grab data for my screen
+		JSONObject myScreen = json.getJSONObject("1");
+		
 		// Grab the physics data
-		JSONArray physicsData = json.getJSONArray("physicsData");
-		JSONArray tileData = json.getJSONArray("tileData");
-		JSONArray visualData = json.getJSONArray("visualData");
+		JSONArray physicsData = myScreen.getJSONArray("physicsData");
+		JSONArray tileData = myScreen.getJSONArray("tileData");
+		JSONArray visualData = myScreen.getJSONArray("visualData");
 		
 		// Spawn the physics meshes
 		for(int i=0; i<physicsData.length(); i++) {
