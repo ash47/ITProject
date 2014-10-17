@@ -6,4 +6,6 @@ package com.teamlemmings.lemmings.networking;
  *
  */
 public class NetworkRequestLobby {
+	// Some value, so it can be registered as a class for networking
+	public int someValue;
 }

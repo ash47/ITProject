@@ -78,7 +78,7 @@ public class Networking {
             protected Connection newConnection () {
                 // Is there a spare slot?
             	if(lobby.connectedPlayers >= lobby.totalScreens) {
-            		return null;
+            		return new Connection();
             	}
             	
             	// Increase the number of connected players
@@ -96,7 +96,7 @@ public class Networking {
             	
             	// Did we find a slot?
             	if(slotNumber == -1) {
-            		return null;
+            		return new Connection();
             	}
             	
             	// Create the connection
@@ -169,8 +169,9 @@ public class Networking {
 		disconnectClient();
 		
 		// Create new client
-		Client client = new Client();
-	    client.start();
+		client = new Client();
+		new Thread(client).start();
+	    //client.start();
 	    
 	    // Attempt to connect
 	    try {
@@ -181,6 +182,9 @@ public class Networking {
 			started = true;
 			isServer = false;
 			inLobby = true;
+			
+			// Register classes
+			registerClasses(client.getKryo());
 			
 			// Handler client messages
 			listenForMessagesClient();
@@ -230,6 +234,8 @@ public class Networking {
 	 */
 	private static void registerClasses(Kryo kryo) {
 		kryo.register(NetworkLobby.class);
+		kryo.register(NetworkRequestLobby.class);
+		kryo.register(String[].class);
 	}
 	
 	/**
@@ -242,10 +248,19 @@ public class Networking {
 		// Listen for messages
 		server.addListener(new Listener() {
 	       public void received (Connection connection, Object object) {
-	          if (object instanceof NetworkRequestLobby) {
-	        	  // Send out the info
-	        	  connection.sendTCP(lobby);
-	          }
+	    	   System.out.println("GOT A MESSAGE!");
+	    	   
+	    	   // Ensure they are allowed to talk to us
+	    	   if(!(connection instanceof LemmingConnection)) {
+	    		   connection.close();
+	    		   return;
+	    	   }
+	    	   
+	    	   // Process messages
+	    	   if (object instanceof NetworkRequestLobby) {
+	    		   // Send out the info
+	    		   connection.sendTCP(lobby);
+	    	   }
 	       }
 	    });
 	}
@@ -257,13 +272,13 @@ public class Networking {
 		// Listen for messages
 		client.addListener(new Listener() {
 	       public void received (Connection connection, Object object) {
-	          if (object instanceof NetworkLobby) {
-	        	  // Store the lobby
-	             lobby = (NetworkLobby) object;
-	             
-	             // Update menu
-	             menuScreen.menuLobby();
-	          }
+	    	   if (object instanceof NetworkLobby) {
+	    		   // Store the lobby
+	    		   lobby = (NetworkLobby) object;
+	    		   
+	    		   // Update menu
+	    		   menuScreen.menuLobby();
+	    	   }
 	       }
 		});
 		

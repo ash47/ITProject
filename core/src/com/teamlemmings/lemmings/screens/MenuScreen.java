@@ -235,9 +235,14 @@ public class MenuScreen extends LemmingScreen {
         
         // Can they start the game?
         if(playersNeeded <= 0) {
-        	// Start game
-        	btn = new TextButton("Start", skin);
-        	table.add(btn).size(150,60).padBottom(20).row();
+        	if(ms.network.isServer()) {
+	        	// Start game
+	        	btn = new TextButton("Start", skin);
+	        	table.add(btn).size(150,60).padBottom(20).row();
+        	} else {
+        		btn = new TextButton("Waiting for host", skin);
+	        	table.add(btn).size(150,60).padBottom(20).row();
+        	}
         } else {
         	// Nope, tell them how many are needed
         	btn = new TextButton("Waiting for "+playersNeeded+" players", skin);
@@ -277,8 +282,18 @@ public class MenuScreen extends LemmingScreen {
         } else {
         	// Add all the servers
         	for(InetAddress address : servers) {
+        		// Grab the address
+        		final String adr = address.getHostAddress();
+        		
         		// Create the button
-        		btn = new TextButton(address.getHostAddress(), skin);
+        		btn = new TextButton(adr, skin);
+            	btn.addListener(new ClickListener(){
+            	    @Override
+            	    public void clicked(InputEvent event, float x, float y) {
+            	    	// Attempt to join the lobby
+            	    	network.joinLobby(adr);
+            	    }
+            	});
             	table.add(btn).size(150,60).padBottom(20).row();
         	}
         }

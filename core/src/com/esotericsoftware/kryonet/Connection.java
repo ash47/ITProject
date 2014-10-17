@@ -32,7 +32,7 @@ public class Connection {
 	private int returnTripTime;
 	volatile boolean isConnected;
 
-	protected Connection () {
+	public Connection () {
 	}
 
 	void initialize (Serialization serialization, int writeBufferSize, int objectBufferSize) {
