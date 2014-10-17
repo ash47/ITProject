@@ -154,7 +154,7 @@ function compiler() {
             }
 
             // Ensure fields exist
-            me.mapSettings.mapName = me.mapSettings.mapName || 'Untitled Map';
+            me.mapSettings.mapTitle = me.mapSettings.mapTitle || 'Untitled Map';
             me.mapSettings.sheepToWin = me.mapSettings.sheepToWin || 1;
             me.mapSettings.interactiveObjects = me.mapSettings.interactiveObjects || [];
 
@@ -230,7 +230,8 @@ function compiler() {
                     visualData: me.visualData
                 }, settings: {
                     mapName: me.mapSettings.mapName,
-                    sheepToWin: me.mapSettings.sheepToWin
+                    sheepToWin: me.mapSettings.sheepToWin,
+                    mapTitle: me.mapSettings.mapTitle
                 }
             });
         });
@@ -440,9 +441,13 @@ fs.readdir(srcDir, function(err, files) {
                     output[1] = data.screen;
 
                     var kk = 2;
+                    var screensNeeded = 1;
 
                     function next(err, data) {
                         if(err) {
+                            // Store how many screens were used
+                            output.totalScreens = screensNeeded;
+
                             // Create the map file
                             mapFile = JSON.stringify(output);
 
@@ -468,6 +473,9 @@ fs.readdir(srcDir, function(err, files) {
                         } else {
                             // Store the data
                             output[kk++] = data.screen;
+
+                            // We used one more screen
+                            screensNeeded++;
 
                             // Compile next screen
                             cmp.compileMap(mapName+'_'+kk, next);

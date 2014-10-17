@@ -55,6 +55,9 @@ public class MenuScreen extends LemmingScreen {
 	// The networking manager
 	private Networking network;
 	
+	// Should we load the map on the next tick
+	private boolean loadNextTick = false;
+	
     @Override
     public void show() {
     	// Load the skin
@@ -81,6 +84,7 @@ public class MenuScreen extends LemmingScreen {
         
         // Create the networking manager
         network = new Networking();
+        network.setMenuScreen(this);
         
         // Load up the main menu
         menuMain();
@@ -129,6 +133,9 @@ public class MenuScreen extends LemmingScreen {
         table.add(btn).size(150,60).padBottom(20).row();
     }
     
+    /**
+     * Shows the map selection screen
+     */
     public void menuMaps() {
     	// Clear the menu
     	table.clear();
@@ -169,10 +176,92 @@ public class MenuScreen extends LemmingScreen {
             btn.addListener(new ClickListener(){
         	    @Override
         	    public void clicked(InputEvent event, float x, float y) {
-        	    	ms.loadLevel(mapName);
+        	    	//ms.loadLevel(mapName);
+        	    	network.makeLobby(mapName);
         	    }
         	});
             table.add(btn).size(150,60).padBottom(20).row();
+        }
+    }
+    
+    /**
+     * Creates a lobby for the given map
+     * @param mapName The map to make a lobby for
+     */
+    public void createLobby(String mapName) {
+    	// Create the server
+    	network.makeLobby(mapName);
+    }
+    
+    /**
+     * Shows the lobby menu
+     */
+    public void menuLobby() {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Back
+        TextButton btn = new TextButton("Back", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	if(ms.network.isServer()) {
+    	    		// Go back to the map selection screen
+        	    	ms.menuMaps();
+        	    	
+        	    	// Cleanup network connection
+        	    	ms.network.closeServer();
+    	    	} else {
+    	    		// Go back to the find games screen
+    	    		ms.menuFindGames();
+    	    		
+    	    		// Cleanup client
+    	    		ms.network.disconnectClient();
+    	    	}
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Add list of players
+        for(String player : ms.network.lobby.players) {
+        	if(player != null) {
+        		// A player
+        		btn = new TextButton(player, skin);
+            	table.add(btn).size(150,60).padBottom(20).row();
+        	} else {
+        		// An empty slot
+        		btn = new TextButton("<awaiting player>", skin);
+            	table.add(btn).size(150,60).padBottom(20).row();
+        	}
+        }
+        
+        // Work out how many players are needed
+        int playersNeeded = ms.network.lobby.totalScreens - ms.network.lobby.connectedPlayers;
+        
+        // Can they start the game?
+        if(playersNeeded <= 0) {
+        	if(ms.network.isServer()) {
+	        	// Start game
+	        	btn = new TextButton("Start", skin);
+	        	btn.addListener(new ClickListener(){
+	        	    @Override
+	        	    public void clicked(InputEvent event, float x, float y) {
+	        	    	// Starts the game
+	        	    	ms.network.startGame();
+	        	    }
+	        	});
+	        	table.add(btn).size(150,60).padBottom(20).row();
+        	} else {
+        		btn = new TextButton("Waiting for host", skin);
+	        	table.add(btn).size(150,60).padBottom(20).row();
+        	}
+        } else {
+        	// Nope, tell them how many are needed
+        	btn = new TextButton("Waiting for "+playersNeeded+" players", skin);
+        	table.add(btn).size(150,60).padBottom(20).row();
         }
     }
     
@@ -208,8 +297,18 @@ public class MenuScreen extends LemmingScreen {
         } else {
         	// Add all the servers
         	for(InetAddress address : servers) {
+        		// Grab the address
+        		final String adr = address.getHostAddress();
+        		
         		// Create the button
-        		btn = new TextButton(address.getHostAddress(), skin);
+        		btn = new TextButton(adr, skin);
+            	btn.addListener(new ClickListener(){
+            	    @Override
+            	    public void clicked(InputEvent event, float x, float y) {
+            	    	// Attempt to join the lobby
+            	    	network.joinLobby(adr);
+            	    }
+            	});
             	table.add(btn).size(150,60).padBottom(20).row();
         	}
         }
@@ -219,15 +318,22 @@ public class MenuScreen extends LemmingScreen {
      * Loads the given level
      * @param mapName The level to load
      */
-    public void loadLevel(String mapName) {
+    public void loadLevel(String mapName, int screenNumber) {
     	// Create a new game screen
     	GameScreen gs = new GameScreen(this.game);
     	
     	// Load up the correct map
-    	gs.loadLevel(mapName);
+    	gs.loadLevel(mapName, screenNumber);
     	
     	// Change to that screen
     	((Game)Gdx.app.getApplicationListener()).setScreen(gs);
+    }
+    
+    /**
+     * Tells the menu to load the map on the next tick
+     */
+    public void loadMapNextTick() {
+    	loadNextTick = true;
     }
     
     @Override
@@ -249,6 +355,15 @@ public class MenuScreen extends LemmingScreen {
 		batch.end();
         stage.act();
         stage.draw();
+        
+        // Should we load the map?
+        if(loadNextTick) {
+        	// No longer need to load the map
+        	loadNextTick = false;
+        	
+        	// Load the map
+        	loadLevel(network.lobby.mapName, network.screenNumber);
+        }
     }
 
     @Override
@@ -273,5 +388,4 @@ public class MenuScreen extends LemmingScreen {
         stage.dispose();
         skin.dispose();
     }
-
 }

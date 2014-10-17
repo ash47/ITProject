@@ -342,7 +342,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 	}
 	
-	public void loadLevel(String mapName) {
+	public void loadLevel(String mapName, int screenNumber) {
 		// Cleanup the current level
 		cleanupLevel();
 		
@@ -369,7 +369,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		JSONObject json = new JSONObject(jsonData);
 		
 		// Grab data for my screen
-		JSONObject myScreen = json.getJSONObject("1");
+		JSONObject myScreen = json.getJSONObject(""+(screenNumber+1));
 		
 		// Grab the physics data
 		JSONArray physicsData = myScreen.getJSONArray("physicsData");
@@ -443,7 +443,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		}
 	}
 	
-	public SpriteBatch getBatch() {
-		return this.batch;
+	/**
+	 * Connects this game to the game network
+	 * @param network The network to connect to
+	 */
+	public void setNetwork(Networking network) {
+		this.network = network;
 	}
 }
