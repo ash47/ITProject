@@ -1,8 +1,10 @@
 package com.teamlemmings.lemmings.screens;
 
+import java.net.InetAddress;
+import java.util.List;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -10,42 +12,210 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.sun.javafx.applet.Splash;
+import com.teamlemmings.lemmings.networking.Networking;
 
 /**
- * Represents the main menu
+ * Represents menus
  * @author Daniel
  *
  */
 public class MenuScreen extends LemmingScreen {
+	/**
+	 * Creates a new menu screen
+	 * @param game The game to attach this menu to
+	 */
 	public MenuScreen(Game game) {
 		super(game);
 	}
-
-	private Stage stage = new Stage();
-    private Table table = new Table();
+	
+	// The stage to render to
+	private Stage stage;
+	
+	// The table used to make the menu nice
+    private Table table;
 
     // The skin of the menu items
-    private Skin skin = new Skin(Gdx.files.internal("skins/menu.json"),
-        new TextureAtlas(Gdx.files.internal("skins/menu.pack")));
-
-    // The buttons for the menu
-    private TextButton buttonPlay = new TextButton("Play", skin),
-        buttonOptions = new TextButton("Options", skin);
+    private Skin skin;
     
 	// The sprite batch renderer
 	private SpriteBatch batch;
 		
-	// The background for this level
+	// The background to draw in the menu
 	private Texture background;
 	
 	// Background tile scale
 	private int bgScale = 5;
+	
+	// The networking manager
+	private Networking network;
+	
+    @Override
+    public void show() {
+    	// Load the skin
+    	skin = new Skin(Gdx.files.internal("skins/menu.json"), new TextureAtlas(Gdx.files.internal("skins/menu.pack")));
+    	
+    	// Create the stage
+    	stage = new Stage();
+    	
+    	// Crate the table
+    	table = new Table();
+    	table.clear();
+    	table.setFillParent(true);
+        stage.addActor(table);
+        
+        // Make the stage use able
+        Gdx.input.setInputProcessor(stage);
+        
+        // Create the sprite batch
+     	batch = new SpriteBatch();
+        
+        // Create a background
+        background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
+        background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+        
+        // Create the networking manager
+        network = new Networking();
+        
+        // Load up the main menu
+        menuMain();
+    }
+    
+    /**
+     * Shows the main menu
+     */
+    public void menuMain() {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Play
+        TextButton btn = new TextButton("Maps", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(ms.game));
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Find Games
+        btn = new TextButton("Servers", skin);
+        btn.addListener(new ClickListener(){
+    		@Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    			// Go to the find games menu
+    	    	ms.menuFindGames();
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Exit
+        btn = new TextButton("Exit", skin);
+        btn.addListener(new ClickListener(){
+    		@Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	Gdx.app.exit(); //TODO
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+    }
+    
+    public void menuMaps() {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Back
+        TextButton btn = new TextButton("Back", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	// Go back to the main menu
+    	    	ms.menuMain();
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        
+    	
+    	// Play
+        /*btn = new TextButton("Maps", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(ms.game));
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Find Games
+        btn = new TextButton("Servers", skin);
+        btn.addListener(new ClickListener(){
+    		@Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    			// Go to the find games menu
+    	    	ms.menuFindGames();
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Exit
+        btn = new TextButton("Exit", skin);
+        btn.addListener(new ClickListener(){
+    		@Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	Gdx.app.exit(); //TODO
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();*/
+    }
+    
+    /**
+     * Shows the find games menu
+     */
+    public void menuFindGames() {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Back
+        TextButton btn = new TextButton("Back", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	// Go back to the main menu
+    	    	ms.menuMain();
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Search for network games
+        List<InetAddress> servers = network.findServers();
+        
+        // Did we find any servers?
+        if(servers.isEmpty()) {
+        	// None found
+        	btn = new TextButton("No Servers Found", skin);
+        	table.add(btn).size(150,60).padBottom(20).row();
+        } else {
+        	// Add all the servers
+        	for(InetAddress address : servers) {
+        		// Create the button
+        		btn = new TextButton(address.getHostAddress(), skin);
+            	table.add(btn).size(150,60).padBottom(20).row();
+        	}
+        }
+    }
     
     @Override
     public void render(float delta) {
@@ -70,43 +240,6 @@ public class MenuScreen extends LemmingScreen {
 
     @Override
     public void resize(int width, int height) {
-    }
-
-    @Override
-    public void show() {
-    	final MenuScreen sc = this;
-    	
-    	// Play button
-    	buttonPlay.addListener(new ClickListener(){
-    	    @Override
-    	    public void clicked(InputEvent event, float x, float y) {
-    	    	((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(sc.game));
-    	    }
-    	});
-    	
-    	// Options button
-    	buttonOptions.addListener(new ClickListener(){
-    		@Override
-    	    public void clicked(InputEvent event, float x, float y) {
-    	    	Gdx.app.exit(); //TODO
-    	    }
-    	});
-    	 
-    	// Add the buttons to the screen
-        table.add(buttonPlay).size(150,60).padBottom(20).row();
-        table.add(buttonOptions).size(150,60).padBottom(20).row();
-        
-        table.setFillParent(true);
-        stage.addActor(table);
-
-        Gdx.input.setInputProcessor(stage);
-        
-        // Create the sprite batch
-     	batch = new SpriteBatch();
-        
-        // Create a background
-        background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
-        background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
     }
 
     @Override

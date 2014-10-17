@@ -127,7 +127,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		//network.findServer();
 		
 		// Load up a level
-		loadLevel("level1");
+		//loadLevel("level1");
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
