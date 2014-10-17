@@ -3,8 +3,10 @@ package com.teamlemmings.lemmings.screens;
 import java.net.InetAddress;
 import java.util.List;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -99,7 +101,8 @@ public class MenuScreen extends LemmingScreen {
         btn.addListener(new ClickListener(){
     	    @Override
     	    public void clicked(InputEvent event, float x, float y) {
-    	    	((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(ms.game));
+    	    	// Change to the maps screen
+    	    	ms.menuMaps();
     	    }
     	});
         table.add(btn).size(150,60).padBottom(20).row();
@@ -144,38 +147,33 @@ public class MenuScreen extends LemmingScreen {
     	});
         table.add(btn).size(150,60).padBottom(20).row();
         
+        /**
+         * NOTE: Should have exception handler here!
+         */
         
-    	
-    	// Play
-        /*btn = new TextButton("Maps", skin);
-        btn.addListener(new ClickListener(){
-    	    @Override
-    	    public void clicked(InputEvent event, float x, float y) {
-    	    	((Game)Gdx.app.getApplicationListener()).setScreen(new GameScreen(ms.game));
-    	    }
-    	});
-        table.add(btn).size(150,60).padBottom(20).row();
+        // Find all maps
+        FileHandle dirHandle;
+        if (Gdx.app.getType() == ApplicationType.Android) {
+        	dirHandle = Gdx.files.internal("maps");
+        } else {
+        	// ApplicationType.Desktop ..
+        	dirHandle = Gdx.files.internal("./bin/maps");
+        }
         
-        // Find Games
-        btn = new TextButton("Servers", skin);
-        btn.addListener(new ClickListener(){
-    		@Override
-    	    public void clicked(InputEvent event, float x, float y) {
-    			// Go to the find games menu
-    	    	ms.menuFindGames();
-    	    }
-    	});
-        table.add(btn).size(150,60).padBottom(20).row();
-        
-        // Exit
-        btn = new TextButton("Exit", skin);
-        btn.addListener(new ClickListener(){
-    		@Override
-    	    public void clicked(InputEvent event, float x, float y) {
-    	    	Gdx.app.exit(); //TODO
-    	    }
-    	});
-        table.add(btn).size(150,60).padBottom(20).row();*/
+        // Loop over each map
+        for(FileHandle map : dirHandle.list()) {
+        	// Grab the name of the map
+        	final String mapName = map.nameWithoutExtension();
+        	
+        	btn = new TextButton(mapName, skin);
+            btn.addListener(new ClickListener(){
+        	    @Override
+        	    public void clicked(InputEvent event, float x, float y) {
+        	    	ms.loadLevel(mapName);
+        	    }
+        	});
+            table.add(btn).size(150,60).padBottom(20).row();
+        }
     }
     
     /**
@@ -215,6 +213,21 @@ public class MenuScreen extends LemmingScreen {
             	table.add(btn).size(150,60).padBottom(20).row();
         	}
         }
+    }
+    
+    /**
+     * Loads the given level
+     * @param mapName The level to load
+     */
+    public void loadLevel(String mapName) {
+    	// Create a new game screen
+    	GameScreen gs = new GameScreen(this.game);
+    	
+    	// Load up the correct map
+    	gs.loadLevel(mapName);
+    	
+    	// Change to that screen
+    	((Game)Gdx.app.getApplicationListener()).setScreen(gs);
     }
     
     @Override

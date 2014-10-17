@@ -90,10 +90,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public GameScreen(Game game) {
 		super(game);
-	}
-	
-	@Override
-	public void show () {
+		
 		// Create the list to store game objects into
 		gameObjects = new ArrayList<GameObject>();
 		
@@ -117,7 +114,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Create the collision handler
 		world.setContactListener(this);
-		
+	}
+	
+	@Override
+	public void show () {
 		// Create the gesture controller
 		GestureProcessor ges = new GestureProcessor(this);
 		Gdx.input.setInputProcessor(new GestureDetector(ges));
