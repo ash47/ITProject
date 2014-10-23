@@ -648,6 +648,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 * @param dir Direction to march in
 	 */
 	public void createSheep(float x, float y, int dir) {
-		(new Sheep(this, x, y)).setDirection(dir);
+		Sheep sheep = new Sheep(this, x, y);
+		sheep.setDirection(dir);
 	}
 }
