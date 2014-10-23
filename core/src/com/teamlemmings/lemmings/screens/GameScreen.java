@@ -103,6 +103,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// Should we return to the lobby next tick?
 	public int returnToLobbyNextTick;
+	
+	// Should we return to the main menu?
+	public boolean returnToMenu;
 		
 	/**
 	 * Create a new game screen
@@ -156,6 +159,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Stop from returning to the lobby
 		returnToLobbyNextTick = 0;
+		returnToMenu = false;
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
@@ -252,6 +256,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			returnToLobby(false);
 		} else if(returnToLobbyNextTick == 1) {
 			returnToLobby(true);
+		}
+		
+		if(returnToMenu) {
+			returnToMenu();
 		}
 		
 		// DEBUG: Render the world
@@ -365,6 +373,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		}
 	}
 	
+	/**
+	 * Returns to hte lobby
+	 * @param shouldNetwork Should we network this?
+	 */
 	public void returnToLobby(boolean shouldNetwork) {
 		// Grab the menu screen
 		MenuScreen ms = this.network.getMenuScreen();
@@ -393,7 +405,28 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
 		}
 	}
-
+	
+	/**
+	 * Returns to the menu after a dropout
+	 */
+	public void returnToMenu() {
+		// Grab the menu screen
+		MenuScreen ms = this.network.getMenuScreen();
+		
+		// Change to the menu
+		((Game)Gdx.app.getApplicationListener()).setScreen(ms);
+		
+		// Cleanup
+		this.dispose();
+		
+		// Remove network reference
+		this.network.setGameScreen(null);
+		this.network.setInLobby(true);
+		
+		// Main menu please (maybe show a error screen next time?)
+		ms.menuMain();
+	}
+	
 	@Override
 	public void beginContact(Contact contact) {
 		// Grab the two game objects that touched

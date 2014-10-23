@@ -286,6 +286,9 @@ public class Networking {
 		// Stop from listening if not the server
 		if(!started || !isServer) return;
 		
+		// Grab a reference to this
+		final Networking _this = this;
+		
 		// Listen for messages
 		server.addListener(new Listener() {
 	       @Override
@@ -324,6 +327,30 @@ public class Networking {
 	    		   }
 	    	   }
 	       }
+	       
+	       @Override
+		   	public void disconnected(Connection connection) {
+	    	// Ensure they are allowed to talk to us
+	    	   if(!(connection instanceof LemmingConnection)) return;
+	    	   
+	    	   // Grab a lemming connection
+	    	   LemmingConnection con = (LemmingConnection) connection;
+	    	   
+	    	   // Remove the noob
+	    	   	_this.lobby.players[con.screenNumber] = null;
+	    	   	_this.lobby.connectedPlayers--;
+	    	   	
+	    	   	// Send the update to everyone
+            	server.sendToAllTCP(_this.lobby);
+	    	   
+		   		// Tell the game to cleanup, and return to the main menu
+	    	   	if(_this.gameScreen != null) {
+	    	   		// Game must handle
+	    	   		_this.gameScreen.returnToLobbyNextTick = 1;
+	    	   	} else {
+	    	   		_this.menuScreen.menuLobby();
+	    	   	}
+		   	}
 	    });
 	}
 	
@@ -333,6 +360,9 @@ public class Networking {
 	public void listenForMessagesClient() {
 		// Stop from listening if not client
 		if(!started || isServer) return;
+		
+		// Grab a reference to this
+		final Networking _this = this;
 		
 		// Listen for messages
 		client.addListener(new Listener() {
@@ -371,6 +401,19 @@ public class Networking {
 	    		   }
 	    	   }
 	       }
+	       
+	       @Override
+		   	public void disconnected(Connection connection) {
+		   		// Tell the game to cleanup, and return to the main menu
+	    	   	if(_this.gameScreen == null) {
+	    	   		// Menu must handle
+	    	   		_this.menuScreen.menuMain();
+	    		   	_this.inLobby = false;
+	    	   	} else {
+	    	   		// Game must handle
+	    	   		_this.gameScreen.returnToMenu = true;
+	    	   	}
+		   	}
 		});
 		
 	}
