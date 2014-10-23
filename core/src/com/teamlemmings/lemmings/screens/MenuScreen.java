@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -327,27 +330,53 @@ public class MenuScreen extends LemmingScreen {
     	});
         table.add(btn).size(150,60).padBottom(20).row();
         
-        // Create parameters
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("mapName", mapName);
-        
         // Setup the request
         HttpRequest httpGet = new HttpRequest(HttpMethods.GET);
-        httpGet.setUrl(Constants.HIGHSCORE_SERVER);
-        httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+        httpGet.setUrl(String.format(Constants.HIGHSCORE_SERVER, mapName));
         
         // Do the request
         Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
         	@Override
         	public void handleHttpResponse(HttpResponse httpResponse) {
+        		// Grab the response
         		String status = httpResponse.getResultAsString();
                 
-        		System.out.println(status);
+        		// Parse it
+        		JSONObject json = new JSONObject(status);
+        		
+        		// Check for failure to find highscores
+        		if(json.has("failure") || !json.has("scores")) {
+        			// No highscores!
+        			TextButton btn = new TextButton("No highscores found", skin);
+                    table.add(btn).size(150,60).padBottom(20).row();
+        		} else {
+        			// Add the scores
+        			JSONArray scores = json.getJSONArray("scores");
+        			
+        			// Add them
+        			for(int i=0; i<scores.length(); i++) {
+        				// Ensure it's not null
+        				if(!scores.isNull(i)) {
+        					// Grab data
+            				JSONObject data = scores.getJSONObject(i);
+        					
+            				// Grab info
+        					String user = data.getString("user");
+            				int score = data.getInt("score");
+            				
+            				// Display the score
+            				TextButton btn = new TextButton(user+" - "+score, skin);
+                            table.add(btn).size(150,60).padBottom(20).row();
+        				}
+        			}
+        		}
             }
                
             @Override
 			public void failed(Throwable t) {
             	// Add the failure notice
+            	
+            	System.out.println(t.getMessage());
             	
             	TextButton btn = new TextButton("Failed to connect", skin);
                 table.add(btn).size(150,60).padBottom(20).row();

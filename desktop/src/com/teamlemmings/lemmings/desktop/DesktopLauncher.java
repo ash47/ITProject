@@ -14,7 +14,6 @@ public class DesktopLauncher {
 	    //settings.maxWidth = 512;
 	    //settings.maxHeight = 512;
 	    TexturePacker.process(settings, "../Images", "../android/assets", "game");
-
 		
 		// Create a new config
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
