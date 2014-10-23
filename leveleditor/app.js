@@ -195,6 +195,9 @@ function compiler() {
                             me.visualData[x + y*levelWidth] = 'Tiles/grassCenter';
                         }
                     }
+					if(image == 'Tiles/grassMid' && imageAbove == 'Tiles/liquidWaterTop') {
+						me.visualData[x + y*levelWidth] = 'Tiles/grassCenter';
+					}
                 }
             }
 
@@ -264,6 +267,15 @@ function compiler() {
         0, 1, 1, 1,
         1, 1, 1, 1
     ]);
+	
+	// A ramp that goes up and to the left
+    var shapeRampUpLeft = new shape(4, 4, [
+        1, 0, 0, 0,
+        1, 1, 0, 0,
+        1, 1, 1, 0,
+        1, 1, 1, 1
+    ]);
+	
 
     // A sheep
     var shapeSheep = new shape(4, 4, [
@@ -370,7 +382,7 @@ function compiler() {
             // Add the coin
             addTile(x, y, 'coin');
 		} else if(shapeLiquid.match(rx, ry, liquidColor)) {
-            // Add the sheep
+            // Add the liquid
             addTile(x, y, 'liquid');
         } else if(shapeBlockFull.match(rx, ry, interactiveColor)) {
             // Grab settings for this object
