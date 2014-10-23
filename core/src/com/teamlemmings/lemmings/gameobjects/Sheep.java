@@ -32,7 +32,7 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 1f;
+	private static final float scale = 0.8f;
 	
 	// Scale of the sprite
 	private static final float spriteScale = scale/256f;
@@ -83,7 +83,11 @@ public class Sheep extends GameObject {
 		
 		// Make it change screens
 		if(pos.x > gameScreen.viewportX) {
-			
+			pos.x -= gameScreen.viewportX;
+			this.body.setTransform(pos, 0);
+		} else if(pos.x < 0) {
+			pos.x += gameScreen.viewportX;
+			this.body.setTransform(pos, 0);
 		}
 	}
 	
