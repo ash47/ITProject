@@ -121,6 +121,14 @@ public class Sheep extends GameObject {
 			
 			// Add to our score
 			System.out.println("Got a coin!");
+		} else if(obj instanceof Liquid) {
+			// Cleanup sheep
+			this.cleanup();
+			
+			System.out.println("A sheep drowned!");
+
+			
 		}
+		
 	}
 }

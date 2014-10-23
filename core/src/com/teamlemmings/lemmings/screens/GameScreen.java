@@ -26,6 +26,7 @@ import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.Coin;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
 import com.teamlemmings.lemmings.gameobjects.Goal;
+import com.teamlemmings.lemmings.gameobjects.Liquid;
 import com.teamlemmings.lemmings.gameobjects.SensorZone;
 import com.teamlemmings.lemmings.gameobjects.Sheep;
 import com.teamlemmings.lemmings.gameobjects.TouchWall;
@@ -415,14 +416,17 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			
 			// Check what to make
 			if(sort.equals("sheep")) {
-				// Create a wall
+				// Create a sheep
 				new Sheep(this, left+x, top-y);
 			} else if(sort.equals("goal")) {
-				// Create a wall
+				// Create a goal
 				new Goal(this, left+x, top-y);
 			} else if(sort.equals("coin")) {
-				// Create a wall
+				// Create a coin
 				new Coin(this, left+x, top-y);
+			} else if(sort.equals("liquid")) {
+				// Create a liquid
+				new Liquid(this, left+x, top-y);
 			} else if(sort.equals("ramp")) {
 				// Create the ramp
 				new InteractiveRamp(this, left+x, top-y,
