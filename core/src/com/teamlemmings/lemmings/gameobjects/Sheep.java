@@ -80,6 +80,11 @@ public class Sheep extends GameObject {
 		    	 timeWaited += deltaTime;
 		     }
 		}
+		
+		// Make it change screens
+		if(pos.x > gameScreen.viewportX) {
+			
+		}
 	}
 	
 	@Override
