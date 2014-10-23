@@ -106,7 +106,8 @@ public class Huff implements None, PostMortem {
             this.zero = null;
         }
 
-        public boolean postMortem(PostMortem pm) {
+        @Override
+		public boolean postMortem(PostMortem pm) {
             boolean result = true;
             Symbol that = (Symbol) pm;
 
@@ -299,7 +300,8 @@ public class Huff implements None, PostMortem {
     /**
      * Compare two Huffman tables.
      */
-    public boolean postMortem(PostMortem pm) {
+    @Override
+	public boolean postMortem(PostMortem pm) {
 
 // Go through every integer in the domain, generating its bit sequence, and
 // then prove that that bit sequence produces the same integer.

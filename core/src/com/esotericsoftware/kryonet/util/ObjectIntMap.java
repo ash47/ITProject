@@ -462,6 +462,7 @@ public class ObjectIntMap<K> {
 		return (h ^ h >>> hashShift) & mask;
 	}
 
+	@Override
 	public String toString () {
 		if (size == 0) return "{}";
 		StringBuilder buffer = new StringBuilder(32);

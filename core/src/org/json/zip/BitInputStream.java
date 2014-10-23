@@ -70,7 +70,8 @@ public class BitInputStream implements BitReader {
      *
      * @return true if it is a 1 bit.
      */
-    public boolean bit() throws IOException {
+    @Override
+	public boolean bit() throws IOException {
         return read(1) != 0;
     }
 
@@ -82,7 +83,8 @@ public class BitInputStream implements BitReader {
      *
      * @return The number of bits read so far.
      */
-    public long nrBits() {
+    @Override
+	public long nrBits() {
         return this.nrBits;
     }
 
@@ -96,7 +98,8 @@ public class BitInputStream implements BitReader {
      *         contains any one bits.
      * @throws IOException
      */
-    public boolean pad(int width) throws IOException {
+    @Override
+	public boolean pad(int width) throws IOException {
         boolean result = true;
         int gap = (int)this.nrBits % width;
         if (gap < 0) {
@@ -122,7 +125,8 @@ public class BitInputStream implements BitReader {
      * @throws IOException
      * @return the bits
      */
-    public int read(int width) throws IOException {
+    @Override
+	public int read(int width) throws IOException {
         if (width == 0) {
             return 0;
         }

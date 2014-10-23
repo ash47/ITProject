@@ -17,6 +17,7 @@ public interface EndPoint extends Runnable {
 	public void removeListener (Listener listener);
 
 	/** Continually updates this end point until {@link #stop()} is called. */
+	@Override
 	public void run ();
 
 	/** Starts a new thread that calls {@link #run()}. */
