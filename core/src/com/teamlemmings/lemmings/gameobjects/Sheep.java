@@ -113,8 +113,8 @@ public class Sheep extends GameObject {
 			// Cleanup the sheep
 			this.cleanup();
 			
-			// Tell the user one got home
-			System.out.println("A sheep got home!");
+			// Add to the total that got home
+			gameScreen.sheepGotHome(true);
 		} else if(obj instanceof Coin) {
 			// Cleanup coin
 			obj.cleanup();

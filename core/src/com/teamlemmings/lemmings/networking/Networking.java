@@ -275,6 +275,7 @@ public class Networking {
 		kryo.register(NetworkStartGame.class);
 		kryo.register(String[].class);
 		kryo.register(NetworkScore.class);
+		kryo.register(NetworkSheepGotHome.class);
 	}
 	
 	/**
@@ -312,6 +313,12 @@ public class Networking {
 	    		   
 	    		   // Score info
 	    		   gameScreen.addToScore(ns.score, true);
+	    	   } else if(object instanceof NetworkSheepGotHome) {
+	    		   // Grab data
+	    		   NetworkSheepGotHome ns = (NetworkSheepGotHome) object;
+	    		   
+	    		   // Sheep info
+	    		   gameScreen.sheepGotHome(true);
 	    	   }
 	       }
 	    });
@@ -348,6 +355,12 @@ public class Networking {
 	    		   
 	    		   // Score info
 	    		   gameScreen.setScore(ns.score);
+	    	   } else if(object instanceof NetworkSheepGotHome) {
+	    		   // Grab data
+	    		   NetworkSheepGotHome ns = (NetworkSheepGotHome) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.setTotalSheepHome(ns.totalSheep);
 	    	   }
 	       }
 		});
@@ -393,6 +406,23 @@ public class Networking {
 			server.sendToAllTCP(sc);
 		} else {
 			sc.score = addition;
+			client.sendTCP(sc);
+		}
+	}
+	
+	/**
+	 * Network a sheep getting home
+	 * @param totalSheep The total number of sheep that got home
+	 */
+	public void sheepGotHome(int totalSheep) {
+		// Create an object to store data onto
+		NetworkSheepGotHome sc = new NetworkSheepGotHome();
+		
+		// What we do depends on if we are client, or server
+		if(this.isServer) {
+			sc.totalSheep = totalSheep;
+			server.sendToAllTCP(sc);
+		} else {
 			client.sendTCP(sc);
 		}
 	}

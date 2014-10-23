@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
+import com.teamlemmings.lemmings.MapInfo;
 import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.Coin;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -90,6 +91,12 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The score
 	private int score;
+	
+	// The number of sheep that got home
+	private int sheepHome;
+	
+	// The number of sheep required to get home in order to win
+	private int sheepToWin;
 	
 	// The font to use to draw text
 	private BitmapFont font;
@@ -221,7 +228,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Render the hud
 		font.setScale(0.05f, 0.05f);
 		font.setColor(Color.BLACK);
-		font.draw(batch, "Score: "+this.score, 0, 0);
+		font.drawMultiLine(batch, "Score: "+this.score+"\nSheep: "+this.sheepHome+'/'+this.sheepToWin, 0, 0);
 		
 		// Finish drawing the sprite batch
 		batch.end();
@@ -375,9 +382,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		float top = 0;
 		
 		// Reset score
-		score = 0;
+		this.score = 0;
+		this.sheepHome = 0;
 		
 		// Load a level
+		
+		MapInfo mi = new MapInfo(mapName);
+		this.sheepToWin = mi.sheepToWin;
 		
 		/*
 		 * 
@@ -499,5 +510,27 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	/**
+	 * Stores that a sheep got home, and networks it
+	 * @param shouldNetwork Do we need to network this?
+	 */
+	public void sheepGotHome(boolean shouldNetwork) {
+		// Increase total sheep that got home
+		this.sheepHome++;
+		
+		// Ensure we have a network to send to
+		if(shouldNetwork && this.network != null) {
+			this.network.sheepGotHome(this.sheepHome);
+		}
+	}
+	
+	/**
+	 * Directly sets how many sheep have gotten home
+	 * @param totalSheep The total number of sheep that have gotten home
+	 */
+	public void setTotalSheepHome(int totalSheep) {
+		this.sheepHome = totalSheep;
 	}
 }
