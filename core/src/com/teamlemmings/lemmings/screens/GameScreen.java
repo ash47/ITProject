@@ -63,10 +63,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	private ArrayList<GameObject> gameObjects;
 	
 	// The width of the actual camera size
-	private int viewportX = 48;
+	public final int viewportX = 48;
 	
 	// The height of the actual camera size
-	private int viewportY = 27;
+	public final int viewportY = 27;
 	
 	// The sprite batch renderer
 	public SpriteBatch batch;
@@ -631,5 +631,23 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public void setTotalSheepHome(int totalSheep) {
 		this.sheepHome = totalSheep;
+	}
+	
+	/**
+	 * Gets our networking
+	 * @return The network of this game screen
+	 */
+	public Networking getNetworking() {
+		return this.network;
+	}
+	
+	/**
+	 * Creates a new sheep
+	 * @param x x coord to spawn at
+	 * @param y y coord to spawn at
+	 * @param dir Direction to march in
+	 */
+	public void createSheep(float x, float y, int dir) {
+		(new Sheep(this, x, y)).setDirection(dir);
 	}
 }
