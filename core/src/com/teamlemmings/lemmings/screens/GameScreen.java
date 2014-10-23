@@ -100,6 +100,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The font to use to draw text
 	private BitmapFont font;
+	
+	// Should we return to the lobby next tick?
+	public int returnToLobbyNextTick;
 		
 	/**
 	 * Create a new game screen
@@ -150,6 +153,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Load up a level
 		//loadLevel("level1");
+		
+		// Stop from returning to the lobby
+		returnToLobbyNextTick = 0;
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
@@ -240,6 +246,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Finish drawing the sprite batch
 		batch.end();
+		
+		// Are we meant to return to the lobby?
+		if(returnToLobbyNextTick == 2) {
+			returnToLobby(false);
+		} else if(returnToLobbyNextTick == 1) {
+			returnToLobby(true);
+		}
 		
 		// DEBUG: Render the world
 		//debugRenderer.render(world, cam.combined);
@@ -348,26 +361,36 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Check if the user was trying to quit
 		if(x <= 0.07 && y <= 0.09) {
-			// Grab the menu screen
-			MenuScreen ms = this.network.getMenuScreen();
-			
-			// Change to the menu
-			((Game)Gdx.app.getApplicationListener()).setScreen(ms);
-			
-			// Cleanup
-			this.dispose();
-			
-			// Remove network reference
-			this.network.setGameScreen(null);
-			this.network.setInLobby(true);
-			
-			// Check if it is a quit or a win
-			if(this.sheepHome >= this.sheepToWin) {
-				
-			} else {
-				// Revert to the lobby
-				ms.menuLobby();
-			}
+			returnToLobby(true);
+		}
+	}
+	
+	public void returnToLobby(boolean shouldNetwork) {
+		// Grab the menu screen
+		MenuScreen ms = this.network.getMenuScreen();
+		
+		// Change to the menu
+		((Game)Gdx.app.getApplicationListener()).setScreen(ms);
+		
+		// Cleanup
+		this.dispose();
+		
+		// Remove network reference
+		this.network.setGameScreen(null);
+		this.network.setInLobby(true);
+		
+		if(shouldNetwork) {
+			// Network it
+			network.returnToLobby();
+		}
+		
+		// Check if it is a quit or a win
+		if(this.sheepHome >= this.sheepToWin) {
+			// Menu for winners!
+			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
+		} else {
+			// Menu for losers >_>
+			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
 		}
 	}
 

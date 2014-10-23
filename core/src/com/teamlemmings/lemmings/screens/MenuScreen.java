@@ -222,12 +222,6 @@ public class MenuScreen extends LemmingScreen {
     	});
         table.add(btn).size(150,60).padBottom(20).row();
         
-        System.out.println(ms);
-        System.out.println(ms.network);
-        System.out.println(ms.network.getLobby());
-        System.out.println(ms.network.getLobby().players);
-        
-        
         // Add list of players
         for(String player : ms.network.getLobby().players) {
         	if(player != null) {
@@ -266,6 +260,31 @@ public class MenuScreen extends LemmingScreen {
         	btn = new TextButton("Waiting for "+playersNeeded+" players", skin);
         	table.add(btn).size(150,60).padBottom(20).row();
         }
+    }
+    
+    /**
+     * Shows the victory screen
+     * @param sheepHome Number of sheep that got home
+     * @param sheepTotal Number of sheep that were needed
+     * @param score Score collected
+     */
+    public void menuVictory(int sheepHome, int sheepTotal, int score) {
+    	this.menuLobby();
+    	
+    	TextButton btn;
+    	
+    	// Did they win?
+    	if(sheepHome >= sheepTotal) {
+    		btn = new TextButton("VICTORY!", skin);
+            table.add(btn).size(150,60).padBottom(20).row();
+    	}
+    	
+    	// Add info
+    	btn = new TextButton("Sheep: "+sheepHome+"/"+sheepTotal, skin);
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        btn = new TextButton("Score: "+score, skin);
+        table.add(btn).size(150,60).padBottom(20).row();
     }
     
     /**
