@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -106,6 +107,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// Should we return to the main menu?
 	public boolean returnToMenu;
+	
+	Sound backgroundSound;
+	Long id;
 		
 	/**
 	 * Create a new game screen
@@ -164,6 +168,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
 		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		
+		backgroundSound = Gdx.audio.newSound(Gdx.files.internal("sounds/background.wav"));
+		id = backgroundSound.loop();
 	}
 	
 	/**
@@ -400,9 +407,13 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		if(this.sheepHome >= this.sheepToWin) {
 			// Menu for winners!
 			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
+			//end music
+			backgroundSound.stop(id);
 		} else {
 			// Menu for losers >_>
 			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
+			//end music
+			backgroundSound.stop(id);
 		}
 	}
 	
@@ -412,6 +423,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void returnToMenu() {
 		// Grab the menu screen
 		MenuScreen ms = this.network.getMenuScreen();
+		
+		//end music
+		backgroundSound.stop(id);
 		
 		// Change to the menu
 		((Game)Gdx.app.getApplicationListener()).setScreen(ms);
