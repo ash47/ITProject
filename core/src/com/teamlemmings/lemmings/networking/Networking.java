@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.Listener;
 import com.teamlemmings.lemmings.MapInfo;
+import com.teamlemmings.lemmings.screens.GameScreen;
 import com.teamlemmings.lemmings.screens.MenuScreen;
 
 public class Networking {
@@ -29,10 +30,13 @@ public class Networking {
 	private boolean inLobby = false;
 	
 	// Lobby info
-	public NetworkLobby lobby;
+	private NetworkLobby lobby;
 	
 	// The menu we are attached to
 	private MenuScreen menuScreen;
+	
+	// The game we are attached to
+	private GameScreen gameScreen;
 	
 	// Our screen number
 	public int screenNumber;
@@ -270,6 +274,9 @@ public class Networking {
 		kryo.register(NetworkPlayerInfo.class);
 		kryo.register(NetworkStartGame.class);
 		kryo.register(String[].class);
+		kryo.register(NetworkScore.class);
+		kryo.register(NetworkSheepGotHome.class);
+		kryo.register(NetworkReturnToLobby.class);
 	}
 	
 	/**
@@ -278,6 +285,9 @@ public class Networking {
 	private void listenForMessagesServer() {
 		// Stop from listening if not the server
 		if(!started || !isServer) return;
+		
+		// Grab a reference to this
+		final Networking _this = this;
 		
 		// Listen for messages
 		server.addListener(new Listener() {
@@ -301,8 +311,46 @@ public class Networking {
 	    		   NetworkPlayerInfo info = new NetworkPlayerInfo();
 	    		   info.screenNumber = con.screenNumber;
 	    		   connection.sendTCP(info);
+	    	   } else if(object instanceof NetworkScore) {
+	    		   // Grab data
+	    		   NetworkScore ns = (NetworkScore) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.addToScore(ns.score, true);
+	    	   } else if(object instanceof NetworkSheepGotHome) {
+	    		   // Sheep info
+	    		   gameScreen.sheepGotHome(true);
+	    	   } else if(object instanceof NetworkReturnToLobby) {
+	    		   // Return to lobby
+	    		   if(gameScreen != null) {
+	    			   gameScreen.returnToLobbyNextTick = 1;
+	    		   }
 	    	   }
 	       }
+	       
+	       @Override
+		   	public void disconnected(Connection connection) {
+	    	// Ensure they are allowed to talk to us
+	    	   if(!(connection instanceof LemmingConnection)) return;
+	    	   
+	    	   // Grab a lemming connection
+	    	   LemmingConnection con = (LemmingConnection) connection;
+	    	   
+	    	   // Remove the noob
+	    	   	_this.lobby.players[con.screenNumber] = null;
+	    	   	_this.lobby.connectedPlayers--;
+	    	   	
+	    	   	// Send the update to everyone
+            	server.sendToAllTCP(_this.lobby);
+	    	   
+		   		// Tell the game to cleanup, and return to the main menu
+	    	   	if(_this.gameScreen != null) {
+	    	   		// Game must handle
+	    	   		_this.gameScreen.returnToLobbyNextTick = 1;
+	    	   	} else {
+	    	   		_this.menuScreen.menuLobby();
+	    	   	}
+		   	}
 	    });
 	}
 	
@@ -312,6 +360,9 @@ public class Networking {
 	public void listenForMessagesClient() {
 		// Stop from listening if not client
 		if(!started || isServer) return;
+		
+		// Grab a reference to this
+		final Networking _this = this;
 		
 		// Listen for messages
 		client.addListener(new Listener() {
@@ -331,8 +382,38 @@ public class Networking {
 	    	   } else if(object instanceof NetworkStartGame) {
 	    		   // Server wants to start the game
 	    		   startGame();
+	    	   } else if(object instanceof NetworkScore) {
+	    		   // Grab data
+	    		   NetworkScore ns = (NetworkScore) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.setScore(ns.score);
+	    	   } else if(object instanceof NetworkSheepGotHome) {
+	    		   // Grab data
+	    		   NetworkSheepGotHome ns = (NetworkSheepGotHome) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.setTotalSheepHome(ns.totalSheep);
+	    	   } else if(object instanceof NetworkReturnToLobby) {
+	    		   // Return to lobby
+	    		   if(gameScreen != null) {
+	    			   gameScreen.returnToLobbyNextTick = 2;
+	    		   }
 	    	   }
 	       }
+	       
+	       @Override
+		   	public void disconnected(Connection connection) {
+		   		// Tell the game to cleanup, and return to the main menu
+	    	   	if(_this.gameScreen == null) {
+	    	   		// Menu must handle
+	    	   		_this.menuScreen.menuMain();
+	    		   	_this.inLobby = false;
+	    	   	} else {
+	    	   		// Game must handle
+	    	   		_this.gameScreen.returnToMenu = true;
+	    	   	}
+		   	}
 		});
 		
 	}
@@ -351,5 +432,88 @@ public class Networking {
 	 */
 	public void setMenuScreen(MenuScreen menuScreen) {
 		this.menuScreen = menuScreen;
+	}
+	
+	/**
+	 * Attaches this to a game screen
+	 * @param gamescreen The game screen to attach to
+	 */
+	public void setGameScreen(GameScreen gameScreen) {
+		this.gameScreen = gameScreen;
+	}
+	
+	/**
+	 * Networks the new score to others
+	 * @param newScore The score after the points have been added
+	 * @param addition The amount of points added
+	 */
+	public void updateScore(int newScore, int addition) {
+		// Create an object to store data onto
+		NetworkScore sc = new NetworkScore();
+		
+		// What we do depends on if we are client, or server
+		if(this.isServer) {
+			sc.score = newScore;
+			server.sendToAllTCP(sc);
+		} else {
+			sc.score = addition;
+			client.sendTCP(sc);
+		}
+	}
+	
+	/**
+	 * Network a sheep getting home
+	 * @param totalSheep The total number of sheep that got home
+	 */
+	public void sheepGotHome(int totalSheep) {
+		// Create an object to store data onto
+		NetworkSheepGotHome sc = new NetworkSheepGotHome();
+		
+		// What we do depends on if we are client, or server
+		if(this.isServer) {
+			sc.totalSheep = totalSheep;
+			server.sendToAllTCP(sc);
+		} else {
+			client.sendTCP(sc);
+		}
+	}
+	
+	/**
+	 * Gets our menu screen
+	 * @return The menu screen
+	 */
+	public MenuScreen getMenuScreen() {
+		return this.menuScreen;
+	}
+	
+	/**
+	 * Sets if we are in a lobby or not
+	 * @param inLobby Are we in a lobby?
+	 */
+	public void setInLobby(boolean inLobby) {
+		this.inLobby = inLobby;
+	}
+	
+	/**
+	 * Gets our network lobby
+	 * @return Our network lobby
+	 */
+	public NetworkLobby getLobby() {
+		return this.lobby;
+	}
+	
+	/**
+	 * Returns the the lobby menu
+	 */
+	public void returnToLobby() {
+		// Create an object to store data onto
+		NetworkReturnToLobby sc = new NetworkReturnToLobby();
+		
+		// What we do depends on if we are client, or server
+		if(this.isServer) {
+			server.sendToAllTCP(sc);
+		} else {
+			client.sendTCP(sc);
+		}
 	}
 }

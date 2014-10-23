@@ -1,5 +1,6 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -57,17 +58,6 @@ public class Coin extends GameObject {
 		
 		// Clean up after ourselves
 		groundBox.dispose();
-	}
-	
-	@Override
-	public void onCollide(GameObject obj) {
-		if(obj instanceof Goal) {
-			// Cleanup the sheep
-			this.cleanup();
-			
-			// Tell the user one got home
-			System.out.println("A sheep got home!");
-		}
 	}
 	
 	@Override

@@ -39,7 +39,8 @@ public class GestureProcessor implements GestureListener {
 
 	@Override
 	public boolean longPress(float x, float y) {
-		System.out.println("Long Press");
+		// Pass the event to the screen
+		screen.onLongPress(x, y);
 		
 		// TODO Auto-generated method stub
 		return false;
