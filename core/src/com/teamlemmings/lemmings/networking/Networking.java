@@ -352,4 +352,18 @@ public class Networking {
 	public void setMenuScreen(MenuScreen menuScreen) {
 		this.menuScreen = menuScreen;
 	}
+	
+	/**
+	 * Networks the new score to others
+	 * @param newScore The score after the points have been added
+	 * @param addition The amount of points added
+	 */
+	public void updateScore(int newScore, int addition) {
+		// What we do depends on if we are client, or server
+		if(this.isServer) {
+			
+		} else {
+			
+		}
+	}
 }

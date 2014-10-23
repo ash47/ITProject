@@ -84,6 +84,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The scale to render the world at
 	private float worldScale = 1 / 235f;
+	
+	// The score
+	private int score;
 		
 	/**
 	 * Create a new game screen
@@ -354,6 +357,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		float left = 0;
 		float top = 0;
 		
+		// Reset score
+		score = 0;
+		
 		// Load a level
 		
 		/*
@@ -453,5 +459,19 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public void setNetwork(Networking network) {
 		this.network = network;
+	}
+	
+	/**
+	 * Adds (and networks) score
+	 * @param amount Amount of score to add
+	 */
+	public void addToScore(int amount) {
+		// Increase score
+		this.score += amount;
+		
+		// Ensure we have a network to send to
+		if(this.network != null) {
+			this.network.updateScore(this.score, amount);
+		}
 	}
 }
