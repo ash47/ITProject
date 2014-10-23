@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.Listener;
 import com.teamlemmings.lemmings.MapInfo;
+import com.teamlemmings.lemmings.screens.GameScreen;
 import com.teamlemmings.lemmings.screens.MenuScreen;
 
 public class Networking {
@@ -33,6 +34,9 @@ public class Networking {
 	
 	// The menu we are attached to
 	private MenuScreen menuScreen;
+	
+	// The game we are attached to
+	private GameScreen gameScreen;
 	
 	// Our screen number
 	public int screenNumber;
@@ -270,6 +274,7 @@ public class Networking {
 		kryo.register(NetworkPlayerInfo.class);
 		kryo.register(NetworkStartGame.class);
 		kryo.register(String[].class);
+		kryo.register(NetworkScore.class);
 	}
 	
 	/**
@@ -301,6 +306,12 @@ public class Networking {
 	    		   NetworkPlayerInfo info = new NetworkPlayerInfo();
 	    		   info.screenNumber = con.screenNumber;
 	    		   connection.sendTCP(info);
+	    	   } else if(object instanceof NetworkScore) {
+	    		   // Grab data
+	    		   NetworkScore ns = (NetworkScore) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.addToScore(ns.score, true);
 	    	   }
 	       }
 	    });
@@ -331,6 +342,12 @@ public class Networking {
 	    	   } else if(object instanceof NetworkStartGame) {
 	    		   // Server wants to start the game
 	    		   startGame();
+	    	   } else if(object instanceof NetworkScore) {
+	    		   // Grab data
+	    		   NetworkScore ns = (NetworkScore) object;
+	    		   
+	    		   // Score info
+	    		   gameScreen.setScore(ns.score, false);
 	    	   }
 	       }
 		});
@@ -354,16 +371,29 @@ public class Networking {
 	}
 	
 	/**
+	 * Attaches this to a game screen
+	 * @param gamescreen The game screen to attach to
+	 */
+	public void setGameScreen(GameScreen gameScreen) {
+		this.gameScreen = gameScreen;
+	}
+	
+	/**
 	 * Networks the new score to others
 	 * @param newScore The score after the points have been added
 	 * @param addition The amount of points added
 	 */
 	public void updateScore(int newScore, int addition) {
+		// Create an object to store data onto
+		NetworkScore sc = new NetworkScore();
+		
 		// What we do depends on if we are client, or server
 		if(this.isServer) {
-			
+			sc.score = newScore;
+			server.sendToAllTCP(sc);
 		} else {
-			
+			sc.score = addition;
+			client.sendTCP(sc);
 		}
 	}
 }

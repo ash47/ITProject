@@ -322,6 +322,12 @@ public class MenuScreen extends LemmingScreen {
     	// Create a new game screen
     	GameScreen gs = new GameScreen(this.game);
     	
+    	// Check if we are using networking
+    	if(this.network != null) {
+    		gs.setNetwork(this.network);
+    		this.network.setGameScreen(gs);
+    	}
+    	
     	// Load up the correct map
     	gs.loadLevel(mapName, screenNumber);
     	

@@ -464,14 +464,23 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	/**
 	 * Adds (and networks) score
 	 * @param amount Amount of score to add
+	 * @param shouldNetwork Do you want this networked?
 	 */
-	public void addToScore(int amount) {
+	public void addToScore(int amount, boolean shouldNetwork) {
 		// Increase score
 		this.score += amount;
 		
 		// Ensure we have a network to send to
-		if(this.network != null) {
+		if(shouldNetwork && this.network != null) {
 			this.network.updateScore(this.score, amount);
 		}
+	}
+	
+	/**
+	 * Sets the score
+	 * @param score The new score to display
+	 */
+	public void setScore(int score) {
+		this.score = score;
 	}
 }
