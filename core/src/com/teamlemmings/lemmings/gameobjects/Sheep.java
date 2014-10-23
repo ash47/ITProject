@@ -1,5 +1,7 @@
 package com.teamlemmings.lemmings.gameobjects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -148,25 +150,32 @@ public class Sheep extends GameObject {
 		circle.dispose();
 	}
 	
+	Sound coinSound = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.mp3"));
+	Sound goalSound = Gdx.audio.newSound(Gdx.files.internal("sounds/goal.wav"));
+	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/death.wav"));
+
+	
 	@Override
 	public void onCollide(GameObject obj) {
 		if(obj instanceof Goal) {
 			// Cleanup the sheep
 			this.cleanup();
+			goalSound.play();
 			
 			// Add to the total that got home
 			gameScreen.sheepGotHome(true);
 		} else if(obj instanceof Coin) {
 			// Cleanup coin
 			obj.cleanup();
+			coinSound.play();
 			
 			// Add score
 			this.gameScreen.addToScore(1,true);
 		} else if(obj instanceof Liquid) {
 			// Cleanup sheep
 			this.cleanup();
+			deathSound.play();
 			
-			System.out.println("A sheep drowned!");
 		}
 	}
 	
