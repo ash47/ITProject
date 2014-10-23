@@ -21,6 +21,9 @@ public class GameObject {
 	// Used to track whether this object should be deleted or not
 	private Boolean shouldDelete = false;
 	
+	// The gamescreen we are attached to
+	protected GameScreen gameScreen;
+	
 	/**
 	 * Creates a new game object based on the given screen and position
 	 * @param screen The screen this object should be stored into
@@ -28,6 +31,9 @@ public class GameObject {
 	 * @param y The y position on screen to put this object
 	 */
 	public GameObject(GameScreen screen, float x, float y) {
+		// Store game screen
+		this.gameScreen = screen;
+		
 		// Create and position the body
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = this.getBodyType();

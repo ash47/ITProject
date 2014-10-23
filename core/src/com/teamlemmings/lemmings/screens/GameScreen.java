@@ -6,11 +6,14 @@ import java.util.Iterator;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -22,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.GestureProcessor;
+import com.teamlemmings.lemmings.MapInfo;
 import com.teamlemmings.lemmings.Renderer;
 import com.teamlemmings.lemmings.gameobjects.Coin;
 import com.teamlemmings.lemmings.gameobjects.GameObject;
@@ -84,6 +88,24 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The scale to render the world at
 	private float worldScale = 1 / 235f;
+	
+	// The score
+	private int score;
+	
+	// The number of sheep that got home
+	private int sheepHome;
+	
+	// The number of sheep required to get home in order to win
+	private int sheepToWin;
+	
+	// The font to use to draw text
+	private BitmapFont font;
+	
+	// Should we return to the lobby next tick?
+	public int returnToLobbyNextTick;
+	
+	// Should we return to the main menu?
+	public boolean returnToMenu;
 		
 	/**
 	 * Create a new game screen
@@ -98,6 +120,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the sprite batch
 		batch = new SpriteBatch();
 		
+		// Load font
+		//font = new BitmapFont(Gdx.files.internal("menu/font.fnt"), false);
+		font = new BitmapFont();
+		font.setUseIntegerPositions(false);
+        
 		// Create the renderer
 		renderer = new Renderer(batch);
 		
@@ -129,6 +156,10 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		
 		// Load up a level
 		//loadLevel("level1");
+		
+		// Stop from returning to the lobby
+		returnToLobbyNextTick = 0;
+		returnToMenu = false;
 		
 		// Create a background
 		background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
@@ -204,8 +235,32 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			}
 		}
 		
+		// Workout if we are in exit / win mode
+		String hintText;
+		if(this.sheepHome >= this.sheepToWin) {
+			hintText = "Long hold here to win the map.";
+		} else {
+			hintText = "Long hold here to exit to the menu.";
+		}
+		
+		// Render the hud
+		font.setScale(0.05f, 0.05f);
+		font.setColor(Color.BLACK);
+		font.drawMultiLine(batch, hintText+"\nScore: "+this.score+"\nSheep: "+this.sheepHome+'/'+this.sheepToWin, 0, 0);
+		
 		// Finish drawing the sprite batch
 		batch.end();
+		
+		// Are we meant to return to the lobby?
+		if(returnToLobbyNextTick == 2) {
+			returnToLobby(false);
+		} else if(returnToLobbyNextTick == 1) {
+			returnToLobby(true);
+		}
+		
+		if(returnToMenu) {
+			returnToMenu();
+		}
 		
 		// DEBUG: Render the world
 		//debugRenderer.render(world, cam.combined);
@@ -241,6 +296,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Cleanup resources
 		batch.dispose();
 		renderer.dispose();
+		font.dispose();
 	}
 	
 	/**
@@ -300,7 +356,77 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
 		s.cleanup();
 	}
-
+	
+	/**
+	 * Called when the user long presses the screen
+	 * @param x The x coordinate they held
+	 * @param y The y coordinate they held
+	 */
+	public void onLongPress(float x, float y) {
+		// Convert to something useful
+		x /= Gdx.graphics.getWidth();
+		y /= Gdx.graphics.getHeight();
+		
+		// Check if the user was trying to quit
+		if(x <= 0.07 && y <= 0.09) {
+			returnToLobby(true);
+		}
+	}
+	
+	/**
+	 * Returns to hte lobby
+	 * @param shouldNetwork Should we network this?
+	 */
+	public void returnToLobby(boolean shouldNetwork) {
+		// Grab the menu screen
+		MenuScreen ms = this.network.getMenuScreen();
+		
+		// Change to the menu
+		((Game)Gdx.app.getApplicationListener()).setScreen(ms);
+		
+		// Cleanup
+		this.dispose();
+		
+		// Remove network reference
+		this.network.setGameScreen(null);
+		this.network.setInLobby(true);
+		
+		if(shouldNetwork) {
+			// Network it
+			network.returnToLobby();
+		}
+		
+		// Check if it is a quit or a win
+		if(this.sheepHome >= this.sheepToWin) {
+			// Menu for winners!
+			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
+		} else {
+			// Menu for losers >_>
+			ms.menuVictory(this.sheepHome, this.sheepToWin, this.score);
+		}
+	}
+	
+	/**
+	 * Returns to the menu after a dropout
+	 */
+	public void returnToMenu() {
+		// Grab the menu screen
+		MenuScreen ms = this.network.getMenuScreen();
+		
+		// Change to the menu
+		((Game)Gdx.app.getApplicationListener()).setScreen(ms);
+		
+		// Cleanup
+		this.dispose();
+		
+		// Remove network reference
+		this.network.setGameScreen(null);
+		this.network.setInLobby(true);
+		
+		// Main menu please (maybe show a error screen next time?)
+		ms.menuMain();
+	}
+	
 	@Override
 	public void beginContact(Contact contact) {
 		// Grab the two game objects that touched
@@ -354,7 +480,14 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		float left = 0;
 		float top = 0;
 		
+		// Reset score
+		this.score = 0;
+		this.sheepHome = 0;
+		
 		// Load a level
+		
+		MapInfo mi = new MapInfo(mapName);
+		this.sheepToWin = mi.sheepToWin;
 		
 		/*
 		 * 
@@ -453,5 +586,50 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	 */
 	public void setNetwork(Networking network) {
 		this.network = network;
+	}
+	
+	/**
+	 * Adds (and networks) score
+	 * @param amount Amount of score to add
+	 * @param shouldNetwork Do you want this networked?
+	 */
+	public void addToScore(int amount, boolean shouldNetwork) {
+		// Increase score
+		this.score += amount;
+		
+		// Ensure we have a network to send to
+		if(shouldNetwork && this.network != null) {
+			this.network.updateScore(this.score, amount);
+		}
+	}
+	
+	/**
+	 * Sets the score
+	 * @param score The new score to display
+	 */
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	/**
+	 * Stores that a sheep got home, and networks it
+	 * @param shouldNetwork Do we need to network this?
+	 */
+	public void sheepGotHome(boolean shouldNetwork) {
+		// Increase total sheep that got home
+		this.sheepHome++;
+		
+		// Ensure we have a network to send to
+		if(shouldNetwork && this.network != null) {
+			this.network.sheepGotHome(this.sheepHome);
+		}
+	}
+	
+	/**
+	 * Directly sets how many sheep have gotten home
+	 * @param totalSheep The total number of sheep that have gotten home
+	 */
+	public void setTotalSheepHome(int totalSheep) {
+		this.sheepHome = totalSheep;
 	}
 }

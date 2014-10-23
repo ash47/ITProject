@@ -16,8 +16,14 @@ public class Lemmings extends Game {
 	
 	@Override
 	public void create () {
+		// Create a menu screen
+		MenuScreen ms = new MenuScreen(this);
+		
 		// Change to the game screen
-		setScreen(new MenuScreen(this));
+		setScreen(ms);
+		
+		// Load the main menu
+		ms.menuMain();
 	}
 	
 	/**

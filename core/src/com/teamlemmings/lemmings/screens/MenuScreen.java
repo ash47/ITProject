@@ -32,6 +32,10 @@ public class MenuScreen extends LemmingScreen {
 	 */
 	public MenuScreen(Game game) {
 		super(game);
+		
+		// Create the networking manager
+        network = new Networking();
+        network.setMenuScreen(this);
 	}
 	
 	// The stage to render to
@@ -72,9 +76,6 @@ public class MenuScreen extends LemmingScreen {
     	table.setFillParent(true);
         stage.addActor(table);
         
-        // Make the stage use able
-        Gdx.input.setInputProcessor(stage);
-        
         // Create the sprite batch
      	batch = new SpriteBatch();
         
@@ -82,12 +83,8 @@ public class MenuScreen extends LemmingScreen {
         background = new Texture(Gdx.files.internal("Backgrounds/bg_castle.png"));
         background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         
-        // Create the networking manager
-        network = new Networking();
-        network.setMenuScreen(this);
-        
-        // Load up the main menu
-        menuMain();
+        // Make the stage use able
+        Gdx.input.setInputProcessor(stage);
     }
     
     /**
@@ -226,7 +223,7 @@ public class MenuScreen extends LemmingScreen {
         table.add(btn).size(150,60).padBottom(20).row();
         
         // Add list of players
-        for(String player : ms.network.lobby.players) {
+        for(String player : ms.network.getLobby().players) {
         	if(player != null) {
         		// A player
         		btn = new TextButton(player, skin);
@@ -239,7 +236,7 @@ public class MenuScreen extends LemmingScreen {
         }
         
         // Work out how many players are needed
-        int playersNeeded = ms.network.lobby.totalScreens - ms.network.lobby.connectedPlayers;
+        int playersNeeded = ms.network.getLobby().totalScreens - ms.network.getLobby().connectedPlayers;
         
         // Can they start the game?
         if(playersNeeded <= 0) {
@@ -263,6 +260,31 @@ public class MenuScreen extends LemmingScreen {
         	btn = new TextButton("Waiting for "+playersNeeded+" players", skin);
         	table.add(btn).size(150,60).padBottom(20).row();
         }
+    }
+    
+    /**
+     * Shows the victory screen
+     * @param sheepHome Number of sheep that got home
+     * @param sheepTotal Number of sheep that were needed
+     * @param score Score collected
+     */
+    public void menuVictory(int sheepHome, int sheepTotal, int score) {
+    	this.menuLobby();
+    	
+    	TextButton btn;
+    	
+    	// Did they win?
+    	if(sheepHome >= sheepTotal) {
+    		btn = new TextButton("VICTORY!", skin);
+            table.add(btn).size(150,60).padBottom(20).row();
+    	}
+    	
+    	// Add info
+    	btn = new TextButton("Sheep: "+sheepHome+"/"+sheepTotal, skin);
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        btn = new TextButton("Score: "+score, skin);
+        table.add(btn).size(150,60).padBottom(20).row();
     }
     
     /**
@@ -322,6 +344,12 @@ public class MenuScreen extends LemmingScreen {
     	// Create a new game screen
     	GameScreen gs = new GameScreen(this.game);
     	
+    	// Check if we are using networking
+    	if(this.network != null) {
+    		gs.setNetwork(this.network);
+    		this.network.setGameScreen(gs);
+    	}
+    	
     	// Load up the correct map
     	gs.loadLevel(mapName, screenNumber);
     	
@@ -362,7 +390,7 @@ public class MenuScreen extends LemmingScreen {
         	loadNextTick = false;
         	
         	// Load the map
-        	loadLevel(network.lobby.mapName, network.screenNumber);
+        	loadLevel(network.getLobby().mapName, network.screenNumber);
         }
     }
 
