@@ -280,9 +280,16 @@ function compiler() {
         0, 1, 1, 0,
         0, 0, 0, 0
     ]);
+	// A liquid
+    var shapeLiquid = new shape(4, 4, [
+        0, 0, 0, 0,
+        1, 1, 1, 1,
+        1, 1, 1, 1,
+        1, 1, 1, 1
+    ]);
 
     // The goal
-    shapeGoal = shapeBlockFull;
+    var shapeGoal = shapeBlockFull;
 
     /*
         Register patterns
@@ -349,6 +356,7 @@ function compiler() {
         var sheepColor = toColor(0, 255, 0, 255);
         var goalColor = toColor(0, 255, 255, 255);
         var coinColor = toColor(255, 255, 0, 255);
+		var liquidColor = toColor(255, 0, 255, 255);
         var interactiveColor = toColor(255, 0, 0, 255);
 
         // Check for objects at the given position
@@ -359,8 +367,11 @@ function compiler() {
             // Add the sheep
             addTile(x, y, 'sheep');
         } else if(shapeCoin.match(rx, ry, coinColor)) {
-            // Add the sheep
+            // Add the coin
             addTile(x, y, 'coin');
+		} else if(shapeLiquid.match(rx, ry, liquidColor)) {
+            // Add the sheep
+            addTile(x, y, 'liquid');
         } else if(shapeBlockFull.match(rx, ry, interactiveColor)) {
             // Grab settings for this object
             var settings = {

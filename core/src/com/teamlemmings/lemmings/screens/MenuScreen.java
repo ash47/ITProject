@@ -22,7 +22,7 @@ import com.teamlemmings.lemmings.networking.Networking;
 
 /**
  * Represents menus
- * @author Daniel
+ * @author dberglie
  *
  */
 public class MenuScreen extends LemmingScreen {
