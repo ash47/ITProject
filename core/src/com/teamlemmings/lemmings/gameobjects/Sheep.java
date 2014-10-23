@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.Renderer;
+import com.teamlemmings.lemmings.networking.Networking;
 import com.teamlemmings.lemmings.screens.GameScreen;
 
 /**
@@ -32,7 +33,7 @@ public class Sheep extends GameObject {
 	private float timeWaited = 0;
 	
 	// Scale of the sheep (meters)
-	private static final float scale = 1f;
+	private static final float scale = 0.8f;
 	
 	// Scale of the sprite
 	private static final float spriteScale = scale/256f;
@@ -79,6 +80,46 @@ public class Sheep extends GameObject {
 		    	 // Allow the changing of direction
 		    	 timeWaited += deltaTime;
 		     }
+		}
+		
+		// Make it change screens
+		if(pos.x > gameScreen.viewportX) {
+			Networking network = gameScreen.getNetworking();
+			
+			int totalScreens = network.getLobby().totalScreens;
+			int screenNumber = network.screenNumber;
+			
+			// Calculate which screen to send to
+			screenNumber++;
+			if(screenNumber >= totalScreens) screenNumber = 0;
+			
+			// Change position
+			pos.x -= gameScreen.viewportX;
+			
+			if(totalScreens == 1) {
+				this.body.setTransform(pos, 0);
+			} else {
+				network.newSheep(pos.x, pos.y, this.direction, screenNumber);
+				this.cleanup();
+			}
+		} else if(pos.x < 0) {
+			Networking network = gameScreen.getNetworking();
+			
+			int totalScreens = network.getLobby().totalScreens;
+			int screenNumber = network.screenNumber;
+			
+			// Calculate which screen to send to
+			screenNumber++;
+			if(screenNumber >= totalScreens) screenNumber = 0;
+			
+			pos.x += gameScreen.viewportX;
+
+			if(totalScreens == 1) {
+				this.body.setTransform(pos, 0);
+			} else {
+				network.newSheep(pos.x, pos.y, this.direction, screenNumber);
+				this.cleanup();
+			}
 		}
 	}
 	
@@ -127,5 +168,13 @@ public class Sheep extends GameObject {
 			
 			System.out.println("A sheep drowned!");
 		}
+	}
+	
+	/**
+	 * Changes our direction
+	 * @param dir The direction to walk in
+	 */
+	public void setDirection(int dir) {
+		this.direction = dir;
 	}
 }

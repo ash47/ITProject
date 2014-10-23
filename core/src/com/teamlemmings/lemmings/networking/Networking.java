@@ -277,6 +277,7 @@ public class Networking {
 		kryo.register(NetworkScore.class);
 		kryo.register(NetworkSheepGotHome.class);
 		kryo.register(NetworkReturnToLobby.class);
+		kryo.register(NetworkSheep.class);
 	}
 	
 	/**
@@ -324,6 +325,18 @@ public class Networking {
 	    		   // Return to lobby
 	    		   if(gameScreen != null) {
 	    			   gameScreen.returnToLobbyNextTick = 1;
+	    		   }
+	    	   } else if(object instanceof NetworkSheep) {
+	    		   // Grab data
+	    		   NetworkSheep ns = (NetworkSheep) object;
+	    		   
+	    		   // Is it on our screen?
+	    		   if(ns.screenNumber == _this.screenNumber) {
+	    			   // Spawn the sheep
+	    			   _this.gameScreen.createSheep(ns.x, ns.y, ns.direction);
+	    		   } else {
+	    			   // Forward to others
+	    			   server.sendToAllTCP(ns);
 	    		   }
 	    	   }
 	       }
@@ -398,6 +411,15 @@ public class Networking {
 	    		   // Return to lobby
 	    		   if(gameScreen != null) {
 	    			   gameScreen.returnToLobbyNextTick = 2;
+	    		   }
+	    	   } else if(object instanceof NetworkSheep) {
+	    		   // Grab data
+	    		   NetworkSheep ns = (NetworkSheep) object;
+	    		   
+	    		   // Is it on our screen?
+	    		   if(ns.screenNumber == _this.screenNumber) {
+	    			   // Spawn the sheep
+	    			   _this.gameScreen.createSheep(ns.x, ns.y, ns.direction);
 	    		   }
 	    	   }
 	       }
@@ -515,5 +537,29 @@ public class Networking {
 		} else {
 			client.sendTCP(sc);
 		}
+	}
+	
+	/**
+	 * Sends a sheep onto someone else's screen
+	 * @param x X position of the new sheep
+	 * @param y Y position of the new sheep
+	 * @param dir The direction to march in
+	 * @param screenNumber The screen to send to
+	 */
+	public void newSheep(float x, float y, int dir, int screenNumber) {
+		// Create the request
+		NetworkSheep ns = new NetworkSheep();
+		ns.x = x;
+		ns.y = y;
+		ns.direction = dir;
+		ns.screenNumber = screenNumber;
+		
+		// Send it
+		if(this.isServer) {
+			server.sendToAllTCP(ns);
+		} else {
+			client.sendTCP(ns);
+		}
+		
 	}
 }
