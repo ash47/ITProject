@@ -632,4 +632,22 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	public void setTotalSheepHome(int totalSheep) {
 		this.sheepHome = totalSheep;
 	}
+	
+	/**
+	 * Gets our networking
+	 * @return The network of this game screen
+	 */
+	public Networking getNetworking() {
+		return this.network;
+	}
+	
+	/**
+	 * Creates a new sheep
+	 * @param x x coord to spawn at
+	 * @param y y coord to spawn at
+	 * @param dir Direction to march in
+	 */
+	public void createSheep(float x, float y, int dir) {
+		(new Sheep(this, x, y)).setDirection(dir);
+	}
 }
