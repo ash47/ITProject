@@ -1,23 +1,31 @@
 package com.teamlemmings.lemmings.screens;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.teamlemmings.lemmings.Constants;
 import com.teamlemmings.lemmings.networking.Networking;
 
 /**
@@ -201,7 +209,7 @@ public class MenuScreen extends LemmingScreen {
     	final MenuScreen ms = this;
     	
     	// Back
-        TextButton btn = new TextButton("Back", skin);
+    	TextButton btn = new TextButton("Back", skin);
         btn.addListener(new ClickListener(){
     	    @Override
     	    public void clicked(InputEvent event, float x, float y) {
@@ -218,6 +226,17 @@ public class MenuScreen extends LemmingScreen {
     	    		// Cleanup client
     	    		ms.network.disconnectClient();
     	    	}
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Highscores
+        btn = new TextButton("Highscores", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	// Show the highscores
+    	    	ms.menuHighScores(network.getLobby().mapName);
     	    }
     	});
         table.add(btn).size(150,60).padBottom(20).row();
@@ -285,6 +304,61 @@ public class MenuScreen extends LemmingScreen {
         
         btn = new TextButton("Score: "+score, skin);
         table.add(btn).size(150,60).padBottom(20).row();
+    }
+    
+    /**
+     * Shows the highscores
+     */
+    public void menuHighScores(String mapName) {
+    	// Clear the menu
+    	table.clear();
+    	
+    	// A reference to this
+    	final MenuScreen ms = this;
+    	
+    	// Back
+        TextButton btn = new TextButton("Back", skin);
+        btn.addListener(new ClickListener(){
+    	    @Override
+    	    public void clicked(InputEvent event, float x, float y) {
+    	    	// Go back to the lobby
+    	    	ms.menuLobby();
+    	    }
+    	});
+        table.add(btn).size(150,60).padBottom(20).row();
+        
+        // Create parameters
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("mapName", mapName);
+        
+        // Setup the request
+        HttpRequest httpGet = new HttpRequest(HttpMethods.GET);
+        httpGet.setUrl(Constants.HIGHSCORE_SERVER);
+        httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+        
+        // Do the request
+        Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
+        	@Override
+        	public void handleHttpResponse(HttpResponse httpResponse) {
+        		String status = httpResponse.getResultAsString();
+                
+        		System.out.println(status);
+            }
+               
+            @Override
+			public void failed(Throwable t) {
+            	// Add the failure notice
+            	
+            	TextButton btn = new TextButton("Failed to connect", skin);
+                table.add(btn).size(150,60).padBottom(20).row();
+			}
+	
+			@Override
+			public void cancelled() {
+				// TODO Auto-generated method stub
+					
+			}
+        });
     }
     
     /**

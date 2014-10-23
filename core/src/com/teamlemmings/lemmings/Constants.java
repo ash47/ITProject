@@ -40,4 +40,7 @@ public abstract class Constants {
 	
 	// Sheep Mask
 	public static final short MASK_SHEEP = CATEGORY_WORLD + CATEGORY_SENSOR;
+	
+	// The server to connect to
+	public static final String HIGHSCORE_SERVER = "http://127.0.0.1/highscores";
 }
