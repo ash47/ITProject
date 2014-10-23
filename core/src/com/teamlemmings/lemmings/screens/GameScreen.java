@@ -6,11 +6,14 @@ import java.util.Iterator;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -87,6 +90,9 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 	
 	// The score
 	private int score;
+	
+	// The font to use to draw text
+	private BitmapFont font;
 		
 	/**
 	 * Create a new game screen
@@ -101,6 +107,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create the sprite batch
 		batch = new SpriteBatch();
 		
+		// Load font
+		//font = new BitmapFont(Gdx.files.internal("menu/font.fnt"), false);
+		font = new BitmapFont();
+		font.setUseIntegerPositions(false);
+        
 		// Create the renderer
 		renderer = new Renderer(batch);
 		
@@ -207,6 +218,11 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			}
 		}
 		
+		// Render the hud
+		font.setScale(0.05f, 0.05f);
+		font.setColor(Color.BLACK);
+		font.draw(batch, "Score: "+this.score, 0, 0);
+		
 		// Finish drawing the sprite batch
 		batch.end();
 		
@@ -244,6 +260,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Cleanup resources
 		batch.dispose();
 		renderer.dispose();
+		font.dispose();
 	}
 	
 	/**

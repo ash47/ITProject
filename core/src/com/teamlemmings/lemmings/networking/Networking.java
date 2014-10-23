@@ -347,7 +347,7 @@ public class Networking {
 	    		   NetworkScore ns = (NetworkScore) object;
 	    		   
 	    		   // Score info
-	    		   gameScreen.setScore(ns.score, false);
+	    		   gameScreen.setScore(ns.score);
 	    	   }
 	       }
 		});
