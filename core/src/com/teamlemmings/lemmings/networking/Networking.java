@@ -30,7 +30,7 @@ public class Networking {
 	private boolean inLobby = false;
 	
 	// Lobby info
-	public NetworkLobby lobby;
+	private NetworkLobby lobby;
 	
 	// The menu we are attached to
 	private MenuScreen menuScreen;
@@ -425,5 +425,29 @@ public class Networking {
 		} else {
 			client.sendTCP(sc);
 		}
+	}
+	
+	/**
+	 * Gets our menu screen
+	 * @return The menu screen
+	 */
+	public MenuScreen getMenuScreen() {
+		return this.menuScreen;
+	}
+	
+	/**
+	 * Sets if we are in a lobby or not
+	 * @param inLobby Are we in a lobby?
+	 */
+	public void setInLobby(boolean inLobby) {
+		this.inLobby = inLobby;
+	}
+	
+	/**
+	 * Gets our network lobby
+	 * @return Our network lobby
+	 */
+	public NetworkLobby getLobby() {
+		return this.lobby;
 	}
 }

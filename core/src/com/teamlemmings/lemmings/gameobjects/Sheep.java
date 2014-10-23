@@ -126,9 +126,6 @@ public class Sheep extends GameObject {
 			this.cleanup();
 			
 			System.out.println("A sheep drowned!");
-
-			
 		}
-		
 	}
 }

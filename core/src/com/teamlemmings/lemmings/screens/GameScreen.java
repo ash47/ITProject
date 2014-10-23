@@ -225,10 +225,18 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 			}
 		}
 		
+		// Workout if we are in exit / win mode
+		String hintText;
+		if(this.sheepHome >= this.sheepToWin) {
+			hintText = "Long hold here to win the map.";
+		} else {
+			hintText = "Long hold here to exit to the menu.";
+		}
+		
 		// Render the hud
 		font.setScale(0.05f, 0.05f);
 		font.setColor(Color.BLACK);
-		font.drawMultiLine(batch, "Score: "+this.score+"\nSheep: "+this.sheepHome+'/'+this.sheepToWin, 0, 0);
+		font.drawMultiLine(batch, hintText+"\nScore: "+this.score+"\nSheep: "+this.sheepHome+'/'+this.sheepToWin, 0, 0);
 		
 		// Finish drawing the sprite batch
 		batch.end();
@@ -326,6 +334,41 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		// Create a collision zone temporarily
 		SensorZone s = new SensorZone(this, worldX, worldY, 1f, 1f);
 		s.cleanup();
+	}
+	
+	/**
+	 * Called when the user long presses the screen
+	 * @param x The x coordinate they held
+	 * @param y The y coordinate they held
+	 */
+	public void onLongPress(float x, float y) {
+		// Convert to something useful
+		x /= Gdx.graphics.getWidth();
+		y /= Gdx.graphics.getHeight();
+		
+		// Check if the user was trying to quit
+		if(x <= 0.07 && y <= 0.09) {
+			// Grab the menu screen
+			MenuScreen ms = this.network.getMenuScreen();
+			
+			// Change to the menu
+			((Game)Gdx.app.getApplicationListener()).setScreen(ms);
+			
+			// Cleanup
+			this.dispose();
+			
+			// Remove network reference
+			this.network.setGameScreen(null);
+			this.network.setInLobby(true);
+			
+			// Check if it is a quit or a win
+			if(this.sheepHome >= this.sheepToWin) {
+				
+			} else {
+				// Revert to the lobby
+				ms.menuLobby();
+			}
+		}
 	}
 
 	@Override
