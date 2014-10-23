@@ -282,7 +282,7 @@ function compiler() {
     ]);
 
     // The goal
-    shapeGoal = shapeBlockFull;
+    var shapeGoal = shapeBlockFull;
 
     /*
         Register patterns
