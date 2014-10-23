@@ -39,6 +39,7 @@ public class JsonSerialization implements Serialization {
 		this.prettyPrint = prettyPrint;
 	}
 
+	@Override
 	public void write (Connection connection, ByteBuffer buffer, Object object) {
 		byteBufferOutputStream.setByteBuffer(buffer);
 		int start = buffer.position();
@@ -63,19 +64,23 @@ public class JsonSerialization implements Serialization {
 		}
 	}
 
+	@Override
 	public Object read (Connection connection, ByteBuffer buffer) {
 		byteBufferInputStream.setByteBuffer(buffer);
 		return json.fromJson(Object.class, byteBufferInputStream);
 	}
 
+	@Override
 	public void writeLength (ByteBuffer buffer, int length) {
 		buffer.putInt(length);
 	}
 
+	@Override
 	public int readLength (ByteBuffer buffer) {
 		return buffer.getInt();
 	}
 
+	@Override
 	public int getLengthLength () {
 		return 4;
 	}

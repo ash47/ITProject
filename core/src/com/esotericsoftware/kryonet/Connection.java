@@ -300,6 +300,7 @@ public class Connection {
 		tcp.idleThreshold = idleThreshold;
 	}
 
+	@Override
 	public String toString () {
 		if (name != null) return name;
 		return "Connection " + id;

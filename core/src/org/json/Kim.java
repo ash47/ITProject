@@ -106,7 +106,7 @@ public class Kim {
         if (this.length > 0) {
             this.bytes = new byte[this.length];
             for (int at = 0; at < this.length; at += 1) {
-                value = (int) bytes[at + from] & 0xFF;
+                value = bytes[at + from] & 0xFF;
                 sum += value;
                 this.hashcode += sum;
                 this.bytes[at] = (byte) value;
@@ -303,7 +303,8 @@ public class Kim {
      * @returns true if this and obj are both kim objects containing identical
      *          byte sequences.
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (!(obj instanceof Kim)) {
             return false;
         }
@@ -329,13 +330,14 @@ public class Kim {
         if (at < 0 || at > this.length) {
             throw new JSONException("Bad character at " + at);
         }
-        return ((int) this.bytes[at]) & 0xFF;
+        return (this.bytes[at]) & 0xFF;
     }
 
     /**
      * Returns a hash code value for the kim.
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return this.hashcode;
     }
 
@@ -348,7 +350,8 @@ public class Kim {
      * @throws JSONException
      *             if the kim is not valid.
      */
-    public String toString() throws JSONException {
+    @Override
+	public String toString() throws JSONException {
         if (this.string == null) {
             int c;
             int length = 0;

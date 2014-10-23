@@ -97,10 +97,12 @@ public class Client extends Connection implements EndPoint {
 		discoveryHandler = newDiscoveryHandler;
 	}
 
+	@Override
 	public Serialization getSerialization () {
 		return serialization;
 	}
 
+	@Override
 	public Kryo getKryo () {
 		return ((KryoSerialization)serialization).getKryo();
 	}
@@ -216,6 +218,7 @@ public class Client extends Connection implements EndPoint {
 	/** Reads or writes any pending data for this client. Multiple threads should not call this method at the same time.
 	 * @param timeout Wait for up to the specified milliseconds for data to be ready to process. May be zero to return immediately
 	 *           if there is no data to process. */
+	@Override
 	public void update (int timeout) throws IOException {
 		updateThread = Thread.currentThread();
 		synchronized (updateLock) { // Blocks to avoid a select while the selector is used to bind the server connection.
@@ -330,6 +333,7 @@ public class Client extends Connection implements EndPoint {
 		if (udp != null && udpRegistered && udp.needsKeepAlive(time)) sendUDP(FrameworkMessage.keepAlive);
 	}
 
+	@Override
 	public void run () {
 		if (TRACE) trace("kryonet", "Client thread started.");
 		shutdown = false;
@@ -363,6 +367,7 @@ public class Client extends Connection implements EndPoint {
 		if (TRACE) trace("kryonet", "Client thread stopped.");
 	}
 
+	@Override
 	public void start () {
 		// Try to let any previous update thread stop.
 		if (updateThread != null) {
@@ -377,6 +382,7 @@ public class Client extends Connection implements EndPoint {
 		updateThread.start();
 	}
 
+	@Override
 	public void stop () {
 		if (shutdown) return;
 		close();
@@ -385,6 +391,7 @@ public class Client extends Connection implements EndPoint {
 		selector.wakeup();
 	}
 
+	@Override
 	public void close () {
 		super.close();
 		// Select one last time to complete closing the socket.
@@ -406,11 +413,13 @@ public class Client extends Connection implements EndPoint {
 		selector.close();
 	}
 
+	@Override
 	public void addListener (Listener listener) {
 		super.addListener(listener);
 		if (TRACE) trace("kryonet", "Client listener added.");
 	}
 
+	@Override
 	public void removeListener (Listener listener) {
 		super.removeListener(listener);
 		if (TRACE) trace("kryonet", "Client listener removed.");
@@ -424,6 +433,7 @@ public class Client extends Connection implements EndPoint {
 		udp.keepAliveMillis = keepAliveMillis;
 	}
 
+	@Override
 	public Thread getUpdateThread () {
 		return updateThread;
 	}

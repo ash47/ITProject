@@ -4,8 +4,6 @@ package com.esotericsoftware.kryonet;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryonet.FrameworkMessage.DiscoverHost;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.FrameworkMessage.Ping;
@@ -42,6 +40,7 @@ public class KryoSerialization implements Serialization {
 		return kryo;
 	}
 
+	@Override
 	public synchronized void write (Connection connection, ByteBuffer buffer, Object object) {
 		output.setBuffer(buffer);
 		kryo.getContext().put("connection", connection);
@@ -49,20 +48,24 @@ public class KryoSerialization implements Serialization {
 		output.flush();
 	}
 
+	@Override
 	public synchronized Object read (Connection connection, ByteBuffer buffer) {
 		input.setBuffer(buffer);
 		kryo.getContext().put("connection", connection);
 		return kryo.readClassAndObject(input);
 	}
 
+	@Override
 	public void writeLength (ByteBuffer buffer, int length) {
 		buffer.putInt(length);
 	}
 
+	@Override
 	public int readLength (ByteBuffer buffer) {
 		return buffer.getInt();
 	}
 
+	@Override
 	public int getLengthLength () {
 		return 4;
 	}

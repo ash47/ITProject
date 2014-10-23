@@ -125,7 +125,8 @@ class Keep implements None, PostMortem {
         return o instanceof Integer ? ((Integer) o).intValue() : none;
     }
 
-    public boolean postMortem(PostMortem pm) {
+    @Override
+	public boolean postMortem(PostMortem pm) {
         Keep that = (Keep) pm;
         if (this.length != that.length) {
             JSONzip.log(this.length + " <> " + that.length);

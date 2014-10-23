@@ -80,7 +80,8 @@ public class BitOutputStream implements BitWriter {
      *
      * @throws IOException
      */
-    public void one() throws IOException {
+    @Override
+	public void one() throws IOException {
         write(1, 1);
     }
 
@@ -93,7 +94,8 @@ public class BitOutputStream implements BitWriter {
      *            This will typically be 8, 16, 32, 64, 128, 256, etc.
      * @throws IOException
      */
-    public void pad(int width) throws IOException {
+    @Override
+	public void pad(int width) throws IOException {
         int gap = (int)this.nrBits % width;
         if (gap < 0) {
             gap += width;
@@ -117,7 +119,8 @@ public class BitOutputStream implements BitWriter {
      *            The number of bits to write. (0..32)
      * @throws IOException
      */
-    public void write(int bits, int width) throws IOException {
+    @Override
+	public void write(int bits, int width) throws IOException {
         if (bits == 0 && width == 0) {
             return;
         }
@@ -147,7 +150,8 @@ public class BitOutputStream implements BitWriter {
      *
      * @throws IOException
      */
-    public void zero() throws IOException {
+    @Override
+	public void zero() throws IOException {
         write(0, 1);
 
     }

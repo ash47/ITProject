@@ -78,7 +78,8 @@ public class Networking {
 	    
 		// Create a new server instance
 	    server = new Server() {
-            protected Connection newConnection () {
+            @Override
+			protected Connection newConnection () {
                 // Is there a spare slot?
             	if(lobby.connectedPlayers >= lobby.totalScreens) {
             		return new Connection();
@@ -280,7 +281,8 @@ public class Networking {
 		
 		// Listen for messages
 		server.addListener(new Listener() {
-	       public void received (Connection connection, Object object) {
+	       @Override
+		public void received (Connection connection, Object object) {
 	    	   // Ensure they are allowed to talk to us
 	    	   if(!(connection instanceof LemmingConnection)) {
 	    		   connection.close();
@@ -313,7 +315,8 @@ public class Networking {
 		
 		// Listen for messages
 		client.addListener(new Listener() {
-	       public void received (Connection connection, Object object) {
+	       @Override
+		public void received (Connection connection, Object object) {
 	    	   if(object instanceof NetworkLobby) {
 	    		   // Store the lobby
 	    		   lobby = (NetworkLobby) object;
