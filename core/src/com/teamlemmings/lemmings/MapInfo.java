@@ -3,6 +3,7 @@ package com.teamlemmings.lemmings;
 import org.json.JSONObject;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 
 /**
@@ -22,6 +23,9 @@ public class MapInfo {
 	
 	// The number of sheep to win
 	public int sheepToWin;
+	
+	// Have we beaten it?
+	public boolean beaten;
 	
 	/**
 	 * Gets info on the given map
@@ -45,5 +49,14 @@ public class MapInfo {
 		this.mapTitle = json.getString("mapTitle");
 		this.mapName = mapName;
 		this.sheepToWin = json.getInt("sheepToWin");
+		
+		// Default to not beaten
+		this.beaten = false;
+		
+		// Check if the map has been beaten
+		Preferences pref = Settings.getSettings();
+		if(pref.contains("beaten_"+mapName)) {
+			beaten = true;
+		}
 	}
 }
