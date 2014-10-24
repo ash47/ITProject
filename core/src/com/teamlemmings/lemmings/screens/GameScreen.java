@@ -375,7 +375,7 @@ public class GameScreen extends LemmingScreen implements ContactListener {
 		y /= Gdx.graphics.getHeight();
 		
 		// Check if the user was trying to quit
-		if(x <= 0.07 && y <= 0.09) {
+		if(x <= 0.14 && y <= 0.18) {
 			returnToLobby(true);
 		}
 	}

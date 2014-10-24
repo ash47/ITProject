@@ -609,8 +609,7 @@ public class MenuScreen extends LemmingScreen {
                 
                 System.out.println(t.getMessage());
                 
-                TextButton btn = new TextButton("Failed to connect", skin);
-                table.add(btn).size(150,60).padBottom(5).row();
+                resBtn.setText("Failed to connect to the server!");
             }
     
             @Override
