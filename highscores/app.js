@@ -31,6 +31,9 @@ app.get('/highscores/:mapName/:user/:highscore', function(req, res) {
     var username = req.params.user;
     var highscore = parseInt(req.params.highscore);
 
+    // Log the data
+    console.log(mapName+' - '+username+' - '+highscore);
+
     // Ensure mapName only has letters and numbers!
 
     // Attempt to load the data
@@ -43,6 +46,18 @@ app.get('/highscores/:mapName/:user/:highscore', function(req, res) {
         data = {
             scores: []
         };
+    }
+
+    // Ensure no keys are stored
+    delete data.added;
+
+    // Check if this score already exists >_>
+    for(var i=0; i<data.scores.length; i++) {
+        console.log(data.scores[i]);
+        if(data.scores[i] != null && highscore == data.scores[i].score && username == data.scores[i].user) {
+            res.json(data);
+            return;
+        }
     }
 
     // Check if our highscore is larger
@@ -76,10 +91,12 @@ app.get('/highscores/:mapName/:user/:highscore', function(req, res) {
                 res.json({failure: true});
             } else {
                 // Report new scores
+                data.added = true;
                 res.json(data);
             }
         });
     } else {
+        console.log(data);
         // Just report the scores
         res.json(data);
     }

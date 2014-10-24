@@ -156,6 +156,9 @@ public class Sheep extends GameObject {
 			
 			// Add to the total that got home
 			gameScreen.sheepGotHome(true);
+			
+			// Increase score
+			this.gameScreen.addToScore(5,true);
 		} else if(obj instanceof Coin) {
 			// Cleanup coin
 			obj.cleanup();
