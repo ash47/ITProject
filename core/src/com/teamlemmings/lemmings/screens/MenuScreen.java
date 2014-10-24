@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
@@ -29,6 +30,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.teamlemmings.lemmings.Constants;
+import com.teamlemmings.lemmings.MapInfo;
+import com.teamlemmings.lemmings.Settings;
 import com.teamlemmings.lemmings.networking.Networking;
 
 /**
@@ -185,7 +188,18 @@ public class MenuScreen extends LemmingScreen {
             // Grab the name of the map
             final String mapName = map.nameWithoutExtension();
             
-            btn = new TextButton(mapName, skin);
+            // Pull info on the map
+            MapInfo info = new MapInfo(mapName);
+            
+            // Workout what name to show
+            String showName;
+            if(info.beaten) {
+            	showName = "[C] "+info.mapTitle;
+            } else {
+            	showName = "[N] "+info.mapTitle;
+            }
+            
+            btn = new TextButton(showName, skin);
             btn.addListener(new ClickListener(){
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -193,9 +207,9 @@ public class MenuScreen extends LemmingScreen {
                     network.makeLobby(mapName);
                 }
             });
-            table.add(btn).size(150,60).padBottom(5);
+            table.add(btn).size(300,60).padBottom(5);
             
-            if(++count >= 6) {
+            if(++count >= 3) {
             	count = 0;
             	table.row();
             }
@@ -326,6 +340,11 @@ public class MenuScreen extends LemmingScreen {
                 }
             });
             table.add(btn).size(150,60).padBottom(5).row();
+            
+            // Store the map as beaten!
+            Preferences pref = Settings.getSettings();
+            pref.putBoolean("beaten_"+network.getLobby().mapName, true);
+            pref.flush();
         }
         
         // Add info
