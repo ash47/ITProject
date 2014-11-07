@@ -64,3 +64,5 @@ build/
 
 # Ignore test results
 core/build/reports/
+
+# Ignore stored highscores
