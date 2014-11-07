@@ -66,3 +66,4 @@ build/
 core/build/reports/
 
 # Ignore stored highscores
+highscores/data/*
